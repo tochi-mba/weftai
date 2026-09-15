@@ -15,6 +15,7 @@ export default defineConfig({
       "packages/*/src/**/*.test.ts",
       "examples/*/src/**/*.test.ts",
       "examples/*/test/**/*.test.ts",
+      "tools/**/*.test.ts",
     ],
     coverage: {
       provider: "v8",
