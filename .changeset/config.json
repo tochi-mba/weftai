@@ -1,0 +1,13 @@
+{
+  "changelog": "@changesets/cli/changelog",
+  "commit": false,
+  "fixed": [
+    ["agentweft", "@agentweft/anthropic", "@agentweft/mcp", "@agentweft/testing", "@agentweft/cli"]
+  ],
+  "linked": [],
+  "access": "public",
+  "baseBranch": "main",
+  "updateInternalDependencies": "patch",
+  "ignore": [],
+  "privatePackages": { "version": false, "tag": false }
+}
