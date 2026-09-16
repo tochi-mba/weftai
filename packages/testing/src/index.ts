@@ -9,7 +9,7 @@ import {
   type Runtime,
   type RuntimeOptions,
   type StepResult,
-} from "agentweft";
+} from "weftai";
 
 export interface TestRuntime<Ctx> {
   readonly runtime: Runtime<Ctx>;

@@ -7,7 +7,7 @@ import {
   StepExecutionError,
   standardOperations,
   z,
-} from "agentweft";
+} from "weftai";
 import { Contract, type DocumentsContext } from "./types.js";
 
 const FilterClause = z.object({

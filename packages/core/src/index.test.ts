@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { createRuntime, VERSION, z } from "./index.js";
 
-describe("agentweft public exports", () => {
+describe("weftai public exports", () => {
   it("exports a version string", () => {
     expect(VERSION).toMatch(/^\d+\.\d+\.\d+/);
   });

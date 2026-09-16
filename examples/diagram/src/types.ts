@@ -1,4 +1,4 @@
-import { z } from "agentweft";
+import { z } from "weftai";
 
 export const DiagramNode = z.object({
   id: z.string(),

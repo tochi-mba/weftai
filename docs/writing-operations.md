@@ -1,10 +1,10 @@
 # Writing operations
 
-Define each operation once. Agentweft derives validation, the model-facing description, JSON
+Define each operation once. Weftai derives validation, the model-facing description, JSON
 Schema, tracing and CLI support from that definition.
 
 ```ts
-import { collection, defineOperation, ref, z } from "agentweft";
+import { collection, defineOperation, ref, z } from "weftai";
 
 const Node = z.object({
   id: z.string(),
@@ -58,7 +58,7 @@ Inside `run`, `input.from` is already a `{ items, count, type }` collection — 
 - Descriptions are one or two sentences for the model: what it does and when to use it.
 - `label` is what the model sees. Never return an internal id as a label.
 - A wrong field name is an error listing available fields, never an empty result. Use
-  `resolveField` from `agentweft`.
+  `resolveField` from `weftai`.
 - Call `notice("…")` whenever a cap or budget shortens or shapes the result. The formatter
   always renders notices.
 - Call `showFields(["Jurisdiction"])` or `showFields("all")` when the model should see
@@ -79,7 +79,7 @@ selectively; exceeding `maxItems` is a hard error (`Narrow the query.`).
 ## Registry and runtime
 
 ```ts
-import { createRegistry, createRuntime } from "agentweft";
+import { createRegistry, createRuntime } from "weftai";
 
 const registry = createRegistry({ operations: [findNodes, descendants, ...standardOperations(Nodes)] });
 const runtime = createRuntime({ registry });

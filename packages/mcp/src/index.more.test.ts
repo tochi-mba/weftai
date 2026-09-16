@@ -1,7 +1,7 @@
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
-import { collection, createRegistry, createRuntime, defineOperation, VERSION, z } from "agentweft";
 import { describe, expect, it } from "vitest";
+import { collection, createRegistry, createRuntime, defineOperation, VERSION, z } from "weftai";
 import { createMcpServer, formatRefResult, type McpServerOptions } from "./index.js";
 
 const Item = z.object({ id: z.string(), label: z.string() });
@@ -46,7 +46,7 @@ function textOf(result: unknown): string {
 
 const isError = (result: unknown) => (result as { isError?: boolean }).isError === true;
 
-describe("@agentweft/mcp: get_result", () => {
+describe("@weftai/mcp: get_result", () => {
   it("reads a whole result and specific positions", async () => {
     const { client } = await connect();
     await client.callTool({
@@ -105,7 +105,7 @@ describe("@agentweft/mcp: get_result", () => {
   });
 });
 
-describe("@agentweft/mcp: run_plan and options", () => {
+describe("@weftai/mcp: run_plan and options", () => {
   it("marks a failed plan as an error while still returning the text", async () => {
     const { client } = await connect();
     const result = await client.callTool({

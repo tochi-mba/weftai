@@ -1,12 +1,12 @@
-# @agentweft/anthropic
+# @weftai/anthropic
 
-Expose an Agentweft runtime to Claude as tools for the Anthropic SDK's beta tool runner.
+Expose a Weftai runtime to Claude as tools for the Anthropic SDK's beta tool runner.
 
 ```ts
-import { agentweftTools } from "@agentweft/anthropic";
+import { weftaiTools } from "@weftai/anthropic";
 import Anthropic from "@anthropic-ai/sdk";
 
-const tools = agentweftTools(runtime, {
+const tools = weftaiTools(runtime, {
   ctx,
   session: { id: conversationId },
   tools: [

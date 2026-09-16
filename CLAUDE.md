@@ -1,16 +1,16 @@
-# Agentweft — working conventions
+# Weftai — working conventions
 
-Agentweft is a Rex Technologies product. It is a TypeScript framework for composable AI workflows. A model emits a declarative
+Weftai is a Rex Technologies product. It is a TypeScript framework for composable AI workflows. A model emits a declarative
 plan of named steps; the runtime validates and executes it; results flow between steps by
 `$ref` name and never travel through the model. See `docs/` for the design and `README.md` for
 the pitch.
 
 ## Repository
 
-- pnpm workspace. `packages/*` are published (`agentweft`, `@agentweft/*`); `examples/*` are
+- pnpm workspace. `packages/*` are published (`weftai`, `@weftai/*`); `examples/*` are
   private. Run everything from the root: `pnpm build`, `pnpm lint`, `pnpm typecheck`, `pnpm test`.
 - ESM only, built with `tsc`. No bundler. Node 20+.
-- Zod 4 is the schema layer. Consumers import `z` from `agentweft` so one copy is loaded.
+- Zod 4 is the schema layer. Consumers import `z` from `weftai` so one copy is loaded.
 - Biome formats and lints. Vitest tests. Changesets versions.
 
 ## Rules that are part of the product

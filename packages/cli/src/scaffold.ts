@@ -22,7 +22,7 @@ export function writeScaffold(dir: string): readonly string[] {
 }
 
 const PACKAGE_JSON = `{
-  "name": "agentweft-domain",
+  "name": "weftai-domain",
   "private": true,
   "type": "module",
   "scripts": {
@@ -30,7 +30,7 @@ const PACKAGE_JSON = `{
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "agentweft": "latest"
+    "weftai": "latest"
   }
 }
 `;
@@ -48,7 +48,7 @@ const TSCONFIG = `{
 }
 `;
 
-const TYPES = `import { z } from "agentweft";
+const TYPES = `import { z } from "weftai";
 
 export const Item = z.object({
   id: z.string(),
@@ -75,7 +75,7 @@ const OPERATIONS = `import {
   defineOperationFor,
   standardOperations,
   z,
-} from "agentweft";
+} from "weftai";
 import { Item, type DomainContext } from "./types.js";
 
 export const Items = collection("items", Item, {
@@ -105,7 +105,7 @@ export function domainOperations() {
 const DOMAIN = `import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { createRegistry, z } from "agentweft";
+import { createRegistry, z } from "weftai";
 import { domainOperations } from "./operations.js";
 import { Item, type DomainContext } from "./types.js";
 
@@ -125,7 +125,7 @@ export function createContext(fixturePath?: string): DomainContext {
 export default { registry, createContext };
 `;
 
-const TEST = `import { createRuntime } from "agentweft";
+const TEST = `import { createRuntime } from "weftai";
 import { describe, expect, it } from "vitest";
 import { createContext, registry } from "./domain.js";
 

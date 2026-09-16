@@ -1,6 +1,6 @@
-import { collection, createRegistry, createRuntime, defineOperation, z } from "agentweft";
 import { describe, expect, it } from "vitest";
-import { agentweftTools, toToolDefinition } from "./index.js";
+import { collection, createRegistry, createRuntime, defineOperation, z } from "weftai";
+import { toToolDefinition, weftaiTools } from "./index.js";
 
 const Item = z.object({ id: z.string(), label: z.string() });
 const Items = collection("items", Item, { label: (item) => item.label, key: (item) => item.id });
@@ -25,11 +25,11 @@ const select = defineOperation({
 const registry = createRegistry<Ctx>({ operations: [find, select] });
 const items = [{ id: "a", label: "Alpha" }];
 
-describe("@agentweft/anthropic: contexts and sessions", () => {
+describe("@weftai/anthropic: contexts and sessions", () => {
   it("resolves a context factory on every call, including async ones", async () => {
     let calls = 0;
     const runtime = createRuntime({ registry });
-    const [tool] = agentweftTools(runtime, {
+    const [tool] = weftaiTools(runtime, {
       ctx: async () => {
         calls += 1;
         return { items };
@@ -42,10 +42,10 @@ describe("@agentweft/anthropic: contexts and sessions", () => {
     expect(calls).toBe(2);
   });
 
-  it("gives each agentweftTools call its own session unless one is provided", async () => {
+  it("gives each weftaiTools call its own session unless one is provided", async () => {
     const runtime = createRuntime({ registry });
-    const [first] = agentweftTools(runtime, { ctx: { items }, tools: [{ name: "q" }] });
-    const [second] = agentweftTools(runtime, { ctx: { items }, tools: [{ name: "q" }] });
+    const [first] = weftaiTools(runtime, { ctx: { items }, tools: [{ name: "q" }] });
+    const [second] = weftaiTools(runtime, { ctx: { items }, tools: [{ name: "q" }] });
     await first?.handle({ steps: [{ id: "x", op: "items.find" }] });
     await second?.handle({ steps: [{ id: "y", op: "items.find" }] });
     const sessions = new Set<string>();
@@ -61,7 +61,7 @@ describe("@agentweft/anthropic: contexts and sessions", () => {
 
   it("shares the session between tools from one call so a later tool can reference an earlier result", async () => {
     const runtime = createRuntime({ registry });
-    const tools = agentweftTools(runtime, {
+    const tools = weftaiTools(runtime, {
       ctx: { items },
       session: { id: "conv" },
       tools: [
@@ -76,10 +76,10 @@ describe("@agentweft/anthropic: contexts and sessions", () => {
   });
 });
 
-describe("@agentweft/anthropic: policies and schema", () => {
+describe("@weftai/anthropic: policies and schema", () => {
   it("rejects write operations in a read-only tool as text, not an exception", async () => {
     const runtime = createRuntime({ registry });
-    const [query] = agentweftTools(runtime, {
+    const [query] = weftaiTools(runtime, {
       ctx: { items },
       tools: [{ name: "query", include: (op) => op.effects === "read" }],
     });
@@ -91,7 +91,7 @@ describe("@agentweft/anthropic: policies and schema", () => {
 
   it("enforces the include scope for read operations too, not only in the description", async () => {
     const runtime = createRuntime({ registry });
-    const [onlySelect] = agentweftTools(runtime, {
+    const [onlySelect] = weftaiTools(runtime, {
       ctx: { items },
       tools: [{ name: "act", include: (op) => op.effects === "write" }],
     });
@@ -101,7 +101,7 @@ describe("@agentweft/anthropic: policies and schema", () => {
 
   it("honours an explicit allowWrites: false even when writes are included", async () => {
     const runtime = createRuntime({ registry });
-    const [tool] = agentweftTools(runtime, {
+    const [tool] = weftaiTools(runtime, {
       ctx: { items },
       tools: [{ name: "all", allowWrites: false }],
     });
@@ -111,14 +111,14 @@ describe("@agentweft/anthropic: policies and schema", () => {
 
   it("returns validation problems as text the model can act on", async () => {
     const runtime = createRuntime({ registry });
-    const [tool] = agentweftTools(runtime, { ctx: { items }, tools: [{ name: "q" }] });
+    const [tool] = weftaiTools(runtime, { ctx: { items }, tools: [{ name: "q" }] });
     const text = await tool?.handle({ steps: [{ id: "a", op: "items.fnd" }] });
     expect(text).toBe("Step 'a': Unknown operation 'items.fnd'. Did you mean 'items.find'?");
   });
 
   it("parse rejects a malformed plan before anything runs", () => {
     const runtime = createRuntime({ registry });
-    const [tool] = agentweftTools(runtime, { ctx: { items }, tools: [{ name: "q" }] });
+    const [tool] = weftaiTools(runtime, { ctx: { items }, tools: [{ name: "q" }] });
     expect(() => tool?.parse({ steps: [{ id: "a", operation: "items.find" }] })).toThrow();
     expect(() => tool?.parse("nope")).toThrow();
     expect(tool?.parse({ steps: [{ id: "a", op: "items.find" }] })).toEqual({
@@ -128,13 +128,13 @@ describe("@agentweft/anthropic: policies and schema", () => {
 
   it("handle rejects a malformed plan with a thrown error", async () => {
     const runtime = createRuntime({ registry });
-    const [tool] = agentweftTools(runtime, { ctx: { items }, tools: [{ name: "q" }] });
+    const [tool] = weftaiTools(runtime, { ctx: { items }, tools: [{ name: "q" }] });
     await expect(tool?.handle({ nope: true })).rejects.toThrow();
   });
 
   it("relaxes the schema when strict is false", () => {
     const runtime = createRuntime({ registry });
-    const [loose] = agentweftTools(runtime, {
+    const [loose] = weftaiTools(runtime, {
       ctx: { items },
       tools: [{ name: "q", strict: false }],
     });
@@ -143,7 +143,7 @@ describe("@agentweft/anthropic: policies and schema", () => {
     type Schema = { steps: { items: { anyOf: Record<string, unknown>[] } } };
     const variants = (loose.input_schema.properties as Schema).steps.items.anyOf;
     expect(variants[0]?.required).toEqual(["id", "op"]);
-    const [strict] = agentweftTools(runtime, { ctx: { items }, tools: [{ name: "q" }] });
+    const [strict] = weftaiTools(runtime, { ctx: { items }, tools: [{ name: "q" }] });
     if (strict === undefined) throw new Error("missing tool");
     const strictVariants = (strict.input_schema.properties as Schema).steps.items.anyOf;
     expect(strictVariants[0]?.required).toEqual(["id", "op", "input"]);
@@ -151,7 +151,7 @@ describe("@agentweft/anthropic: policies and schema", () => {
 
   it("uses a custom description verbatim", () => {
     const runtime = createRuntime({ registry });
-    const [tool] = agentweftTools(runtime, {
+    const [tool] = weftaiTools(runtime, {
       ctx: { items },
       tools: [{ name: "q", description: "Custom." }],
     });

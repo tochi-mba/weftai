@@ -1,6 +1,6 @@
 import { fileURLToPath } from "node:url";
-import { collection, createRegistry, defineOperation, z } from "agentweft";
 import { describe, expect, it } from "vitest";
+import { collection, createRegistry, defineOperation, z } from "weftai";
 import {
   createTestRuntime,
   formatSnapshot,
@@ -42,7 +42,7 @@ const boom = defineOperation({
 
 const registry = createRegistry({ operations: [find, boom] });
 
-describe("@agentweft/testing", () => {
+describe("@weftai/testing", () => {
   it("runs a plan and exposes model-facing text", async () => {
     const test = createTestRuntime(registry, {});
     const result = await test.runSteps([{ id: "all", op: "items.find" }]);

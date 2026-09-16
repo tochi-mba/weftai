@@ -1,8 +1,8 @@
 import {
-  AgentweftError,
   LimitExceededError,
   RefResolutionError,
   StepExecutionError,
+  WeftaiError,
 } from "../errors.js";
 import type { Formatter } from "../format/formatter.js";
 import { createFormatter } from "../format/formatter.js";
@@ -402,7 +402,7 @@ function wrapAbort<Ctx>(step: ValidatedStep<Ctx>, reason: unknown): Error {
 function executionMessage(stepId: string, operation: string, error: unknown): string {
   if (error instanceof LimitExceededError) return error.message;
   if (error instanceof RefResolutionError) return error.message;
-  if (error instanceof AgentweftError) return error.message;
+  if (error instanceof WeftaiError) return error.message;
   if (isAbortLike(error)) return `Step '${stepId}' was cancelled.`;
   if (error instanceof Error && error.message.length > 0) {
     return `Step '${stepId}' failed while running '${operation}': ${error.message}`;

@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
-import { validatePlan } from "agentweft";
 import { describe, expect, it } from "vitest";
+import { validatePlan } from "weftai";
 import { registry } from "../examples/diagram/src/domain.js";
 
 const DOC_NAMES = [

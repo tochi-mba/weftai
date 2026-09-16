@@ -1,6 +1,6 @@
 # Concepts
 
-Agentweft runs a **plan**: a list of named steps a model emits in one tool call. Your application
+Weftai runs a **plan**: a list of named steps a model emits in one tool call. Your application
 validates the plan, executes the steps, and stores each result under its `id`. Later steps — and
 later tool calls in the same session — refer to those results with `$id`. The data never goes
 back through the model; the model only sees a formatted summary.

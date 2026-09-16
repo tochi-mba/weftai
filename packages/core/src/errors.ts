@@ -30,7 +30,7 @@ export interface PlanIssue {
   readonly hint?: string | undefined;
 }
 
-export class AgentweftError extends Error {
+export class WeftaiError extends Error {
   readonly code: string;
 
   constructor(code: string, message: string, options?: ErrorOptions) {
@@ -45,21 +45,21 @@ export class AgentweftError extends Error {
 }
 
 /** Thrown by `defineOperation`, `collection` and friends when a definition is malformed. */
-export class DefinitionError extends AgentweftError {
+export class DefinitionError extends WeftaiError {
   constructor(message: string) {
     super("definition.invalid", message);
   }
 }
 
 /** Thrown by `createRegistry` on duplicate or missing operations. */
-export class RegistryError extends AgentweftError {
+export class RegistryError extends WeftaiError {
   constructor(code: "registry.duplicate" | "registry.unknown", message: string) {
     super(code, message);
   }
 }
 
 /** A plan failed validation. `issues` lists every problem found, not only the first. */
-export class PlanValidationError extends AgentweftError {
+export class PlanValidationError extends WeftaiError {
   readonly issues: readonly PlanIssue[];
 
   constructor(issues: readonly PlanIssue[]) {
@@ -78,7 +78,7 @@ export class PlanValidationError extends AgentweftError {
 }
 
 /** A `$ref` could not be resolved at execution time (missing result, ordinal out of range). */
-export class RefResolutionError extends AgentweftError {
+export class RefResolutionError extends WeftaiError {
   readonly ref: string;
   readonly stepId: string | undefined;
 
@@ -100,7 +100,7 @@ export class RefResolutionError extends AgentweftError {
 }
 
 /** An operation handler threw, timed out or was aborted. */
-export class StepExecutionError extends AgentweftError {
+export class StepExecutionError extends WeftaiError {
   readonly stepId: string;
   readonly operation: string;
 
@@ -122,7 +122,7 @@ export class StepExecutionError extends AgentweftError {
 }
 
 /** A hard limit was exceeded. Hard limits fail loudly; soft limits emit notices instead. */
-export class LimitExceededError extends AgentweftError {
+export class LimitExceededError extends WeftaiError {
   readonly limit: string;
   readonly actual: number;
   readonly max: number;

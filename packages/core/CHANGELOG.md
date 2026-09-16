@@ -1,4 +1,4 @@
-# agentweft
+# weftai
 
 ## 0.1.0
 

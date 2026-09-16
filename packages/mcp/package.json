@@ -1,7 +1,7 @@
 {
-  "name": "@agentweft/mcp",
+  "name": "@weftai/mcp",
   "version": "0.1.0",
-  "description": "Expose an Agentweft runtime as an MCP server.",
+  "description": "Expose a Weftai runtime as an MCP server.",
   "license": "MIT",
   "author": "Rex Technologies",
   "type": "module",
@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.27.1",
-    "agentweft": "workspace:*"
+    "weftai": "workspace:*"
   },
   "publishConfig": {
     "access": "public"

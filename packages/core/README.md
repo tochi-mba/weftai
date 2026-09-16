@@ -1,11 +1,11 @@
-# agentweft
+# weftai
 
 Core runtime for composable AI workflows: a model emits a declarative plan of named steps, your
 application validates and executes it, and results flow between steps by `$name` without ever
 travelling through the model.
 
 ```ts
-import { collection, createRegistry, createRuntime, defineOperation, ref, standardOperations, z } from "agentweft";
+import { collection, createRegistry, createRuntime, defineOperation, ref, standardOperations, z } from "weftai";
 
 const Item = z.object({ id: z.string(), label: z.string(), kind: z.string() });
 const Items = collection("items", Item, {
@@ -45,8 +45,8 @@ What the definition gives you: validation with actionable errors, typed `$ref` f
 to collections, dependency-ordered execution with timeouts and cancellation, a session-scoped
 result store, and token-budgeted formatting that never truncates silently.
 
-Adapters: `@agentweft/anthropic` (Claude tool runner), `@agentweft/mcp` (MCP server),
-`@agentweft/testing` (test helpers), `@agentweft/cli` (`agentweft run | validate | describe |
+Adapters: `@weftai/anthropic` (Claude tool runner), `@weftai/mcp` (MCP server),
+`@weftai/testing` (test helpers), `@weftai/cli` (`weftai run | validate | describe |
 trace | mcp | init`).
 
 Full documentation lives in the repository's `docs/` folder.

@@ -1,19 +1,19 @@
 import { describe, expect, it } from "vitest";
 import {
-  AgentweftError,
   DefinitionError,
   LimitExceededError,
   PlanValidationError,
   RefResolutionError,
   RegistryError,
   StepExecutionError,
+  WeftaiError,
 } from "./errors.js";
 
 describe("error toJSON", () => {
   it("serialises the base error to name, code and message without a stack", () => {
-    const json = new AgentweftError("x.y", "Boom.").toJSON();
-    expect(json).toEqual({ name: "AgentweftError", code: "x.y", message: "Boom." });
-    expect(JSON.parse(JSON.stringify(new AgentweftError("x.y", "Boom.")))).toEqual(json);
+    const json = new WeftaiError("x.y", "Boom.").toJSON();
+    expect(json).toEqual({ name: "WeftaiError", code: "x.y", message: "Boom." });
+    expect(JSON.parse(JSON.stringify(new WeftaiError("x.y", "Boom.")))).toEqual(json);
     expect(Object.keys(json)).not.toContain("stack");
   });
 

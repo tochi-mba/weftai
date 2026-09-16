@@ -1,7 +1,7 @@
 {
-  "name": "@agentweft/anthropic",
+  "name": "@weftai/anthropic",
   "version": "0.1.0",
-  "description": "Expose an Agentweft runtime to Claude through the Anthropic SDK tool runner.",
+  "description": "Expose a Weftai runtime to Claude through the Anthropic SDK tool runner.",
   "license": "MIT",
   "author": "Rex Technologies",
   "type": "module",
@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.125.0",
-    "agentweft": "workspace:*"
+    "weftai": "workspace:*"
   },
   "publishConfig": {
     "access": "public"

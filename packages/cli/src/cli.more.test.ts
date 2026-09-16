@@ -36,7 +36,7 @@ function capture() {
   };
 }
 
-const dir = mkdtempSync(join(tmpdir(), "agentweft-cli-more-"));
+const dir = mkdtempSync(join(tmpdir(), "weftai-cli-more-"));
 afterAll(() => rmSync(dir, { recursive: true, force: true }));
 
 describe("parseArgv", () => {
@@ -75,7 +75,7 @@ describe("parseArgv", () => {
   });
 });
 
-describe("agentweft CLI: usage and argument errors", { timeout: 60_000 }, () => {
+describe("weftai CLI: usage and argument errors", { timeout: 60_000 }, () => {
   it("prints usage for no command and for help", async () => {
     for (const argv of [[], ["help"]]) {
       const cap = capture();
@@ -138,7 +138,7 @@ export { loadContext as createContext } from ${JSON.stringify(domain.replace(/\\
   });
 });
 
-describe("agentweft CLI: outputs", { timeout: 60_000 }, () => {
+describe("weftai CLI: outputs", { timeout: 60_000 }, () => {
   it("reports validation issues on stderr and exits 1", async () => {
     const plan = join(dir, "unknown-op.json");
     writeFileSync(plan, JSON.stringify({ steps: [{ id: "a", op: "nodes.fnd" }] }));

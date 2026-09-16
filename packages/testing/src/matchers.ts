@@ -1,8 +1,8 @@
-import type { ExecutionResult } from "agentweft";
 import { expect } from "vitest";
+import type { ExecutionResult } from "weftai";
 import { stepById } from "./index.js";
 
-interface AgentweftMatchers<R = unknown> {
+interface WeftaiMatchers<R = unknown> {
   toHaveMatched(id: string, n: number): R;
   toHaveNotice(id: string, pattern: string | RegExp): R;
   toHaveFailed(id: string, pattern: string | RegExp): R;
@@ -11,8 +11,8 @@ interface AgentweftMatchers<R = unknown> {
 declare module "vitest" {
   // Vitest's Assertion is declared with `T = any`; the parameters must match.
   // biome-ignore lint/suspicious/noExplicitAny: must match vitest's Assertion type parameters
-  interface Assertion<T = any> extends AgentweftMatchers<T> {}
-  interface AsymmetricMatchersContaining extends AgentweftMatchers {}
+  interface Assertion<T = any> extends WeftaiMatchers<T> {}
+  interface AsymmetricMatchersContaining extends WeftaiMatchers {}
 }
 
 expect.extend({

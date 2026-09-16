@@ -1,4 +1,4 @@
-# @agentweft/anthropic
+# @weftai/anthropic
 
 ## 0.1.0
 
@@ -9,4 +9,4 @@
 ### Patch Changes
 
 - Updated dependencies [9b9b491]
-  - agentweft@0.1.0
+  - weftai@0.1.0

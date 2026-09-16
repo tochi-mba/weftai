@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { betaZodTool } from "@anthropic-ai/sdk/helpers/beta/zod";
-import { type AnyOperation, PlanSchema, type Registry, type Runtime } from "agentweft";
+import { type AnyOperation, PlanSchema, type Registry, type Runtime } from "weftai";
 
 export interface ToolSpec<Ctx> {
   readonly name: string;
@@ -16,7 +16,7 @@ export interface ToolSpec<Ctx> {
   readonly allowWrites?: boolean | undefined;
 }
 
-export interface AgentweftToolsOptions<Ctx> {
+export interface WeftaiToolsOptions<Ctx> {
   readonly ctx: Ctx | (() => Ctx | Promise<Ctx>);
   readonly tools: readonly ToolSpec<Ctx>[];
   /** Shared by every tool from this call so a later tool call can `$ref` an earlier result. */
@@ -29,7 +29,7 @@ type PlanRunnable = ReturnType<typeof betaZodTool<typeof PlanSchema>>;
  * A runnable Claude tool (accepted by `client.beta.messages.toolRunner`) whose input is a plan.
  * `handle` runs raw JSON input for manual tool-use loops and returns the model-facing text.
  */
-export type AgentweftTool = PlanRunnable & {
+export type WeftaiTool = PlanRunnable & {
   readonly name: string;
   readonly description: string;
   readonly input_schema: Record<string, unknown>;
@@ -48,13 +48,13 @@ export interface ToolDefinition {
 }
 
 /**
- * Claude tools backed by an Agentweft runtime. Each spec becomes one tool; results stay in the
+ * Claude tools backed by a Weftai runtime. Each spec becomes one tool; results stay in the
  * session store so a later tool call can reference an earlier one by name.
  */
-export function agentweftTools<Ctx>(
+export function weftaiTools<Ctx>(
   runtime: Runtime<Ctx>,
-  options: AgentweftToolsOptions<Ctx>,
-): AgentweftTool[] {
+  options: WeftaiToolsOptions<Ctx>,
+): WeftaiTool[] {
   const sessionId = options.session?.id ?? randomUUID();
   return options.tools.map((spec) => makeTool(runtime, spec, options.ctx, sessionId));
 }
@@ -86,7 +86,7 @@ function makeTool<Ctx>(
   spec: ToolSpec<Ctx>,
   ctx: Ctx | (() => Ctx | Promise<Ctx>),
   sessionId: string,
-): AgentweftTool {
+): WeftaiTool {
   const scoped: Registry<Ctx> = runtime.registry.filter(spec.include ?? (() => true));
   const allowWrites =
     spec.allowWrites ?? scoped.operations.some((operation) => operation.effects === "write");
@@ -119,7 +119,7 @@ function makeTool<Ctx>(
     input_schema: scoped.planSchema({ style: "union", strict }),
     strict,
     handle,
-  } as AgentweftTool;
+  } as WeftaiTool;
   return spec.eagerInputStreaming === true ? { ...tool, eager_input_streaming: true } : tool;
 }
 

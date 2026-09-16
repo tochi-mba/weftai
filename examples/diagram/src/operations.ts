@@ -9,7 +9,7 @@ import {
   StepExecutionError,
   standardOperations,
   z,
-} from "agentweft";
+} from "weftai";
 import { edgeFields, nodeFields } from "./fields.js";
 import { findPaths, involving, walkAncestors, walkDescendants } from "./graph.js";
 import { type DiagramContext, DiagramEdge, DiagramNode, DiagramPath } from "./types.js";

@@ -66,7 +66,7 @@ describe("ref", () => {
   it("stamps a global symbol so a second copy of this module can still see the ref", () => {
     const schema = ref(Nodes);
     const stamped = (schema as unknown as Record<symbol, RefMeta | undefined>)[
-      Symbol.for("agentweft.ref")
+      Symbol.for("weftai.ref")
     ];
     expect(stamped).toEqual({ kind: "ref", target: Nodes });
   });

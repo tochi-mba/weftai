@@ -25,7 +25,7 @@ operation's input schema, `additionalProperties: false`, and every property requ
 for Anthropic `strict: true`. `style: "loose"` is a smaller schema: `op` is an enum and `input`
 is a free-form object.
 
-The Zod `PlanSchema` (re-exported from `agentweft`) is the loose runtime shape. Adapters parse
+The Zod `PlanSchema` (re-exported from `weftai`) is the loose runtime shape. Adapters parse
 with it, then `runtime.execute` validates operation inputs and references.
 
 ## Validation issues

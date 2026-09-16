@@ -7,7 +7,7 @@ still index the full stored set.
 ## Budgets
 
 ```ts
-import { createFormatter, DEFAULT_BUDGETS } from "agentweft";
+import { createFormatter, DEFAULT_BUDGETS } from "weftai";
 
 const formatter = createFormatter({
   budgets: { read: 2000, preview: 400, total: 8000 }, // tokens; defaults

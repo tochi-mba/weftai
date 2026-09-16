@@ -164,7 +164,7 @@ describe("withSources and isStepOutput", () => {
   });
 
   it("uses a global symbol so outputs from another copy of the package still count", () => {
-    const foreign = { [Symbol.for("agentweft.stepOutput")]: true, data: 1, sources: undefined };
+    const foreign = { [Symbol.for("weftai.stepOutput")]: true, data: 1, sources: undefined };
     expect(isStepOutput(foreign)).toBe(true);
   });
 

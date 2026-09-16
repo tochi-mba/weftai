@@ -1,7 +1,7 @@
 {
-  "name": "@agentweft/cli",
+  "name": "@weftai/cli",
   "version": "0.1.0",
-  "description": "CLI for Agentweft: run, validate, describe, trace, mcp, init.",
+  "description": "CLI for Weftai: run, validate, describe, trace, mcp, init.",
   "license": "MIT",
   "author": "Rex Technologies",
   "type": "module",
@@ -9,7 +9,7 @@
     "node": ">=22.12.0"
   },
   "bin": {
-    "agentweft": "./dist/cli.js"
+    "weftai": "./dist/cli.js"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -31,8 +31,8 @@
     "clean": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\""
   },
   "dependencies": {
-    "@agentweft/mcp": "workspace:*",
-    "agentweft": "workspace:*",
+    "@weftai/mcp": "workspace:*",
+    "weftai": "workspace:*",
     "jiti": "^2.6.1"
   },
   "publishConfig": {

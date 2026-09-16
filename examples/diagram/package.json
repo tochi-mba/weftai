@@ -1,5 +1,5 @@
 {
-  "name": "@agentweft-examples/diagram",
+  "name": "@weftai-examples/diagram",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -7,6 +7,6 @@
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "agentweft": "workspace:*"
+    "weftai": "workspace:*"
   }
 }

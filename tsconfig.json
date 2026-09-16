@@ -9,7 +9,7 @@
     "declarationMap": false,
     "sourceMap": false,
     "paths": {
-      "agentweft": ["./packages/core/src/index.ts"]
+      "weftai": ["./packages/core/src/index.ts"]
     }
   },
   "include": ["tools", "vitest.config.ts"]

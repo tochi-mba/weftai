@@ -3,8 +3,9 @@
  * proposal's test diagram. These assert the exact model-facing text, so they are the acceptance
  * bar for the framework: if a rendering rule changes, one of these fails.
  */
-import { createFormatter } from "agentweft";
+
 import { describe, expect, it } from "vitest";
+import { createFormatter } from "weftai";
 import { createDiagramRuntime } from "./domain.js";
 import { chainDiagram, ids, largeDiagram, withDuplicateSub3 } from "./fixture.js";
 

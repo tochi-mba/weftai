@@ -1,8 +1,8 @@
 import { existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import type { Registry } from "agentweft";
 import { createJiti } from "jiti";
+import type { Registry } from "weftai";
 
 export interface DomainModule<Ctx = unknown> {
   readonly registry: Registry<Ctx>;
@@ -21,8 +21,8 @@ export async function loadDomain(file: string): Promise<DomainModule> {
 }
 
 function sourceAliases(): Record<string, string> {
-  const agentweft = fileURLToPath(new URL("../../core/src/index.ts", import.meta.url));
-  return existsSync(agentweft) ? { agentweft } : {};
+  const weftai = fileURLToPath(new URL("../../core/src/index.ts", import.meta.url));
+  return existsSync(weftai) ? { weftai } : {};
 }
 
 function unwrap(loaded: unknown): DomainModule {

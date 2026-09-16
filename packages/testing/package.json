@@ -1,7 +1,7 @@
 {
-  "name": "@agentweft/testing",
+  "name": "@weftai/testing",
   "version": "0.1.0",
-  "description": "Test helpers for Agentweft domains: runtimes, plan sugar, matchers and fixtures.",
+  "description": "Test helpers for Weftai domains: runtimes, plan sugar, matchers and fixtures.",
   "license": "MIT",
   "author": "Rex Technologies",
   "type": "module",
@@ -32,7 +32,7 @@
     "clean": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\""
   },
   "dependencies": {
-    "agentweft": "workspace:*"
+    "weftai": "workspace:*"
   },
   "peerDependencies": {
     "vitest": ">=4"

@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
 import {
-  AgentweftError,
   DefinitionError,
   formatIssue,
   formatIssues,
@@ -10,37 +9,38 @@ import {
   RefResolutionError,
   RegistryError,
   StepExecutionError,
+  WeftaiError,
 } from "./errors.js";
 
-describe("AgentweftError", () => {
+describe("WeftaiError", () => {
   it("carries a code, the message and the subclass name", () => {
-    const error = new AgentweftError("x.y", "Something happened.");
+    const error = new WeftaiError("x.y", "Something happened.");
     expect(error.code).toBe("x.y");
     expect(error.message).toBe("Something happened.");
-    expect(error.name).toBe("AgentweftError");
+    expect(error.name).toBe("WeftaiError");
     expect(error).toBeInstanceOf(Error);
   });
 
   it("passes a cause through", () => {
     const cause = new Error("root");
-    expect(new AgentweftError("x", "m", { cause }).cause).toBe(cause);
-    expect(new AgentweftError("x", "m").cause).toBeUndefined();
+    expect(new WeftaiError("x", "m", { cause }).cause).toBe(cause);
+    expect(new WeftaiError("x", "m").cause).toBeUndefined();
   });
 
   it("has a stack that names the class", () => {
-    expect(new AgentweftError("x", "m").stack).toContain("AgentweftError");
+    expect(new WeftaiError("x", "m").stack).toContain("WeftaiError");
   });
 
   it("serialises through JSON.stringify without leaking a stack", () => {
-    expect(JSON.parse(JSON.stringify(new AgentweftError("x.y", "Something happened.")))).toEqual({
-      name: "AgentweftError",
+    expect(JSON.parse(JSON.stringify(new WeftaiError("x.y", "Something happened.")))).toEqual({
+      name: "WeftaiError",
       code: "x.y",
       message: "Something happened.",
     });
   });
 
   it("uses the most derived class name for subclasses", () => {
-    class Custom extends AgentweftError {
+    class Custom extends WeftaiError {
       constructor() {
         super("custom", "c");
       }
@@ -55,7 +55,7 @@ describe("DefinitionError", () => {
     expect(error.code).toBe("definition.invalid");
     expect(error.name).toBe("DefinitionError");
     expect(error.message).toBe("Bad definition.");
-    expect(error).toBeInstanceOf(AgentweftError);
+    expect(error).toBeInstanceOf(WeftaiError);
   });
 });
 

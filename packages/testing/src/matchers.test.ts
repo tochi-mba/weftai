@@ -1,5 +1,5 @@
-import { collection, createRegistry, defineOperation, z } from "agentweft";
 import { describe, expect, it } from "vitest";
+import { collection, createRegistry, defineOperation, z } from "weftai";
 import { createTestRuntime } from "./index.js";
 import "./matchers.js";
 

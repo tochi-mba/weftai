@@ -1,6 +1,6 @@
-import { collection, createRegistry, createRuntime, defineOperation, z } from "agentweft";
 import { describe, expect, it } from "vitest";
-import { agentweftTools, toToolDefinition } from "./index.js";
+import { collection, createRegistry, createRuntime, defineOperation, z } from "weftai";
+import { toToolDefinition, weftaiTools } from "./index.js";
 
 const Item = z.object({ id: z.string(), label: z.string() });
 const Items = collection("items", Item, {
@@ -30,10 +30,10 @@ const select = defineOperation({
 
 const registry = createRegistry({ operations: [find, select] });
 
-describe("@agentweft/anthropic", () => {
+describe("@weftai/anthropic", () => {
   it("builds runnable tools whose run returns formatted text", async () => {
     const runtime = createRuntime({ registry });
-    const tools = agentweftTools(runtime, {
+    const tools = weftaiTools(runtime, {
       ctx: {},
       session: { id: "s1" },
       tools: [
@@ -63,7 +63,7 @@ describe("@agentweft/anthropic", () => {
 
   it("spreads eager_input_streaming when requested", () => {
     const runtime = createRuntime({ registry });
-    const [tool] = agentweftTools(runtime, {
+    const [tool] = weftaiTools(runtime, {
       ctx: {},
       tools: [{ name: "query", eagerInputStreaming: true }],
     });

@@ -1,7 +1,7 @@
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
-import { collection, createRegistry, createRuntime, defineOperation, z } from "agentweft";
 import { describe, expect, it } from "vitest";
+import { collection, createRegistry, createRuntime, defineOperation, z } from "weftai";
 import { createMcpServer, formatRefResult } from "./index.js";
 
 const Item = z.object({ id: z.string(), label: z.string() });
@@ -28,7 +28,7 @@ async function connect(runtime: ReturnType<typeof createRuntime>) {
   return client;
 }
 
-describe("@agentweft/mcp", () => {
+describe("@weftai/mcp", () => {
   it("lists the three tools", async () => {
     const runtime = createRuntime({ registry });
     const client = await connect(runtime);

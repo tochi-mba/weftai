@@ -31,7 +31,7 @@ export interface RefMeta {
 }
 
 /** Private metadata, keyed by schema identity; nothing here leaks into JSON Schema output. */
-const REF_KEY = Symbol.for("agentweft.ref");
+const REF_KEY = Symbol.for("weftai.ref");
 const refSchemas = new WeakMap<z.ZodType, RefMeta>();
 
 export interface RefOptions {

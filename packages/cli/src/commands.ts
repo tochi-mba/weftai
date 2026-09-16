@@ -1,24 +1,24 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { createMcpServer } from "@agentweft/mcp";
+import { createMcpServer } from "@weftai/mcp";
 import {
   createRuntime,
   type ExecutionResult,
   formatIssues,
   type Trace,
   validatePlan,
-} from "agentweft";
+} from "weftai";
 import { loadDomain } from "./domain.js";
 import { boolFlag, type CliArgs, flag } from "./parse.js";
 import { writeScaffold } from "./scaffold.js";
 
 export const USAGE = `Usage:
-  agentweft run <plan.json> --domain <file> [--fixture <file>] [--trace out.json] [--format text|json]
-  agentweft validate <plan.json> --domain <file>
-  agentweft describe --domain <file> [--json]
-  agentweft trace <trace.json>
-  agentweft mcp --domain <file> [--fixture <file>] [--name <name>]
-  agentweft init [dir]
+  weftai run <plan.json> --domain <file> [--fixture <file>] [--trace out.json] [--format text|json]
+  weftai validate <plan.json> --domain <file>
+  weftai describe --domain <file> [--json]
+  weftai trace <trace.json>
+  weftai mcp --domain <file> [--fixture <file>] [--name <name>]
+  weftai init [dir]
 `;
 
 export interface Io {
@@ -131,7 +131,7 @@ async function mcpCommand(args: CliArgs, io: Io): Promise<number> {
   const runtime = createRuntime({ registry: domain.registry });
   const ctx = await domain.createContext(flag(args, "fixture"));
   const mcp = createMcpServer(runtime, {
-    name: flag(args, "name") ?? "agentweft",
+    name: flag(args, "name") ?? "weftai",
     ctx,
   });
   io.stderr.write("Serving MCP on stdio. Press Ctrl+C to stop.\n");

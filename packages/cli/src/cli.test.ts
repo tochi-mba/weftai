@@ -37,7 +37,7 @@ function capture() {
   };
 }
 
-describe("agentweft CLI", { timeout: 30_000 }, () => {
+describe("weftai CLI", { timeout: 30_000 }, () => {
   it("parses flags and positionals", () => {
     const args = parseArgv(["run", "plan.json", "--domain", "d.ts", "--format=json"]);
     expect(args.command).toBe("run");
@@ -108,7 +108,7 @@ describe("agentweft CLI", { timeout: 30_000 }, () => {
   });
 
   it("writes a trace file from run", async () => {
-    const dir = mkdtempSync(join(tmpdir(), "agentweft-cli-"));
+    const dir = mkdtempSync(join(tmpdir(), "weftai-cli-"));
     const tracePath = join(dir, "out.json");
     const cap = capture();
     const code = await runCli(["run", delaware, "--domain", domain, "--trace", tracePath], cap.io);
@@ -123,7 +123,7 @@ describe("agentweft CLI", { timeout: 30_000 }, () => {
   });
 
   it("scaffolds a domain that can execute a plan", async () => {
-    const dir = mkdtempSync(join(tmpdir(), "agentweft-init-"));
+    const dir = mkdtempSync(join(tmpdir(), "weftai-init-"));
     const cap = capture();
     expect(await runCli(["init", dir], cap.io)).toBe(0);
     expect(cap.stdout).toContain("Wrote 7 files");

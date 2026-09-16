@@ -1,4 +1,4 @@
-# Agentweft
+# Weftai
 
 A Rex Technologies product.
 
@@ -38,7 +38,7 @@ You define each operation once: a name, a description for the model, a Zod input
 output type and a handler.
 
 ```ts
-import { collection, defineOperationFor, ref, standardOperations, z } from "agentweft";
+import { collection, defineOperationFor, ref, standardOperations, z } from "weftai";
 
 const Nodes = collection("nodes", Node, {
   label: (n) => n.label,
@@ -65,7 +65,7 @@ const result = await runtime.execute(plan, { ctx, session: { id: conversationId 
 result.text; // the model-facing string above
 ```
 
-From that one definition Agentweft derives:
+From that one definition Weftai derives:
 
 - **Validation** with actionable errors: unknown operations suggest the nearest name, unknown
   fields list the available ones, a reference to the wrong kind of result says which kind it
@@ -86,11 +86,11 @@ From that one definition Agentweft derives:
 
 | Package | Purpose |
 |---------|---------|
-| `agentweft` | Core runtime: operations, plans, validation, execution, result store, formatter, traces |
-| `@agentweft/anthropic` | Expose a runtime to Claude through the Anthropic SDK tool runner |
-| `@agentweft/mcp` | Expose a runtime as an MCP server |
-| `@agentweft/testing` | Test runtime, Vitest matchers and fixture helpers |
-| `@agentweft/cli` | `agentweft run | validate | describe | trace | mcp | init` |
+| `weftai` | Core runtime: operations, plans, validation, execution, result store, formatter, traces |
+| `@weftai/anthropic` | Expose a runtime to Claude through the Anthropic SDK tool runner |
+| `@weftai/mcp` | Expose a runtime as an MCP server |
+| `@weftai/testing` | Test runtime, Vitest matchers and fixture helpers |
+| `@weftai/cli` | `weftai run | validate | describe | trace | mcp | init` |
 
 ## Examples
 

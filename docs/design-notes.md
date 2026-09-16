@@ -47,7 +47,7 @@ Running record of decisions and ideas. Each idea carries a status so nothing is 
 - **Domain file contract.** Default export `{ registry, createContext(fixturePath?) }`. The CLI
   loads TypeScript through jiti and `pathToFileURL`.
 - **`ref()` metadata uses `Symbol.for`.** A WeakMap is the fast path, but a global symbol on the
-  schema means a second copy of `agentweft` (CLI + jiti, bundlers) can still see `$ref` fields.
+  schema means a second copy of `weftai` (CLI + jiti, bundlers) can still see `$ref` fields.
 
 ## Ideas
 
@@ -62,7 +62,7 @@ Running record of decisions and ideas. Each idea carries a status so nothing is 
 | 7 | Tracing hooks shaped like OpenTelemetry spans | planned | No dependency; expose `onSpan(start, end, attributes)` so any exporter can attach. |
 | 8 | Result-store adapters (Redis, encrypted) | evaluating | Interface first; in-memory store ships in v0.1. |
 | 9 | Step result caching within a session | evaluating | Re-running an identical read step against an unchanged context could reuse the earlier result. Needs a `contextVersion(ctx)` hook to be safe. |
-| 10 | `agentweft doctor`: lint a registry for DX problems | planned | Missing examples, descriptions under N words, operations whose names differ by one character, fields without descriptions. |
+| 10 | `weftai doctor`: lint a registry for DX problems | planned | Missing examples, descriptions under N words, operations whose names differ by one character, fields without descriptions. |
 | 11 | Evaluation harness measuring round trips per scenario | planned | Turns the proposal's hand-counted "structural counts" into an automated metric. |
 | 12 | Cost hints on operations (`cost: "cheap" | "expensive"`) rendered in descriptions | evaluating | Nudges the model toward cheap operations first. |
 | 13 | Streaming step results as they finish | evaluating | `runtime.stream(plan)` as an async iterator for UIs. |

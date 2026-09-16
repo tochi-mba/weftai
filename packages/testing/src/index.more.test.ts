@@ -1,8 +1,8 @@
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { collection, createMemoryStore, createRegistry, defineOperation, z } from "agentweft";
 import { afterAll, describe, expect, it } from "vitest";
+import { collection, createMemoryStore, createRegistry, defineOperation, z } from "weftai";
 import {
   createTestRuntime,
   formatSnapshot,
@@ -30,7 +30,7 @@ const registry = createRegistry<Ctx>({
 });
 const ctx: Ctx = { items: [{ id: "a", label: "Alpha" }] };
 
-const dir = mkdtempSync(join(tmpdir(), "agentweft-testing-"));
+const dir = mkdtempSync(join(tmpdir(), "weftai-testing-"));
 afterAll(() => rmSync(dir, { recursive: true, force: true }));
 
 describe("createTestRuntime", () => {

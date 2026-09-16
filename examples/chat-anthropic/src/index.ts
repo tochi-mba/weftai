@@ -2,15 +2,16 @@
  * Live check: the diagram domain wired to Claude through the beta tool runner. Not run in CI.
  * Needs ANTHROPIC_API_KEY or an `ant auth login` profile.
  */
-import { agentweftTools } from "@agentweft/anthropic";
+
 import Anthropic from "@anthropic-ai/sdk";
+import { weftaiTools } from "@weftai/anthropic";
 import { createDiagramRuntime } from "../../diagram/src/domain.js";
 
 const MODEL = "claude-opus-5";
 
 async function main(): Promise<void> {
   const { runtime, ctx } = createDiagramRuntime();
-  const tools = agentweftTools(runtime, {
+  const tools = weftaiTools(runtime, {
     ctx,
     tools: [
       { name: "query_diagram", include: (op) => op.effects === "read" },

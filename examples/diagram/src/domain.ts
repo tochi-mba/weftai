@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { createRegistry, createRuntime, type Registry, type RuntimeOptions } from "agentweft";
+import { createRegistry, createRuntime, type Registry, type RuntimeOptions } from "weftai";
 import { fixture } from "./fixture.js";
 import { diagramOperations } from "./operations.js";
 import { type Diagram, type DiagramContext, DiagramFile, enrich } from "./types.js";

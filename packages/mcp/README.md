@@ -1,9 +1,9 @@
-# @agentweft/mcp
+# @weftai/mcp
 
-Expose an Agentweft runtime as an MCP server.
+Expose a Weftai runtime as an MCP server.
 
 ```ts
-import { createMcpServer } from "@agentweft/mcp";
+import { createMcpServer } from "@weftai/mcp";
 
 const mcp = createMcpServer(runtime, { name: "diagram", ctx });
 await mcp.connectStdio();
@@ -17,4 +17,4 @@ await mcp.connectStdio();
 
 Options: `include` scopes operations, `allowWrites` gates `write` operations, `session` fixes the
 session id, `ctx` may be a value or a factory. Use `mcp.server.connect(transport)` for any other
-transport. The CLI wraps this as `agentweft mcp --domain ./domain.ts`.
+transport. The CLI wraps this as `weftai mcp --domain ./domain.ts`.

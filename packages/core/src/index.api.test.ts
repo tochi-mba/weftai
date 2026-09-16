@@ -6,7 +6,7 @@ import * as api from "./index.js";
  * breaking change that must be deliberate.
  */
 const EXPECTED = [
-  "AgentweftError",
+  "WeftaiError",
   "DEFAULT_BUDGETS",
   "DEFAULT_LIMITS",
   "DEFAULT_SESSION_ID",

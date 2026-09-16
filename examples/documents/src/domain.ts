@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { createRegistry, createRuntime, type Registry, z } from "agentweft";
+import { createRegistry, createRuntime, type Registry, z } from "weftai";
 import { fixture, NOW } from "./fixture.js";
 import { documentOperations } from "./operations.js";
 import { Contract, type DocumentsContext } from "./types.js";

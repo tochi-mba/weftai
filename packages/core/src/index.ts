@@ -1,7 +1,6 @@
 export { z } from "zod";
 
 export {
-  AgentweftError,
   DefinitionError,
   formatIssue,
   formatIssues,
@@ -12,6 +11,7 @@ export {
   RefResolutionError,
   RegistryError,
   StepExecutionError,
+  WeftaiError,
 } from "./errors.js";
 export {
   createRuntime,

@@ -8,7 +8,7 @@ import {
   resolveRef,
   VERSION,
   z,
-} from "agentweft";
+} from "weftai";
 
 export interface McpServerOptions<Ctx> {
   readonly name: string;
@@ -19,7 +19,7 @@ export interface McpServerOptions<Ctx> {
   readonly allowWrites?: boolean | undefined;
 }
 
-export interface AgentweftMcpServer {
+export interface WeftaiMcpServer {
   readonly server: McpServer;
   connectStdio(): Promise<void>;
 }
@@ -31,7 +31,7 @@ export interface AgentweftMcpServer {
 export function createMcpServer<Ctx>(
   runtime: Runtime<Ctx>,
   options: McpServerOptions<Ctx>,
-): AgentweftMcpServer {
+): WeftaiMcpServer {
   const sessionId = options.session?.id ?? "default";
   const scoped =
     options.include === undefined ? runtime.registry : runtime.registry.filter(options.include);

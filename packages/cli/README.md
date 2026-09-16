@@ -1,14 +1,14 @@
-# @agentweft/cli
+# @weftai/cli
 
-Run an Agentweft domain against saved plans with no model in the loop.
+Run a Weftai domain against saved plans with no model in the loop.
 
 ```
-agentweft run <plan.json> --domain <file> [--fixture <file>] [--trace out.json] [--format text|json]
-agentweft validate <plan.json> --domain <file>
-agentweft describe --domain <file> [--json]
-agentweft trace <trace.json>
-agentweft mcp --domain <file> [--fixture <file>] [--name <name>]
-agentweft init [dir]
+weftai run <plan.json> --domain <file> [--fixture <file>] [--trace out.json] [--format text|json]
+weftai validate <plan.json> --domain <file>
+weftai describe --domain <file> [--json]
+weftai trace <trace.json>
+weftai mcp --domain <file> [--fixture <file>] [--name <name>]
+weftai init [dir]
 ```
 
 A domain file default-exports `{ registry, createContext(fixturePath?) }`. TypeScript domain

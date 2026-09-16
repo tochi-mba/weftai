@@ -121,7 +121,7 @@ export type OutputData<O extends ResultType> =
         ? readonly Group[]
         : never;
 
-const STEP_OUTPUT = Symbol.for("agentweft.stepOutput");
+const STEP_OUTPUT = Symbol.for("weftai.stepOutput");
 
 /**
  * A handler return value carrying provenance: the entities that produced an aggregate. A count

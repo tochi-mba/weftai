@@ -1,10 +1,10 @@
-# @agentweft/testing
+# @weftai/testing
 
-Test helpers for Agentweft domains.
+Test helpers for Weftai domains.
 
 ```ts
-import { createTestRuntime, formatSnapshot, toHaveMatched } from "@agentweft/testing";
-import "@agentweft/testing/matchers"; // optional Vitest matchers
+import { createTestRuntime, formatSnapshot, toHaveMatched } from "@weftai/testing";
+import "@weftai/testing/matchers"; // optional Vitest matchers
 
 const test = createTestRuntime(registry, ctx);
 const result = await test.runSteps([{ id: "acme", op: "nodes.find" }]);

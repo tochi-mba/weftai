@@ -1,4 +1,4 @@
-import type { FieldSpec } from "agentweft";
+import type { FieldSpec } from "weftai";
 import type { DiagramEdge, DiagramNode } from "./types.js";
 
 /**

@@ -8,9 +8,9 @@
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@agentweft/anthropic": "workspace:*",
+    "@weftai/anthropic": "workspace:*",
     "@anthropic-ai/sdk": "^0.125.0",
-    "agentweft": "workspace:*",
+    "weftai": "workspace:*",
     "jiti": "^2.6.1"
   }
 }
