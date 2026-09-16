@@ -58,11 +58,11 @@ describe("openai Chat Completions and Responses", () => {
     const tools = openaiTools(runtime, {
       ctx: sampleCtx,
       session: { id: "s" },
-      tools: [{ name: "query_diagram", include: (op) => op.effects === "read" }],
+      tools: [{ name: "query_supply_chain", include: (op) => op.effects === "read" }],
     });
     expect(tools[0]).toMatchObject({
       type: "function",
-      function: { name: "query_diagram" },
+      function: { name: "query_supply_chain" },
     });
     expect(tools[0]?.function.description).toContain("查找项目");
     expect(tools[0]?.function.parameters.type).toBe("object");
@@ -71,7 +71,7 @@ describe("openai Chat Completions and Responses", () => {
       {
         id: "call_abc123",
         type: "function",
-        function: { name: "query_diagram", arguments: PLAN_JSON },
+        function: { name: "query_supply_chain", arguments: PLAN_JSON },
       },
     ]);
     expect(messages).toEqual([

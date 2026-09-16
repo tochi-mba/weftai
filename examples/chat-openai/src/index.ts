@@ -2,10 +2,10 @@
  * OpenAI Responses (flat function tools) and Chat Completions (nested function).
  */
 import { openaiTools } from "@weftai/providers/openai";
-import { diagram, isMain, queryTool, writeJson } from "../../chat-shared/src/shared.js";
+import { isMain, queryTool, supplyChain, writeJson } from "../../chat-shared/src/shared.js";
 
 export function bind() {
-  const { runtime, ctx } = diagram();
+  const { runtime, ctx } = supplyChain();
   const responses = openaiTools(runtime, {
     api: "responses",
     model: "gpt-4o",

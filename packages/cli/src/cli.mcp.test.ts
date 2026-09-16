@@ -11,7 +11,7 @@ import { parseArgv } from "./parse.js";
 import { runCli } from "./run.js";
 
 const root = fileURLToPath(new URL("../../..", import.meta.url));
-const domain = join(root, "examples/diagram/src/domain.ts");
+const domain = join(root, "examples/supply-chain/src/domain.ts");
 
 function capture() {
   let stdout = "";
@@ -46,12 +46,14 @@ describe("weftai mcp", { timeout: 60_000 }, () => {
     const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
     const client = new Client({ name: "test-client", version: "0.0.0" });
     const cap = capture();
-    const serving = dispatch(parseArgv(["mcp", "--domain", domain, "--name", "diagram"]), cap.io, {
-      mcpTransport: serverTransport,
-    });
+    const serving = dispatch(
+      parseArgv(["mcp", "--domain", domain, "--name", "supply-chain"]),
+      cap.io,
+      { mcpTransport: serverTransport },
+    );
     await client.connect(clientTransport);
     expect(cap.stderr).toContain("Serving MCP on stdio.");
-    expect(client.getServerVersion()?.name).toBe("diagram");
+    expect(client.getServerVersion()?.name).toBe("supply-chain");
     const listed = await client.listTools();
     expect(listed.tools.map((tool) => tool.name).sort()).toEqual([
       "describe_operations",
@@ -63,9 +65,9 @@ describe("weftai mcp", { timeout: 60_000 }, () => {
       arguments: {
         steps: [
           {
-            id: "acme",
-            op: "nodes.find",
-            input: { filters: [{ field: "label", op: "fuzzy", value: "Corporate 1" }] },
+            id: "drone",
+            op: "parts.find",
+            input: { filters: [{ field: "label", op: "fuzzy", value: "Aurora Drone" }] },
           },
         ],
       },
@@ -73,7 +75,7 @@ describe("weftai mcp", { timeout: 60_000 }, () => {
     const text = (result as { content: { text?: string }[] }).content
       .map((block) => block.text ?? "")
       .join("");
-    expect(text).toBe("acme (nodes): 1 matched\n  1. Corporate 1");
+    expect(text).toBe("drone (parts): 1 matched\n  1. Aurora Drone");
     // The command stays alive until the client goes away, then exits cleanly.
     await client.close();
     expect(await serving).toBe(0);

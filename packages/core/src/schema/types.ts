@@ -13,7 +13,7 @@ export interface FieldSpec<T = unknown> {
 /**
  * Describes a kind of entity an operation can return: how items are named for the model, how
  * they are identified, and which fields they expose. Method signatures are used deliberately so a
- * `CollectionType<Node, DiagramContext>` is assignable to `CollectionType<unknown, unknown>`.
+ * `CollectionType<Part, CatalogContext>` is assignable to `CollectionType<unknown, unknown>`.
  */
 export interface CollectionType<T = unknown, Ctx = unknown> {
   readonly kind: "collection";

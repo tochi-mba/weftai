@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { validatePlan } from "weftai";
-import { registry } from "../examples/diagram/src/domain.js";
+import { registry } from "../examples/supply-chain/src/domain.js";
 
 const DOC_NAMES = [
   "concepts.md",
@@ -35,14 +35,14 @@ describe("docs", () => {
     }
   });
 
-  it("shows the Delaware plan in concepts.md", () => {
+  it("shows the Taiwan components plan in concepts.md", () => {
     const md = readDoc("concepts.md");
-    expect(md).toContain('"op": "nodes.filter"');
-    expect(md).toContain("$owned");
+    expect(md).toContain('"op": "parts.filter"');
+    expect(md).toContain("$components");
     expect(md).toContain("structural counts");
   });
 
-  it("only shows plans that validate against the diagram domain, so examples cannot drift", () => {
+  it("only shows plans that validate against the supply-chain domain, so examples cannot drift", () => {
     let checked = 0;
     for (const name of DOC_NAMES) {
       for (const block of planBlocks(readDoc(name))) {
@@ -69,9 +69,7 @@ describe("docs", () => {
   it("uses only operation names that exist when it names one in backticks", () => {
     const known = new Set(registry.names());
     for (const name of DOC_NAMES) {
-      for (const match of readDoc(name).matchAll(
-        /`((?:nodes|edges|graph|selection)\.[a-zA-Z]+)`/g,
-      )) {
+      for (const match of readDoc(name).matchAll(/`((?:parts|links|bom|orders)\.[a-zA-Z]+)`/g)) {
         expect(known.has(match[1] ?? ""), `${name}: ${match[1]}`).toBe(true);
       }
     }

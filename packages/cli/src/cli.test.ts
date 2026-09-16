@@ -8,9 +8,9 @@ import { parseArgv } from "./parse.js";
 import { runCli } from "./run.js";
 
 const root = fileURLToPath(new URL("../../..", import.meta.url));
-const domain = join(root, "examples/diagram/src/domain.ts");
-const delaware = join(root, "examples/diagram/plans/05-delaware.json");
-const unknownField = join(root, "examples/diagram/plans/11-unknown-field.json");
+const domain = join(root, "examples/supply-chain/src/domain.ts");
+const taiwan = join(root, "examples/supply-chain/plans/taiwan-components.json");
+const unknownField = join(root, "examples/supply-chain/plans/unknown-field.json");
 
 function capture() {
   let stdout = "";
@@ -46,52 +46,52 @@ describe("weftai CLI", { timeout: 30_000 }, () => {
     expect(args.flags.format).toBe("json");
   });
 
-  it("validates the Delaware plan", async () => {
+  it("validates the Taiwan components plan", async () => {
     const cap = capture();
-    const code = await runCli(["validate", delaware, "--domain", domain], cap.io);
+    const code = await runCli(["validate", taiwan, "--domain", domain], cap.io);
     expect(code).toBe(0);
     expect(cap.stdout).toContain("OK: 3 step(s).");
   });
 
-  it("runs the Delaware plan and prints formatted counts", async () => {
+  it("runs the Taiwan components plan and prints formatted counts", async () => {
     const cap = capture();
-    const code = await runCli(["run", delaware, "--domain", domain], cap.io);
+    const code = await runCli(["run", taiwan, "--domain", domain], cap.io);
     expect(code, cap.stdout + cap.stderr).toBe(0);
-    expect(cap.stdout).toContain("acme (nodes): 1 matched");
-    expect(cap.stdout).toContain("owned (nodes): 3 matched");
-    expect(cap.stdout).toContain("delaware (nodes): 2 matched");
-    expect(cap.stdout).toContain("Sub 2 Ltd");
+    expect(cap.stdout).toContain("drone (parts): 1 matched");
+    expect(cap.stdout).toContain("components (parts): 3 matched");
+    expect(cap.stdout).toContain("taiwan (parts): 2 matched");
+    expect(cap.stdout).toContain("Sensor Board");
   });
 
   it("exits 1 when a wrong field is used", async () => {
     const cap = capture();
     const code = await runCli(["run", unknownField, "--domain", domain], cap.io);
     expect(code).toBe(1);
-    expect(cap.stdout).toContain("Unknown field 'relationshipType' on nodes.");
-    expect(cap.stdout).toContain("Available fields: label, entityType, Jurisdiction.");
+    expect(cap.stdout).toContain("Unknown field 'relationshipType' on parts.");
+    expect(cap.stdout).toContain("Available fields: label, partType, origin.");
   });
 
   it("describes operations including $ref syntax", async () => {
     const cap = capture();
     const code = await runCli(["describe", "--domain", domain], cap.io);
     expect(code).toBe(0);
-    expect(cap.stdout).toContain("nodes.find");
+    expect(cap.stdout).toContain("parts.find");
     expect(cap.stdout).toContain("$stepId");
   });
 
-  it("prints a trace table", async () => {
+  it("prints a trace table", () => {
     const table = formatTrace({
       version: 1,
       ok: true,
       durationMs: 12,
       steps: [
         {
-          id: "acme",
-          operation: "nodes.find",
+          id: "drone",
+          operation: "parts.find",
           status: "ok",
           dependencies: [],
           input: {},
-          output: { kind: "collection", type: "nodes", count: 1 },
+          output: { kind: "collection", type: "parts", count: 1 },
           notices: [],
           error: undefined,
           skippedBecause: undefined,
@@ -102,8 +102,8 @@ describe("weftai CLI", { timeout: 30_000 }, () => {
       issues: undefined,
     });
     expect(table).toContain("ok");
-    expect(table).toContain("acme");
-    expect(table).toContain("nodes.find");
+    expect(table).toContain("drone");
+    expect(table).toContain("parts.find");
     expect(table).toContain("1");
   });
 
@@ -111,14 +111,14 @@ describe("weftai CLI", { timeout: 30_000 }, () => {
     const dir = mkdtempSync(join(tmpdir(), "weftai-cli-"));
     const tracePath = join(dir, "out.json");
     const cap = capture();
-    const code = await runCli(["run", delaware, "--domain", domain, "--trace", tracePath], cap.io);
+    const code = await runCli(["run", taiwan, "--domain", domain, "--trace", tracePath], cap.io);
     expect(code, `${cap.stdout}${cap.stderr}`).toBe(0);
     const trace = JSON.parse(readFileSync(tracePath, "utf8")) as { steps: unknown[] };
     expect(trace.steps).toHaveLength(3);
     const listed = capture();
     expect(await runCli(["trace", tracePath], listed.io)).toBe(0);
-    expect(listed.stdout).toContain("acme");
-    expect(listed.stdout).toContain("delaware");
+    expect(listed.stdout).toContain("drone");
+    expect(listed.stdout).toContain("taiwan");
     rmSync(dir, { recursive: true, force: true });
   });
 

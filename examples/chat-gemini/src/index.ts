@@ -1,9 +1,9 @@
 /** Gemini generateContent, Interactions, and Vertex endpoint construction. */
 import { googleEndpoint, googleTools } from "@weftai/providers/google";
-import { diagram, isMain, queryTool, writeJson } from "../../chat-shared/src/shared.js";
+import { isMain, queryTool, supplyChain, writeJson } from "../../chat-shared/src/shared.js";
 
 export function bind() {
-  const { runtime, ctx } = diagram();
+  const { runtime, ctx } = supplyChain();
   const generate = googleTools(runtime, { model: "gemini-2.5-flash", ctx, tools: [queryTool] });
   const interactions = googleTools(runtime, {
     api: "interactions",

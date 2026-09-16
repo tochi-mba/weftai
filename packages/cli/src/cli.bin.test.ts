@@ -31,31 +31,31 @@ describe("weftai bin", { timeout: 90_000 }, () => {
     expect(result.stderr).toContain("Unknown command 'frobnicate'.");
   });
 
-  it("serves the diagram domain over real stdio", async () => {
+  it("serves the supply-chain domain over real stdio", async () => {
     const domain = join(
       fileURLToPath(new URL("../../..", import.meta.url)),
-      "examples/diagram/src/domain.ts",
+      "examples/supply-chain/src/domain.ts",
     );
     const transport = new StdioClientTransport({
       command: process.execPath,
-      args: ["--import", "jiti/register", cli, "mcp", "--domain", domain, "--name", "diagram"],
+      args: ["--import", "jiti/register", cli, "mcp", "--domain", domain, "--name", "supply-chain"],
       cwd: pkg,
       stderr: "pipe",
     });
     const client = new Client({ name: "stdio-test", version: "0.0.0" });
     try {
       await client.connect(transport);
-      expect(client.getServerVersion()?.name).toBe("diagram");
+      expect(client.getServerVersion()?.name).toBe("supply-chain");
       const listed = await client.listTools();
       expect(listed.tools.map((tool) => tool.name)).toContain("run_plan");
       const result = await client.callTool({
         name: "run_plan",
-        arguments: { steps: [{ id: "all", op: "nodes.find" }] },
+        arguments: { steps: [{ id: "all", op: "parts.find" }] },
       });
       const text = (result as { content: { text?: string }[] }).content
         .map((block) => block.text ?? "")
         .join("");
-      expect(text).toContain("all (nodes): 6 matched");
+      expect(text).toContain("all (parts): 6 matched");
     } finally {
       await client.close();
     }

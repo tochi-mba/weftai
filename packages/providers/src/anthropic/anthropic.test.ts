@@ -7,14 +7,14 @@ describe("Anthropic Messages tools", () => {
     const tools = anthropicTools(sampleRuntime(), {
       ctx: sampleCtx,
       session: { id: "s" },
-      tools: [{ name: "query_diagram", include: (op) => op.effects === "read" }],
+      tools: [{ name: "query_supply_chain", include: (op) => op.effects === "read" }],
     });
-    expect(tools[0]?.name).toBe("query_diagram");
+    expect(tools[0]?.name).toBe("query_supply_chain");
     expect(tools[0]?.description).toContain("查找项目");
     expect(await tools[0]?.handle(SAMPLE_PLAN)).toContain("Alpha");
     expect(tools[0]?.input_schema).toMatchObject({ type: "object", required: ["steps"] });
     const results = await handleToolUseBlocks(tools, [
-      { type: "tool_use", id: "toolu_1", name: "query_diagram", input: SAMPLE_PLAN },
+      { type: "tool_use", id: "toolu_1", name: "query_supply_chain", input: SAMPLE_PLAN },
       { id: "toolu_2", name: "nope", input: {} },
     ]);
     expect(results[0]).toEqual({

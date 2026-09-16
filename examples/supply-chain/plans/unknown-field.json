@@ -1,0 +1,11 @@
+{
+  "steps": [
+    {
+      "id": "drone",
+      "op": "parts.find",
+      "input": {
+        "filters": [{ "field": "relationshipType", "op": "eq", "value": "Contains" }]
+      }
+    }
+  ]
+}

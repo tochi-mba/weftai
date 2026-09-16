@@ -3,7 +3,7 @@
 The wire format is a JSON object the model produces as a single tool input:
 
 ```json
-{ "steps": [{ "id": "acme", "op": "nodes.find", "input": { } }] }
+{ "steps": [{ "id": "drone", "op": "parts.find", "input": { } }] }
 ```
 
 Unknown keys on a step (`operation` instead of `op`) are an error naming the key, never ignored.
@@ -14,7 +14,7 @@ Unknown keys on a step (`operation` instead of `op`) are an error naming the key
 |-------|----------|---------|
 | `steps` | yes | Non-empty array of steps. |
 | `steps[].id` | yes | Result name. `^[A-Za-z_][A-Za-z0-9_]{0,63}$`, unique in the plan. |
-| `steps[].op` | yes | Operation name such as `nodes.find`. |
+| `steps[].op` | yes | Operation name such as `parts.find`. |
 | `steps[].input` | no | Object of arguments. Missing input is `{}`. |
 | `steps[].present` | no | `auto` (default), `preview`, or `full`. |
 
@@ -35,7 +35,7 @@ with it, then `runtime.execute` validates operation inputs and references.
 
 - `step.unknown_operation` — includes a "Did you mean …?" hint when close
 - `ref.unknown_target` / `ref.forward_reference` / `ref.self_reference`
-- `ref.type_mismatch` — `$owned` is `nodes` but the field wanted `edges`
+- `ref.type_mismatch` — `$components` is `parts` but the field wanted `links`
 - `step.invalid_input` — Zod issues rewritten as plain sentences
 - `step.write_not_allowed` — a write op in a read-only tool
 - `plan.too_many_steps`

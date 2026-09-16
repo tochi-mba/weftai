@@ -23,7 +23,7 @@ const tools = openaiTools(runtime, {
   model: "gpt-6-astra",
   ctx,
   session: { id: conversationId },
-  tools: [{ name: "query_diagram", include: (op) => op.effects === "read" }],
+  tools: [{ name: "query_supply_chain", include: (op) => op.effects === "read" }],
 });
 
 openaiTools(runtime, { ...PRESETS.groq, model: "llama-3.3-70b-versatile", ctx, tools: [...] });
@@ -47,7 +47,7 @@ import { weftaiTools } from "@weftai/providers/anthropic/tool-runner";
 const messages = anthropicTools(runtime, {
   ctx,
   session: { id: conversationId },
-  tools: [{ name: "query_diagram", include: (op) => op.effects === "read" }],
+  tools: [{ name: "query_supply_chain", include: (op) => op.effects === "read" }],
 });
 ```
 
@@ -76,7 +76,7 @@ publishes them.
 ```ts
 import { createMcpServer } from "@weftai/mcp";
 
-const mcp = createMcpServer(runtime, { name: "diagram", ctx });
+const mcp = createMcpServer(runtime, { name: "supply-chain", ctx });
 await mcp.connectStdio();
 ```
 
@@ -84,13 +84,13 @@ await mcp.connectStdio();
 |------|------|
 | `run_plan` | Execute a plan; returns formatted text; stores results in the session. |
 | `describe_operations` | Model-facing description of every operation. |
-| `get_result` | Read a stored result by `$ref` (`$owned`, `$owned[2]`). |
+| `get_result` | Read a stored result by `$ref` (`$components`, `$components[2]`). |
 
 The CLI wraps this: `weftai mcp --domain ./domain.ts`. Register with Claude Code using
 `claude mcp add`.
 
 ## Live check
 
-`examples/chat-*` binds the diagram domain in every family (`pnpm --filter chat-openai start`,
+`examples/chat-*` binds the supply-chain domain in every family (`pnpm --filter chat-openai start`,
 `chat-anthropic start:bind`, `chat-presets start`, …). `examples/chat-anthropic` `start` is the
 live Claude tool-runner check (`ANTHROPIC_API_KEY`). Catalog rows: `docs/providers.md`.

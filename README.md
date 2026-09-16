@@ -7,29 +7,29 @@ validates and executes it; results flow between steps by name and never travel t
 
 ```json
 { "steps": [
-  { "id": "acme",     "op": "nodes.find",        "input": { "filters": [{ "field": "label", "op": "fuzzy", "value": "Corporate 1" }] } },
-  { "id": "owned",    "op": "nodes.descendants", "input": { "from": "$acme", "depth": "all" } },
-  { "id": "delaware", "op": "nodes.filter",      "input": { "from": "$owned", "filters": [{ "field": "Jurisdiction", "op": "eq", "value": "Delaware" }] } }
+  { "id": "drone",      "op": "parts.find",       "input": { "filters": [{ "field": "label", "op": "fuzzy", "value": "Aurora Drone" }] } },
+  { "id": "components", "op": "parts.components", "input": { "from": "$drone", "depth": "all" } },
+  { "id": "taiwan",     "op": "parts.filter",     "input": { "from": "$components", "filters": [{ "field": "origin", "op": "eq", "value": "Taiwan" }] } }
 ] }
 ```
 
 One tool call, three dependent lookups, zero identifiers copied by the model. The model reads:
 
 ```
-acme (nodes): 1 matched
-  1. Corporate 1
-  [intermediate step - preview only; reference $acme to use the full set]
-owned (nodes): 3 matched
-  1. Sub 1 Ltd
-  2. Sub 2 Ltd
-  3. Sub 3 Ltd
-  [intermediate step - preview only; reference $owned to use the full set]
-delaware (nodes): 2 matched
-  1. Sub 2 Ltd
-  2. Sub 3 Ltd
+drone (parts): 1 matched
+  1. Aurora Drone
+  [intermediate step - preview only; reference $drone to use the full set]
+components (parts): 3 matched
+  1. Power Module
+  2. Sensor Board
+  3. Voltage Regulator
+  [intermediate step - preview only; reference $components to use the full set]
+taiwan (parts): 2 matched
+  1. Sensor Board
+  2. Voltage Regulator
 ```
 
-A later tool call can still say `{ "refs": ["$owned"] }` or `$matches[2]`: results stay in a
+A later tool call can still say `{ "refs": ["$components"] }` or `$matches[2]`: results stay in a
 session-scoped store, and positions always index the full set, not the preview.
 
 ## What you define, and what you get
@@ -40,26 +40,26 @@ output type and a handler.
 ```ts
 import { collection, defineOperationFor, ref, standardOperations, z } from "weftai";
 
-const Nodes = collection("nodes", Node, {
-  label: (n) => n.label,
-  key: (n) => n.id,
+const Parts = collection("parts", Part, {
+  label: (p) => p.label,
+  key: (p) => p.id,
   fields: () => [
-    { name: "label", aliases: ["name"], get: (n) => n.label },
-    { name: "Jurisdiction", get: (n) => n.properties.Jurisdiction },
+    { name: "label", aliases: ["name"], get: (p) => p.label },
+    { name: "origin", aliases: ["country"], get: (p) => p.origin },
   ],
 });
 
-const define = defineOperationFor<DiagramContext>();
+const define = defineOperationFor<SupplyChainContext>();
 
-export const descendants = define({
-  name: "nodes.descendants",
-  description: "Everything the given entities own, walking ownership edges down.",
-  input: z.object({ from: ref(Nodes), depth: z.union([z.int().min(1), z.literal("all")]).default("all") }),
-  output: Nodes,
-  run: ({ input, ctx }) => walkDown(ctx.diagram, input.from.items, input.depth),
+export const components = define({
+  name: "parts.components",
+  description: "Everything the given parts are built from, walking the bill of materials down.",
+  input: z.object({ from: ref(Parts), depth: z.union([z.int().min(1), z.literal("all")]).default("all") }),
+  output: Parts,
+  run: ({ input, ctx }) => walkDown(ctx.catalog, input.from.items, input.depth),
 });
 
-const registry = createRegistry({ operations: [findNodes, descendants, ...standardOperations(Nodes)] });
+const registry = createRegistry({ operations: [findParts, components, ...standardOperations(Parts)] });
 const runtime = createRuntime({ registry });
 const result = await runtime.execute(plan, { ctx, session: { id: conversationId } });
 result.text; // the model-facing string above
@@ -70,8 +70,8 @@ From that one definition Weftai derives:
 - **Validation** with actionable errors: unknown operations suggest the nearest name, unknown
   fields list the available ones, a reference to the wrong kind of result says which kind it
   expected. A wrong question is an error, never an empty result.
-- **Typed references** between steps. `ref(Nodes)` renders as a `$stepId` string for the model and
-  arrives in the handler as a `Collection<Node>`.
+- **Typed references** between steps. `ref(Parts)` renders as a `$stepId` string for the model and
+  arrives in the handler as a `Collection<Part>`.
 - **Execution** in dependency order: independent steps run together, a failed step skips only its
   dependents, timeouts and cancellation are built in, and every step is traced.
 - **Session-scoped results** so the next tool call can build on this one.
@@ -94,16 +94,20 @@ From that one definition Weftai derives:
 
 ## Examples
 
-- `examples/diagram` ports the corporate-structure domain the framework grew out of. Its
-  thirteen scenarios assert the exact text the model sees and are the acceptance suite.
-- `examples/documents` is a second, unrelated domain (contracts) that proves the core is not
-  graph-shaped.
-- `examples/chat-*` binds the diagram domain in each family: `chat-openai` (Chat Completions +
-  Responses), `chat-azure`, `chat-anthropic` (Messages bind plus a live Claude tool-runner),
-  `chat-gemini`, `chat-bedrock`, `chat-ollama`, `chat-cohere`, `chat-dashscope`, `chat-hunyuan`,
-  `chat-spark`, `chat-ai-sdk`, `chat-qwen`, and `chat-presets` (Groq, Kimi, GLM, Ark, MiniMax,
-  DeepSeek, …). `pnpm --filter chat-presets start` prints the full preset list. Live Claude:
-  `ANTHROPIC_API_KEY` and `pnpm --filter chat-anthropic start`.
+- `examples/supply-chain` is a bill-of-materials domain: parts, the links between them, and
+  routes with quantity arithmetic. Ask which components of a product come from one country, how
+  many of a part one unit needs, or which finished goods a component ends up in. Its thirteen
+  scenarios assert the exact text the model sees and are the acceptance suite.
+- `examples/inbox` is a support-inbox domain: tickets, their messages, and the customers waiting
+  longest for a reply. Triage in one call, then assign the stale ones in the next.
+- `examples/documents` is a contracts domain with expiry windows, proving the core is not tied to
+  one shape of data.
+- `examples/chat-*` binds the supply-chain domain in each family: `chat-openai` (Chat
+  Completions + Responses), `chat-azure`, `chat-anthropic` (Messages bind plus a live Claude
+  tool-runner), `chat-gemini`, `chat-bedrock`, `chat-ollama`, `chat-cohere`, `chat-dashscope`,
+  `chat-hunyuan`, `chat-spark`, `chat-ai-sdk`, `chat-qwen`, and `chat-presets` (Groq, Kimi, GLM,
+  Ark, MiniMax, DeepSeek, …). `pnpm --filter chat-presets start` prints the full preset list.
+  Live Claude: `ANTHROPIC_API_KEY` and `pnpm --filter chat-anthropic start`.
 
 ## Docs
 
@@ -136,5 +140,5 @@ enforces it locally and in CI.
 
 ## Status
 
-Version 0.1.0 is published on npm as `weftai` and `@weftai/*`. Source and the `v0.1.0` tag live
+Version 0.2.0 is published on npm as `weftai` and `@weftai/*`. Source and the release tags live
 at https://github.com/tochi-mba/weftai.

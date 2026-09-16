@@ -1,9 +1,9 @@
 /** Anthropic Messages API: `input_schema`, `tool_use` / `tool_result`. Never sets tool_choice. */
 import { anthropicTools } from "@weftai/providers/anthropic";
-import { diagram, isMain, queryTool, writeJson } from "../../chat-shared/src/shared.js";
+import { isMain, queryTool, supplyChain, writeJson } from "../../chat-shared/src/shared.js";
 
 export function bind() {
-  const { runtime, ctx } = diagram();
+  const { runtime, ctx } = supplyChain();
   const tools = anthropicTools(runtime, { ctx, tools: [queryTool] });
   const [tool] = tools;
   if (tool === undefined) throw new Error("expected a tool");

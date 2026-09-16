@@ -35,22 +35,22 @@ Per-step `present` on the plan overrides the operation default.
 
 ## Rendering rules
 
-- Collection: `owned (nodes): 3 matched` then `  1. Label`.
-- Details: `  1. Corporate 1 - entityType: Corporate; Jurisdiction: Cayman Islands`. A handler
-  asks for this with `showFields(["Jurisdiction"])` or `showFields("all")`; with `"all"` a field
-  that merely repeats the label is omitted.
-- Groups with provenance: `by (nodes): 6 matched` then `  Delaware: 2` per group, most common
+- Collection: `components (parts): 3 matched` then `  1. Label`.
+- Details: `  1. Aurora Drone - partType: Assembly; origin: Germany`. A handler asks for this
+  with `showFields(["origin"])` or `showFields("all")`; with `"all"` a field that merely repeats
+  the label is omitted.
+- Groups with provenance: `by (parts): 6 matched` then `  Taiwan: 2` per group, most common
   first, `not recorded` last. Without provenance: `by (groups): 2 groups`.
-- Value with provenance: `n (nodes): 4 matched` then `  4`. Without: `n: 5`.
-- Error: `acme: failed` then the message (which already names the fix).
-- Skipped: `delaware: skipped` then `Skipped because step 'owned' failed.`
-- Intermediate: `[intermediate step - preview only; reference $owned to use the full set]`.
+- Value with provenance: `n (parts): 2 matched` then `  2`. Without: `n: 5`.
+- Error: `drone: failed` then the message (which already names the fix).
+- Skipped: `taiwan: skipped` then `Skipped because step 'components' failed.`
+- Intermediate: `[intermediate step - preview only; reference $components to use the full set]`.
 - Missing properties render as `not recorded`.
 - Labels are sanitised (control characters stripped) so a value cannot forge a step header.
 - Internal ids are not printed.
 
 ## Notices
 
-Anything that shortened a result — a path-search cap, a distinct-values summary, a replaced
+Anything that shortened a result — a route-search cap, a distinct-values summary, a replaced
 step id, a session eviction, a token-budget cut — is a notice under that step. Tests should
 assert the rendered string, not only the structured `notices` array.

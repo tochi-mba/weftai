@@ -60,7 +60,9 @@ describe("@weftai/testing", () => {
 
   it("loads a JSON fixture from disk", () => {
     const data = loadFixture<{ steps: unknown[] }>(
-      fileURLToPath(new URL("../../../examples/diagram/plans/05-delaware.json", import.meta.url)),
+      fileURLToPath(
+        new URL("../../../examples/supply-chain/plans/taiwan-components.json", import.meta.url),
+      ),
     );
     expect(data.steps).toHaveLength(3);
   });

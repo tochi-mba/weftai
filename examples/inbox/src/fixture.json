@@ -1,0 +1,133 @@
+{
+  "now": "2026-09-15T09:00:00Z",
+  "tickets": [
+    {
+      "id": "t1",
+      "subject": "Refund for duplicate charge",
+      "customer": "Acme Corp",
+      "priority": "high",
+      "status": "open",
+      "tags": ["billing", "refund"],
+      "openedAt": "2026-09-13T08:00:00Z",
+      "lastActivityAt": "2026-09-14T16:00:00Z",
+      "lastAgentReplyAt": "2026-09-13T10:00:00Z"
+    },
+    {
+      "id": "t2",
+      "subject": "Cannot export report to CSV",
+      "customer": "Acme Corp",
+      "priority": "normal",
+      "status": "open",
+      "tags": ["bug", "exports"],
+      "openedAt": "2026-09-10T09:00:00Z",
+      "lastActivityAt": "2026-09-11T09:00:00Z"
+    },
+    {
+      "id": "t3",
+      "subject": "Invoice shows wrong VAT rate",
+      "customer": "Borealis GmbH",
+      "priority": "urgent",
+      "status": "open",
+      "tags": ["billing"],
+      "openedAt": "2026-09-14T20:00:00Z",
+      "lastActivityAt": "2026-09-14T20:00:00Z"
+    },
+    {
+      "id": "t4",
+      "subject": "Feature request: dark mode",
+      "customer": "Cobalt Labs",
+      "priority": "low",
+      "status": "pending",
+      "tags": ["feature"],
+      "openedAt": "2026-09-01T12:00:00Z",
+      "lastActivityAt": "2026-09-02T12:00:00Z",
+      "lastAgentReplyAt": "2026-09-02T12:00:00Z"
+    },
+    {
+      "id": "t5",
+      "subject": "SSO login loop",
+      "customer": "Borealis GmbH",
+      "priority": "high",
+      "status": "solved",
+      "tags": ["auth", "bug"],
+      "openedAt": "2026-09-08T09:00:00Z",
+      "lastActivityAt": "2026-09-09T10:00:00Z",
+      "lastAgentReplyAt": "2026-09-09T10:00:00Z",
+      "assignee": "Priya"
+    }
+  ],
+  "messages": [
+    {
+      "id": "m1",
+      "ticketId": "t1",
+      "from": "customer",
+      "author": "Dana Whitfield",
+      "body": "We were charged twice for September. Please refund the duplicate.",
+      "sentAt": "2026-09-13T08:00:00Z"
+    },
+    {
+      "id": "m2",
+      "ticketId": "t1",
+      "from": "agent",
+      "author": "Priya",
+      "body": "Sorry about that. I have asked billing to look into the duplicate charge.",
+      "sentAt": "2026-09-13T10:00:00Z"
+    },
+    {
+      "id": "m3",
+      "ticketId": "t1",
+      "from": "customer",
+      "author": "Dana Whitfield",
+      "body": "Any update on the refund? Finance needs it before month end.",
+      "sentAt": "2026-09-14T16:00:00Z"
+    },
+    {
+      "id": "m4",
+      "ticketId": "t2",
+      "from": "customer",
+      "author": "Marcus Reed",
+      "body": "Exporting the usage report to CSV fails with a 500 error.",
+      "sentAt": "2026-09-11T09:00:00Z"
+    },
+    {
+      "id": "m5",
+      "ticketId": "t3",
+      "from": "customer",
+      "author": "Lena Vogt",
+      "body": "Our invoice applies 19% VAT but we are VAT-exempt. Please reissue it.",
+      "sentAt": "2026-09-14T20:00:00Z"
+    },
+    {
+      "id": "m6",
+      "ticketId": "t4",
+      "from": "customer",
+      "author": "Sam Ortiz",
+      "body": "Would love a dark mode for the dashboard.",
+      "sentAt": "2026-09-01T12:00:00Z"
+    },
+    {
+      "id": "m7",
+      "ticketId": "t4",
+      "from": "agent",
+      "author": "Priya",
+      "body": "Thanks, added to the roadmap.",
+      "sentAt": "2026-09-02T12:00:00Z"
+    },
+    {
+      "id": "m8",
+      "ticketId": "t5",
+      "from": "customer",
+      "author": "Lena Vogt",
+      "body": "SSO login keeps looping back to the sign-in page.",
+      "sentAt": "2026-09-08T09:00:00Z"
+    },
+    {
+      "id": "m9",
+      "ticketId": "t5",
+      "from": "agent",
+      "author": "Priya",
+      "body": "Fixed the redirect; please try again.",
+      "sentAt": "2026-09-09T10:00:00Z"
+    }
+  ]
+}

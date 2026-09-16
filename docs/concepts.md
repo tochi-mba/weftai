@@ -9,43 +9,43 @@ back through the model; the model only sees a formatted summary.
 {
   "steps": [
     {
-      "id": "acme",
-      "op": "nodes.find",
-      "input": { "filters": [{ "field": "label", "op": "fuzzy", "value": "Corporate 1" }] }
+      "id": "drone",
+      "op": "parts.find",
+      "input": { "filters": [{ "field": "label", "op": "fuzzy", "value": "Aurora Drone" }] }
     },
     {
-      "id": "owned",
-      "op": "nodes.descendants",
-      "input": { "from": "$acme", "depth": "all" }
+      "id": "components",
+      "op": "parts.components",
+      "input": { "from": "$drone", "depth": "all" }
     },
     {
-      "id": "delaware",
-      "op": "nodes.filter",
+      "id": "taiwan",
+      "op": "parts.filter",
       "input": {
-        "from": "$owned",
-        "filters": [{ "field": "Jurisdiction", "op": "eq", "value": "Delaware" }]
+        "from": "$components",
+        "filters": [{ "field": "origin", "op": "eq", "value": "Taiwan" }]
       }
     }
   ]
 }
 ```
 
-That plan is the Delaware scenario from `examples/diagram`, which ships the proposal's six-entity
-test diagram. After execution the model sees exact counts (`1`, `3`, `2` matched), labels rather
+That plan is the Taiwan scenario from `examples/supply-chain`, which ships a six-part bill of
+materials. After execution the model sees exact counts (`1`, `3`, `2` matched), labels rather
 than internal ids, and a preview notice on every intermediate step:
 
 ```
-acme (nodes): 1 matched
-  1. Corporate 1
-  [intermediate step - preview only; reference $acme to use the full set]
-owned (nodes): 3 matched
-  1. Sub 1 Ltd
-  2. Sub 2 Ltd
-  3. Sub 3 Ltd
-  [intermediate step - preview only; reference $owned to use the full set]
-delaware (nodes): 2 matched
-  1. Sub 2 Ltd
-  2. Sub 3 Ltd
+drone (parts): 1 matched
+  1. Aurora Drone
+  [intermediate step - preview only; reference $drone to use the full set]
+components (parts): 3 matched
+  1. Power Module
+  2. Sensor Board
+  3. Voltage Regulator
+  [intermediate step - preview only; reference $components to use the full set]
+taiwan (parts): 2 matched
+  1. Sensor Board
+  2. Voltage Regulator
 ```
 
 ## Pieces
@@ -61,22 +61,22 @@ delaware (nodes): 2 matched
 
 ## References
 
-A field declared with `ref(Nodes)` accepts a string:
+A field declared with `ref(Parts)` accepts a string:
 
-- `$owned` — the full result of step `owned`
-- `$owned[2]` — the 2nd item (1-based)
-- `$owned[1,4,7]` — those three items, in that order
+- `$components` — the full result of step `components`
+- `$components[2]` — the 2nd item (1-based)
+- `$components[1,4,7]` — those three items, in that order
 
 Positions always index the **full stored set**, not the lines the formatter happened to show.
 Plain string fields never interpret a leading `$`.
 
 ## What the model is shown
 
-- Collection steps: `owned (nodes): 3 matched` then numbered labels.
-- Counts and groups keep their entities: `n (nodes): 4 matched` then `  4`, and
-  `byJurisdiction (nodes): 6 matched` then `  Delaware: 2` per group, `not recorded` last.
+- Collection steps: `components (parts): 3 matched` then numbered labels.
+- Counts and groups keep their entities: `n (parts): 2 matched` then `  2`, and
+  `byOrigin (parts): 6 matched` then `  Taiwan: 2` per group, `not recorded` last.
 - Intermediate steps (referenced later in the same plan) get a smaller budget and
-  `[intermediate step - preview only; reference $owned to use the full set]`.
+  `[intermediate step - preview only; reference $components to use the full set]`.
 - Truncation adds `showing N of M` with the exact counts.
 - Errors name the fix: unknown fields list available fields; unknown ops suggest the nearest name.
 - Internal identifiers never appear.

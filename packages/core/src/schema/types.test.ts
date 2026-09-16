@@ -48,11 +48,11 @@ describe("collection", () => {
   it("records kind, item schema and description", () => {
     const type = collection("nodes", Node, {
       label: (n) => n.label,
-      description: "Diagram nodes.",
+      description: "Catalog parts.",
     });
     expect(type.kind).toBe("collection");
     expect(type.item).toBe(Node);
-    expect(type.description).toBe("Diagram nodes.");
+    expect(type.description).toBe("Catalog parts.");
     expect(collection("nodes", Node, { label: (n) => n.label }).description).toBeUndefined();
   });
 

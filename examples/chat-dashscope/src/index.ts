@@ -4,14 +4,14 @@ import {
   dashscopeNativeRequest,
   dashscopeTools,
 } from "@weftai/providers/dashscope";
-import { diagram, isMain, queryTool, writeJson } from "../../chat-shared/src/shared.js";
+import { isMain, queryTool, supplyChain, writeJson } from "../../chat-shared/src/shared.js";
 
 export function bind() {
-  const { runtime, ctx } = diagram();
+  const { runtime, ctx } = supplyChain();
   const tools = dashscopeTools(runtime, { model: "qwen-plus", ctx, tools: [queryTool] });
   const request = dashscopeNativeRequest({
     model: "qwen-plus",
-    messages: [{ role: "user", content: "Which subsidiaries are in Delaware?" }],
+    messages: [{ role: "user", content: "Which components come from Taiwan?" }],
     tools,
     extraBody: { enable_thinking: false },
   });

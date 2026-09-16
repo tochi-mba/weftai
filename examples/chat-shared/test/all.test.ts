@@ -15,23 +15,23 @@ import { bind as bindQwen } from "../../chat-qwen/src/index.js";
 import { bind as bindSpark } from "../../chat-spark/src/index.js";
 
 describe("chat examples", () => {
-  it("binds a diagram tool in every wire-format family", () => {
+  it("binds a supply-chain tool in every wire-format family", () => {
     const openai = bindOpenAI();
-    expect(openai.responses.name).toBe("query_diagram");
-    expect(openai.chat.name).toBe("query_diagram");
-    expect(bindAzure().name).toBe("query_diagram");
-    expect(bindAnthropic().name).toBe("query_diagram");
+    expect(openai.responses.name).toBe("query_supply_chain");
+    expect(openai.chat.name).toBe("query_supply_chain");
+    expect(bindAzure().name).toBe("query_supply_chain");
+    expect(bindAnthropic().name).toBe("query_supply_chain");
     const gemini = bindGemini();
-    expect(gemini.generateContent.name).toBe("query_diagram");
+    expect(gemini.generateContent.name).toBe("query_supply_chain");
     expect(gemini.interactions.type).toBe("function");
     expect(bindBedrock().nova.additionalProperties).toBe(false);
-    expect(bindOllama().name).toBe("query_diagram");
-    expect(bindCohere().name).toBe("query_diagram");
+    expect(bindOllama().name).toBe("query_supply_chain");
+    expect(bindCohere().name).toBe("query_supply_chain");
     expect(bindDashScope().generation).toBe("generation");
     expect(bindHunyuan().ToolChoice).toBe("auto");
-    expect(bindSpark().name).toBe("query_diagram");
+    expect(bindSpark().name).toBe("query_supply_chain");
     expect(bindAiSdk().schemaType).toBe("object");
-    expect(bindQwen().name).toBe("query_diagram");
+    expect(bindQwen().name).toBe("query_supply_chain");
   });
 
   it("covers every OpenAI-compat preset, including Chinese CN/intl hosts", () => {
@@ -40,6 +40,6 @@ describe("chat examples", () => {
     for (const key of Object.keys(PRESETS)) expect(names.has(key)).toBe(true);
     expect(rows.find((row) => row.preset === "qwen")?.baseURLIntl).toContain("dashscope-intl");
     expect(rows.find((row) => row.preset === "ark")?.provider).toBe("ark");
-    expect(rows.every((row) => row.tool === "query_diagram")).toBe(true);
+    expect(rows.every((row) => row.tool === "query_supply_chain")).toBe(true);
   });
 });

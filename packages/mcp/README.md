@@ -5,7 +5,7 @@ Expose a Weftai runtime as an MCP server.
 ```ts
 import { createMcpServer } from "@weftai/mcp";
 
-const mcp = createMcpServer(runtime, { name: "diagram", ctx });
+const mcp = createMcpServer(runtime, { name: "supply-chain", ctx });
 await mcp.connectStdio();
 ```
 

@@ -1,9 +1,9 @@
 /** Vercel AI SDK `tool()` shape: description, JSON Schema, execute. */
 import { aiSdkTools } from "@weftai/providers/ai-sdk";
-import { diagram, isMain, queryTool, writeJson } from "../../chat-shared/src/shared.js";
+import { isMain, queryTool, supplyChain, writeJson } from "../../chat-shared/src/shared.js";
 
 export function bind() {
-  const { runtime, ctx } = diagram();
+  const { runtime, ctx } = supplyChain();
   const tools = aiSdkTools(runtime, { ctx, tools: [queryTool] });
   const [tool] = tools;
   if (tool === undefined) throw new Error("expected a tool");

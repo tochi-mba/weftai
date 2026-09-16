@@ -13,7 +13,7 @@ const tools = openaiTools(runtime, {
   ...PRESETS.qwenIntl,
   model: "qwen-plus",
   ctx,
-  tools: [{ name: "query_diagram", include: (op) => op.effects === "read" }],
+  tools: [{ name: "query_supply_chain", include: (op) => op.effects === "read" }],
 });
 ```
 

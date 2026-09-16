@@ -347,13 +347,19 @@ importers:
         specifier: workspace:*
         version: link:../../packages/core
 
-  examples/diagram:
+  examples/documents:
     dependencies:
       weftai:
         specifier: workspace:*
         version: link:../../packages/core
 
-  examples/documents:
+  examples/inbox:
+    dependencies:
+      weftai:
+        specifier: workspace:*
+        version: link:../../packages/core
+
+  examples/supply-chain:
     dependencies:
       weftai:
         specifier: workspace:*

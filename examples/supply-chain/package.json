@@ -1,0 +1,12 @@
+{
+  "name": "@weftai-examples/supply-chain",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "weftai": "workspace:*"
+  }
+}

@@ -1,27 +1,27 @@
 /**
- * Live check: the diagram domain wired to Claude through the beta tool runner. Not run in CI.
- * Needs ANTHROPIC_API_KEY or an `ant auth login` profile.
+ * Live check: the supply-chain domain wired to Claude through the beta tool runner. Not run in
+ * CI. Needs ANTHROPIC_API_KEY or an `ant auth login` profile.
  */
 
 import Anthropic from "@anthropic-ai/sdk";
 import { weftaiTools } from "@weftai/providers/anthropic/tool-runner";
-import { createDiagramRuntime } from "../../diagram/src/domain.js";
+import { createSupplyChainRuntime } from "../../supply-chain/src/domain.js";
 
 const MODEL = "claude-opus-5";
 
 async function main(): Promise<void> {
-  const { runtime, ctx } = createDiagramRuntime();
+  const { runtime, ctx } = createSupplyChainRuntime();
   const tools = weftaiTools(runtime, {
     ctx,
     tools: [
-      { name: "query_diagram", include: (op) => op.effects === "read" },
-      { name: "select", include: (op) => op.name === "selection.select" },
+      { name: "query_supply_chain", include: (op) => op.effects === "read" },
+      { name: "reserve", include: (op) => op.name === "orders.reserve" },
     ],
   });
 
   const question =
     process.argv.slice(2).join(" ") ||
-    "Which of Corporate 1's subsidiaries are incorporated in Delaware?";
+    "Which components of the Aurora Drone come from Taiwan, and how many voltage regulators does one drone need?";
 
   const client = new Anthropic();
   const runner = client.beta.messages.toolRunner({
@@ -49,7 +49,7 @@ async function main(): Promise<void> {
     }
   }
   process.stdout.write(
-    `\n\n(${toolCalls} tool call${toolCalls === 1 ? "" : "s"}; selected: ${ctx.selected.length})\n`,
+    `\n\n(${toolCalls} tool call${toolCalls === 1 ? "" : "s"}; reserved: ${ctx.reserved.length})\n`,
   );
 }
 

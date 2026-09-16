@@ -1,9 +1,9 @@
 /** Cohere Chat v2. Results wrap Weftai text as citation documents. */
 import { cohereTools } from "@weftai/providers/cohere";
-import { diagram, isMain, queryTool, writeJson } from "../../chat-shared/src/shared.js";
+import { isMain, queryTool, supplyChain, writeJson } from "../../chat-shared/src/shared.js";
 
 export function bind() {
-  const { runtime, ctx } = diagram();
+  const { runtime, ctx } = supplyChain();
   const tools = cohereTools(runtime, { model: "command-a", ctx, tools: [queryTool] });
   const [tool] = tools;
   if (tool === undefined) throw new Error("expected a tool");

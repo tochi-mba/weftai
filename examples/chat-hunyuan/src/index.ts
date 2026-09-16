@@ -1,9 +1,9 @@
 /** Native Tencent Hunyuan TC3 ChatCompletions. ToolChoice stays auto. */
 import { hunyuanAuthorization, hunyuanTools } from "@weftai/providers/hunyuan";
-import { diagram, isMain, queryTool, writeJson } from "../../chat-shared/src/shared.js";
+import { isMain, queryTool, supplyChain, writeJson } from "../../chat-shared/src/shared.js";
 
 export function bind() {
-  const { runtime, ctx } = diagram();
+  const { runtime, ctx } = supplyChain();
   const mapped = hunyuanTools(runtime, { model: "hunyuan-turbos", ctx, tools: [queryTool] });
   const auth = hunyuanAuthorization({
     secretId: "AKIDexample",

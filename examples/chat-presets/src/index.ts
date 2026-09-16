@@ -3,10 +3,10 @@
  * Hosts that are not OpenAI-shaped have their own `examples/chat-*` packages.
  */
 import { type HostPreset, openaiTools, PRESETS } from "@weftai/providers/openai";
-import { diagram, isMain, queryTool, writeJson } from "../../chat-shared/src/shared.js";
+import { isMain, queryTool, supplyChain, writeJson } from "../../chat-shared/src/shared.js";
 
 export function bind() {
-  const { runtime, ctx } = diagram();
+  const { runtime, ctx } = supplyChain();
   return Object.entries(PRESETS).map(([name, preset]) => {
     const host = preset as HostPreset;
     const tools =

@@ -8,8 +8,8 @@ import { boolFlag, flag, parseArgv } from "./parse.js";
 import { runCli } from "./run.js";
 
 const root = fileURLToPath(new URL("../../..", import.meta.url));
-const domain = join(root, "examples/diagram/src/domain.ts");
-const delaware = join(root, "examples/diagram/plans/05-delaware.json");
+const domain = join(root, "examples/supply-chain/src/domain.ts");
+const taiwan = join(root, "examples/supply-chain/plans/taiwan-components.json");
 
 function capture() {
   let stdout = "";
@@ -126,7 +126,7 @@ export { loadContext as createContext } from ${JSON.stringify(domain.replace(/\\
 `;
     writeFileSync(named, source);
     const cap = capture();
-    expect(await runCli(["validate", delaware, "--domain", named], cap.io)).toBe(0);
+    expect(await runCli(["validate", taiwan, "--domain", named], cap.io)).toBe(0);
     expect(cap.stdout).toContain("OK: 3 step(s).");
   });
 
@@ -141,17 +141,17 @@ export { loadContext as createContext } from ${JSON.stringify(domain.replace(/\\
 describe("weftai CLI: outputs", { timeout: 60_000 }, () => {
   it("reports validation issues on stderr and exits 1", async () => {
     const plan = join(dir, "unknown-op.json");
-    writeFileSync(plan, JSON.stringify({ steps: [{ id: "a", op: "nodes.fnd" }] }));
+    writeFileSync(plan, JSON.stringify({ steps: [{ id: "a", op: "parts.fnd" }] }));
     const cap = capture();
     expect(await runCli(["validate", plan, "--domain", domain], cap.io)).toBe(1);
     expect(cap.stderr).toContain(
-      "Step 'a': Unknown operation 'nodes.fnd'. Did you mean 'nodes.find'?",
+      "Step 'a': Unknown operation 'parts.fnd'. Did you mean 'parts.find'?",
     );
   });
 
   it("prints a JSON result with --format json", async () => {
     const cap = capture();
-    expect(await runCli(["run", delaware, "--domain", domain, "--format", "json"], cap.io)).toBe(0);
+    expect(await runCli(["run", taiwan, "--domain", domain, "--format", "json"], cap.io)).toBe(0);
     const parsed = JSON.parse(cap.stdout) as {
       ok: boolean;
       steps: { id: string; count: number }[];
@@ -160,11 +160,11 @@ describe("weftai CLI: outputs", { timeout: 60_000 }, () => {
     };
     expect(parsed.ok).toBe(true);
     expect(parsed.steps.map((s) => [s.id, s.count])).toEqual([
-      ["acme", 1],
-      ["owned", 3],
-      ["delaware", 2],
+      ["drone", 1],
+      ["components", 3],
+      ["taiwan", 2],
     ]);
-    expect(parsed.text).toContain("delaware (nodes): 2 matched");
+    expect(parsed.text).toContain("taiwan (parts): 2 matched");
     expect(parsed.trace.version).toBe(1);
   });
 
@@ -178,12 +178,10 @@ describe("weftai CLI: outputs", { timeout: 60_000 }, () => {
   });
 
   it("runs against a fixture file given with --fixture", async () => {
-    const fixture = join(root, "examples/diagram/src/fixture.json");
+    const fixture = join(root, "examples/supply-chain/src/fixture.json");
     const cap = capture();
-    expect(await runCli(["run", delaware, "--domain", domain, "--fixture", fixture], cap.io)).toBe(
-      0,
-    );
-    expect(cap.stdout).toContain("owned (nodes): 3 matched");
+    expect(await runCli(["run", taiwan, "--domain", domain, "--fixture", fixture], cap.io)).toBe(0);
+    expect(cap.stdout).toContain("components (parts): 3 matched");
   });
 
   it("scaffolds into the current directory when no dir is given", async () => {

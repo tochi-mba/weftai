@@ -1,12 +1,12 @@
 import { pathToFileURL } from "node:url";
-import { createDiagramRuntime } from "../../diagram/src/domain.js";
+import { createSupplyChainRuntime } from "../../supply-chain/src/domain.js";
 
-export function diagram() {
-  return createDiagramRuntime();
+export function supplyChain() {
+  return createSupplyChainRuntime();
 }
 
 export const queryTool = {
-  name: "query_diagram",
+  name: "query_supply_chain",
   include: (op: { readonly effects: string }) => op.effects === "read",
 };
 

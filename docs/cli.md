@@ -16,16 +16,17 @@ weftai init [dir]
 
 ## Examples
 
-Delaware subsidiaries, from the repo root:
+Components sourced from Taiwan, from the repo root:
 
 ```
-weftai run examples/diagram/plans/05-delaware.json --domain examples/diagram/src/domain.ts --trace out.json
+weftai run examples/supply-chain/plans/taiwan-components.json --domain examples/supply-chain/src/domain.ts --trace out.json
 weftai trace out.json
 ```
 
-Expect three steps with counts 1 / 3 / 2: Corporate 1, its three subsidiaries, and the two
-incorporated in Delaware. The fixture is the proposal's test diagram, so every scenario in the
-proposal can be replayed with `run` against `examples/diagram/src/domain.ts`.
+Expect three steps with counts 1 / 3 / 2: the Aurora Drone, the three parts it is built from,
+and the two that originate in Taiwan. The fixture is the sample bill of materials, so every
+scenario in `examples/supply-chain/src/scenarios.test.ts` can be replayed with `run` against
+`examples/supply-chain/src/domain.ts`.
 
 `validate` reports plan issues (unknown op, bad `$ref`, malformed shape) without running
 handlers. `describe` prints the model-facing operation list; `--json` prints the union plan
@@ -40,9 +41,9 @@ import { createTestRuntime, formatSnapshot, toHaveMatched } from "@weftai/testin
 import "@weftai/testing/matchers"; // optional Vitest matchers
 
 const test = createTestRuntime(registry, ctx);
-const result = await test.runSteps([{ id: "acme", op: "nodes.find", input: { /* */ } }]);
-toHaveMatched(result, "acme", 1);
-expect(formatSnapshot(result)).toContain("acme (nodes): 1 matched");
+const result = await test.runSteps([{ id: "drone", op: "parts.find", input: { /* */ } }]);
+toHaveMatched(result, "drone", 1);
+expect(formatSnapshot(result)).toContain("drone (parts): 1 matched");
 ```
 
 Matchers: `toHaveMatched(id, n)`, `toHaveNotice(id, /pattern/)`, `toHaveFailed(id, /pattern/)`.

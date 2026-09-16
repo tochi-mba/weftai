@@ -1,9 +1,9 @@
 /** Classic iFlytek Spark HMAC WebSocket `function_definition`. HTTP OpenAI-style is PRESETS.sparkHttp. */
 import { sparkAuthUrl, sparkTools } from "@weftai/providers/spark";
-import { diagram, isMain, queryTool, writeJson } from "../../chat-shared/src/shared.js";
+import { isMain, queryTool, supplyChain, writeJson } from "../../chat-shared/src/shared.js";
 
 export function bind() {
-  const { runtime, ctx } = diagram();
+  const { runtime, ctx } = supplyChain();
   const mapped = sparkTools(runtime, { ctx, tools: [queryTool] });
   const url = sparkAuthUrl({
     host: "spark-api.xf-yun.com",

@@ -1,9 +1,9 @@
 /** Bedrock Converse. Nova uses the restricted schema dialect. */
 import { bedrockTools } from "@weftai/providers/bedrock";
-import { diagram, isMain, queryTool, writeJson } from "../../chat-shared/src/shared.js";
+import { isMain, queryTool, supplyChain, writeJson } from "../../chat-shared/src/shared.js";
 
 export function bind() {
-  const { runtime, ctx } = diagram();
+  const { runtime, ctx } = supplyChain();
   const claude = bedrockTools(runtime, {
     model: "anthropic.claude-3-5-sonnet-20241022-v2:0",
     ctx,
