@@ -1,6 +1,6 @@
 {
   "name": "weftai",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Composable AI workflows: declarative multi-step plans a model emits and your application validates and executes.",
   "license": "MIT",
   "author": "Rex Technologies",
