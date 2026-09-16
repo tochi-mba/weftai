@@ -9,6 +9,7 @@ const DOC_NAMES = [
   "writing-operations.md",
   "formatting.md",
   "adapters.md",
+  "providers.md",
   "cli.md",
 ] as const;
 

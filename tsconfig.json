@@ -9,7 +9,8 @@
     "declarationMap": false,
     "sourceMap": false,
     "paths": {
-      "weftai": ["./packages/core/src/index.ts"]
+      "weftai": ["./packages/core/src/index.ts"],
+      "weftai/adapter": ["./packages/core/src/adapter/index.ts"]
     }
   },
   "include": ["tools", "vitest.config.ts"]

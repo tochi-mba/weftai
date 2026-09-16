@@ -45,8 +45,8 @@ What the definition gives you: validation with actionable errors, typed `$ref` f
 to collections, dependency-ordered execution with timeouts and cancellation, a session-scoped
 result store, and token-budgeted formatting that never truncates silently.
 
-Adapters: `@weftai/anthropic` (Claude tool runner), `@weftai/mcp` (MCP server),
-`@weftai/testing` (test helpers), `@weftai/cli` (`weftai run | validate | describe |
-trace | mcp | init`).
+Adapters: `@weftai/providers` (OpenAI, Anthropic, Gemini, Bedrock, Ollama, Chinese hosts),
+`@weftai/mcp` (MCP server), `@weftai/testing` (test helpers), `@weftai/cli` (`weftai run |
+validate | describe | trace | mcp | init`).
 
 Full documentation lives in the repository's `docs/` folder.

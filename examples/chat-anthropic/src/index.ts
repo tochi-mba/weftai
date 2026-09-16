@@ -4,7 +4,7 @@
  */
 
 import Anthropic from "@anthropic-ai/sdk";
-import { weftaiTools } from "@weftai/anthropic";
+import { weftaiTools } from "@weftai/providers/anthropic/tool-runner";
 import { createDiagramRuntime } from "../../diagram/src/domain.js";
 
 const MODEL = "claude-opus-5";
