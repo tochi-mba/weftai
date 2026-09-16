@@ -1,5 +1,15 @@
 # @weftai/cli
 
+## 0.1.1
+
+### Patch Changes
+
+- 7940f89: Keep the MCP CLI server running until its client disconnects, and allow custom MCP transports for tests and embedded use.
+- Updated dependencies [7940f89]
+- Updated dependencies [7940f89]
+  - @weftai/mcp@0.1.1
+  - weftai@0.1.1
+
 ## 0.1.0
 
 ### Minor Changes

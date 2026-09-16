@@ -1,5 +1,12 @@
 # @weftai/anthropic
 
+## 0.1.1
+
+### Patch Changes
+
+- Updated dependencies [7940f89]
+  - weftai@0.1.1
+
 ## 0.1.0
 
 ### Minor Changes

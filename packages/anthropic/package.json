@@ -1,6 +1,6 @@
 {
   "name": "@weftai/anthropic",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Expose a Weftai runtime to Claude through the Anthropic SDK tool runner.",
   "license": "MIT",
   "author": "Rex Technologies",
