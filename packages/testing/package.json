@@ -1,6 +1,6 @@
 {
   "name": "@agentweft/testing",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Test helpers for Agentweft domains: runtimes, plan sugar, matchers and fixtures.",
   "license": "MIT",
   "author": "Tochi Mba",

@@ -22,7 +22,9 @@ const tools = agentweftTools(runtime, {
 // Pass `tools` to client.beta.messages.toolRunner({ model: "claude-opus-5", tools, … }).
 ```
 
-Each spec becomes one Claude tool whose input is a **plan**. `strict: true` is on by default.
+Each spec becomes one Claude tool whose input is a **plan**. `include` decides which operations
+the tool advertises **and** which it can run: a plan naming an operation outside the scope gets
+`Unknown operation`, the same as if it were not registered. `strict: true` is on by default.
 Set `eagerInputStreaming: true` to spread `eager_input_streaming: true`.
 
 The session id defaults to one UUID per `agentweftTools()` call, so a later tool call in the

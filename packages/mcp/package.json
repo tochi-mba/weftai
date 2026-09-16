@@ -1,6 +1,6 @@
 {
   "name": "@agentweft/mcp",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Expose an Agentweft runtime as an MCP server.",
   "license": "MIT",
   "author": "Tochi Mba",
