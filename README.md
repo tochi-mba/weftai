@@ -120,4 +120,5 @@ Windows and Ubuntu. No source file may exceed 1,000 lines; a test enforces it.
 
 ## Status
 
-Version 0.1.0 is tagged and ready to publish. Nothing is on npm until `pnpm -r publish` runs.
+Version 0.1.0 is published on npm as `weftai` and `@weftai/*`. Source and the `v0.1.0` tag live
+at https://github.com/tochi-mba/weftai.
