@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Composable AI workflows: declarative multi-step plans a model emits and your application validates and executes.",
   "license": "MIT",
-  "author": "Tochi Mba",
+  "author": "Rex Technologies",
   "type": "module",
   "engines": {
     "node": ">=22.12.0"

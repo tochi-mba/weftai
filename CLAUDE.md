@@ -1,6 +1,6 @@
 # Agentweft — working conventions
 
-Agentweft is a TypeScript framework for composable AI workflows. A model emits a declarative
+Agentweft is a Rex Technologies product. It is a TypeScript framework for composable AI workflows. A model emits a declarative
 plan of named steps; the runtime validates and executes it; results flow between steps by
 `$ref` name and never travel through the model. See `docs/` for the design and `README.md` for
 the pitch.

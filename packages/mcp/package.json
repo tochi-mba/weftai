@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Expose an Agentweft runtime as an MCP server.",
   "license": "MIT",
-  "author": "Tochi Mba",
+  "author": "Rex Technologies",
   "type": "module",
   "engines": {
     "node": ">=22.12.0"

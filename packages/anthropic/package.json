@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Expose an Agentweft runtime to Claude through the Anthropic SDK tool runner.",
   "license": "MIT",
-  "author": "Tochi Mba",
+  "author": "Rex Technologies",
   "type": "module",
   "engines": {
     "node": ">=22.12.0"

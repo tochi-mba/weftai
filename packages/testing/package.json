@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Test helpers for Agentweft domains: runtimes, plan sugar, matchers and fixtures.",
   "license": "MIT",
-  "author": "Tochi Mba",
+  "author": "Rex Technologies",
   "type": "module",
   "engines": {
     "node": ">=22.12.0"

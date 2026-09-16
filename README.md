@@ -1,5 +1,7 @@
 # Agentweft
 
+A Rex Technologies product.
+
 Composable AI workflows. A model emits a declarative plan of named steps; your application
 validates and executes it; results flow between steps by name and never travel through the model.
 

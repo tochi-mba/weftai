@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "CLI for Agentweft: run, validate, describe, trace, mcp, init.",
   "license": "MIT",
-  "author": "Tochi Mba",
+  "author": "Rex Technologies",
   "type": "module",
   "engines": {
     "node": ">=22.12.0"
