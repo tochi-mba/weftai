@@ -127,4 +127,4 @@ export {
 export { buildTrace, type Trace, type TraceInputRef, type TraceStep } from "./trace.js";
 
 /** Package version, kept in sync with package.json by the release step. */
-export const VERSION = "0.2.0";
+export const VERSION = "0.2.1";
