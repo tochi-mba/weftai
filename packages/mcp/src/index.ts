@@ -55,6 +55,7 @@ export function createMcpServer<Ctx>(
         ctx,
         session: { id: sessionId },
         allowWrites,
+        include: options.include,
       });
       return { content: [{ type: "text" as const, text: result.text }], isError: !result.ok };
     },

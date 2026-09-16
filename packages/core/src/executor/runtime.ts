@@ -69,19 +69,15 @@ export function createRuntime<Ctx>(options: RuntimeOptions<Ctx>): Runtime<Ctx> {
     async execute(raw, executeOptions) {
       const started = Date.now();
       const sessionId = executeOptions.session?.id ?? DEFAULT_SESSION_ID;
-      const validation = validatePlan(raw, registry, {
+      const scoped =
+        executeOptions.include === undefined ? registry : registry.filter(executeOptions.include);
+      const validation = validatePlan(raw, scoped, {
         maxSteps: limits.maxSteps,
         allowWrites: executeOptions.allowWrites,
         session: sessionView(store, sessionId),
       });
       if (!validation.ok) {
-        return failedValidation(
-          started,
-          validation.issues,
-          formatter,
-          registry,
-          executeOptions.ctx,
-        );
+        return failedValidation(started, validation.issues, formatter, scoped, executeOptions.ctx);
       }
 
       const failAbort = new AbortController();
@@ -136,7 +132,7 @@ export function createRuntime<Ctx>(options: RuntimeOptions<Ctx>): Runtime<Ctx> {
       const text = formatter.format({
         steps,
         plan: validation.plan,
-        registry,
+        registry: scoped,
         ctx: executeOptions.ctx,
       });
       return {

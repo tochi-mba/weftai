@@ -36,6 +36,10 @@ Running record of decisions and ideas. Each idea carries a status so nothing is 
   disambiguation scenario into a wrong answer.
 - **Handlers choose displayed fields with `showFields`.** The formatter never sniffs plan input;
   `details` asks for `"all"` or the named fields, and `"all"` omits a field that repeats the label.
+- **A tool's scope is enforced at execution.** `execute({ include })` filters the registry before
+  validation, so an operation a tool does not advertise is unknown to plans sent through that
+  tool. Both adapters pass their `include` through. Before this, `include` only shaped the
+  description and schema, and any registered operation stayed callable.
 - **Provenance headers everywhere.** A count or a group with sources renders as
   `id (nodes): N matched`; only results with no entities behind them use the bare forms.
 - **Two adapters in v0.1.** Anthropic tools wrap a plan schema (`strict: true` by default; session

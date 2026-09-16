@@ -100,6 +100,7 @@ function makeTool<Ctx>(
         ctx: await resolveCtx(ctx),
         session: { id: sessionId },
         allowWrites,
+        include: spec.include,
       });
       return result.text;
     },

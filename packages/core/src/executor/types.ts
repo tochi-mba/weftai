@@ -1,6 +1,6 @@
 import type { PlanIssue } from "../errors.js";
 import type { Formatter } from "../format/formatter.js";
-import type { Presentation } from "../operation.js";
+import type { AnyOperation, Presentation } from "../operation.js";
 import type { ValidatedPlan, ValidatedStep } from "../plan/validate.js";
 import type { Registry } from "../registry.js";
 import type { ResultKind, ResultStore } from "../results/types.js";
@@ -50,6 +50,11 @@ export interface ExecuteOptions<Ctx> {
   readonly session?: { readonly id: string } | undefined;
   readonly signal?: AbortSignal | undefined;
   readonly allowWrites?: boolean | undefined;
+  /**
+   * Restrict this call to a subset of the registry. An operation outside the subset is unknown to
+   * the plan, exactly as if it were not registered, so a tool's scope is enforced, not just shown.
+   */
+  readonly include?: ((operation: AnyOperation<Ctx>) => boolean) | undefined;
 }
 
 export interface StepResult {
