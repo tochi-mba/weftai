@@ -1,5 +1,14 @@
 # @weftai/mcp
 
+## 0.2.1
+
+### Patch Changes
+
+- 8233fe9: Use the supply-chain domain in the published README examples and in the `CollectionType` doc
+  comment, so every shipped example matches the reference domain the test suites use.
+- Updated dependencies [8233fe9]
+  - weftai@0.2.1
+
 ## 0.2.0
 
 ### Minor Changes
