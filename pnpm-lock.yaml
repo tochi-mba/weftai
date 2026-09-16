@@ -188,14 +188,158 @@ importers:
         specifier: ^4.1.11
         version: 4.1.11(@types/node@24.13.4)(@vitest/coverage-istanbul@4.1.11)(@vitest/coverage-v8@4.1.11)(vite@8.3.0(@types/node@24.13.4)(jiti@2.7.0)(yaml@2.9.1))
 
+  examples/chat-ai-sdk:
+    dependencies:
+      '@weftai/providers':
+        specifier: workspace:*
+        version: link:../../packages/providers
+      jiti:
+        specifier: ^2.6.1
+        version: 2.7.0
+      weftai:
+        specifier: workspace:*
+        version: link:../../packages/core
+
   examples/chat-anthropic:
     dependencies:
       '@anthropic-ai/sdk':
         specifier: ^0.125.0
         version: 0.125.0(zod@4.6.5)
-      '@weftai/anthropic':
+      '@weftai/providers':
         specifier: workspace:*
-        version: link:../../packages/anthropic
+        version: link:../../packages/providers
+      jiti:
+        specifier: ^2.6.1
+        version: 2.7.0
+      weftai:
+        specifier: workspace:*
+        version: link:../../packages/core
+
+  examples/chat-azure:
+    dependencies:
+      '@weftai/providers':
+        specifier: workspace:*
+        version: link:../../packages/providers
+      jiti:
+        specifier: ^2.6.1
+        version: 2.7.0
+      weftai:
+        specifier: workspace:*
+        version: link:../../packages/core
+
+  examples/chat-bedrock:
+    dependencies:
+      '@weftai/providers':
+        specifier: workspace:*
+        version: link:../../packages/providers
+      jiti:
+        specifier: ^2.6.1
+        version: 2.7.0
+      weftai:
+        specifier: workspace:*
+        version: link:../../packages/core
+
+  examples/chat-cohere:
+    dependencies:
+      '@weftai/providers':
+        specifier: workspace:*
+        version: link:../../packages/providers
+      jiti:
+        specifier: ^2.6.1
+        version: 2.7.0
+      weftai:
+        specifier: workspace:*
+        version: link:../../packages/core
+
+  examples/chat-dashscope:
+    dependencies:
+      '@weftai/providers':
+        specifier: workspace:*
+        version: link:../../packages/providers
+      jiti:
+        specifier: ^2.6.1
+        version: 2.7.0
+      weftai:
+        specifier: workspace:*
+        version: link:../../packages/core
+
+  examples/chat-gemini:
+    dependencies:
+      '@weftai/providers':
+        specifier: workspace:*
+        version: link:../../packages/providers
+      jiti:
+        specifier: ^2.6.1
+        version: 2.7.0
+      weftai:
+        specifier: workspace:*
+        version: link:../../packages/core
+
+  examples/chat-hunyuan:
+    dependencies:
+      '@weftai/providers':
+        specifier: workspace:*
+        version: link:../../packages/providers
+      jiti:
+        specifier: ^2.6.1
+        version: 2.7.0
+      weftai:
+        specifier: workspace:*
+        version: link:../../packages/core
+
+  examples/chat-ollama:
+    dependencies:
+      '@weftai/providers':
+        specifier: workspace:*
+        version: link:../../packages/providers
+      jiti:
+        specifier: ^2.6.1
+        version: 2.7.0
+      weftai:
+        specifier: workspace:*
+        version: link:../../packages/core
+
+  examples/chat-openai:
+    dependencies:
+      '@weftai/providers':
+        specifier: workspace:*
+        version: link:../../packages/providers
+      jiti:
+        specifier: ^2.6.1
+        version: 2.7.0
+      weftai:
+        specifier: workspace:*
+        version: link:../../packages/core
+
+  examples/chat-presets:
+    dependencies:
+      '@weftai/providers':
+        specifier: workspace:*
+        version: link:../../packages/providers
+      jiti:
+        specifier: ^2.6.1
+        version: 2.7.0
+      weftai:
+        specifier: workspace:*
+        version: link:../../packages/core
+
+  examples/chat-qwen:
+    dependencies:
+      '@weftai/providers':
+        specifier: workspace:*
+        version: link:../../packages/providers
+      jiti:
+        specifier: ^2.6.1
+        version: 2.7.0
+      weftai:
+        specifier: workspace:*
+        version: link:../../packages/core
+
+  examples/chat-spark:
+    dependencies:
+      '@weftai/providers':
+        specifier: workspace:*
+        version: link:../../packages/providers
       jiti:
         specifier: ^2.6.1
         version: 2.7.0
@@ -214,15 +358,6 @@ importers:
       weftai:
         specifier: workspace:*
         version: link:../../packages/core
-
-  packages/anthropic:
-    dependencies:
-      '@anthropic-ai/sdk':
-        specifier: ^0.125.0
-        version: 0.125.0(zod@4.6.5)
-      weftai:
-        specifier: workspace:*
-        version: link:../core
 
   packages/cli:
     dependencies:
@@ -253,6 +388,16 @@ importers:
       weftai:
         specifier: workspace:*
         version: link:../core
+
+  packages/providers:
+    dependencies:
+      weftai:
+        specifier: workspace:*
+        version: link:../core
+    devDependencies:
+      '@anthropic-ai/sdk':
+        specifier: ^0.125.0
+        version: 0.125.0(zod@4.6.5)
 
   packages/testing:
     dependencies:

@@ -1,0 +1,85 @@
+{
+  "name": "@weftai/providers",
+  "version": "0.1.1",
+  "description": "Wire-format adapters that expose a Weftai runtime as tools on model APIs.",
+  "license": "MIT",
+  "author": "Rex Technologies",
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "exports": {
+    "./openai": {
+      "types": "./dist/openai/index.d.ts",
+      "import": "./dist/openai/index.js"
+    },
+    "./anthropic": {
+      "types": "./dist/anthropic/index.d.ts",
+      "import": "./dist/anthropic/index.js"
+    },
+    "./anthropic/tool-runner": {
+      "types": "./dist/anthropic/tool-runner.d.ts",
+      "import": "./dist/anthropic/tool-runner.js"
+    },
+    "./google": {
+      "types": "./dist/google/index.d.ts",
+      "import": "./dist/google/index.js"
+    },
+    "./bedrock": {
+      "types": "./dist/bedrock/index.d.ts",
+      "import": "./dist/bedrock/index.js"
+    },
+    "./ollama": {
+      "types": "./dist/ollama/index.d.ts",
+      "import": "./dist/ollama/index.js"
+    },
+    "./cohere": {
+      "types": "./dist/cohere/index.d.ts",
+      "import": "./dist/cohere/index.js"
+    },
+    "./dashscope": {
+      "types": "./dist/dashscope/index.d.ts",
+      "import": "./dist/dashscope/index.js"
+    },
+    "./hunyuan": {
+      "types": "./dist/hunyuan/index.d.ts",
+      "import": "./dist/hunyuan/index.js"
+    },
+    "./spark": {
+      "types": "./dist/spark/index.d.ts",
+      "import": "./dist/spark/index.js"
+    },
+    "./ai-sdk": {
+      "types": "./dist/ai-sdk/index.d.ts",
+      "import": "./dist/ai-sdk/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc -b tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "clean": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\""
+  },
+  "dependencies": {
+    "weftai": "workspace:*"
+  },
+  "peerDependencies": {
+    "@anthropic-ai/sdk": "^0.125.0"
+  },
+  "peerDependenciesMeta": {
+    "@anthropic-ai/sdk": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@anthropic-ai/sdk": "^0.125.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -1,0 +1,15 @@
+﻿{
+  "name": "chat-cohere",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "jiti src/index.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@weftai/providers": "workspace:*",
+    "jiti": "^2.6.1",
+    "weftai": "workspace:*"
+  }
+}

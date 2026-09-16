@@ -87,7 +87,7 @@ From that one definition Weftai derives:
 | Package | Purpose |
 |---------|---------|
 | `weftai` | Core runtime: operations, plans, validation, execution, result store, formatter, traces |
-| `@weftai/anthropic` | Expose a runtime to Claude through the Anthropic SDK tool runner |
+| `@weftai/providers` | Wire-format adapters (OpenAI, Anthropic, Gemini, Bedrock, Ollama, Chinese hosts, …) |
 | `@weftai/mcp` | Expose a runtime as an MCP server |
 | `@weftai/testing` | Test runtime, Vitest matchers and fixture helpers |
 | `@weftai/cli` | `weftai run | validate | describe | trace | mcp | init` |
@@ -98,12 +98,18 @@ From that one definition Weftai derives:
   thirteen scenarios assert the exact text the model sees and are the acceptance suite.
 - `examples/documents` is a second, unrelated domain (contracts) that proves the core is not
   graph-shaped.
-- `examples/chat-anthropic` wires the diagram domain to Claude for a live check.
+- `examples/chat-*` binds the diagram domain in each family: `chat-openai` (Chat Completions +
+  Responses), `chat-azure`, `chat-anthropic` (Messages bind plus a live Claude tool-runner),
+  `chat-gemini`, `chat-bedrock`, `chat-ollama`, `chat-cohere`, `chat-dashscope`, `chat-hunyuan`,
+  `chat-spark`, `chat-ai-sdk`, `chat-qwen`, and `chat-presets` (Groq, Kimi, GLM, Ark, MiniMax,
+  DeepSeek, …). `pnpm --filter chat-presets start` prints the full preset list. Live Claude:
+  `ANTHROPIC_API_KEY` and `pnpm --filter chat-anthropic start`.
 
 ## Docs
 
 `docs/concepts.md`, `docs/plan-format.md`, `docs/writing-operations.md`, `docs/formatting.md`,
-`docs/adapters.md`, `docs/cli.md`, and `docs/design-notes.md` for decisions and ideas.
+`docs/adapters.md`, `docs/providers.md`, `docs/cli.md`, and `docs/design-notes.md` for decisions
+and ideas.
 
 Claims in these docs are structural counts (steps and tool calls per question). Token and
 latency savings are not claimed until measured.

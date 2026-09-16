@@ -5,10 +5,11 @@
   "type": "module",
   "scripts": {
     "start": "jiti src/index.ts",
+    "start:bind": "jiti src/bind.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@weftai/anthropic": "workspace:*",
+    "@weftai/providers": "workspace:*",
     "@anthropic-ai/sdk": "^0.125.0",
     "weftai": "workspace:*",
     "jiti": "^2.6.1"

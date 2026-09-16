@@ -10,6 +10,7 @@ import {
   VERSION,
   z,
 } from "weftai";
+import { bindTool } from "weftai/adapter";
 
 export interface McpServerOptions<Ctx> {
   readonly name: string;
@@ -37,8 +38,18 @@ export function createMcpServer<Ctx>(
   const sessionId = options.session?.id ?? "default";
   const scoped =
     options.include === undefined ? runtime.registry : runtime.registry.filter(options.include);
-  const allowWrites =
-    options.allowWrites ?? scoped.operations.some((operation) => operation.effects === "write");
+  const bound = bindTool(
+    runtime,
+    {
+      name: "run_plan",
+      description: scoped.describe(),
+      include: options.include,
+      allowWrites: options.allowWrites,
+      dialect: "union",
+      onInvalid: "text",
+    },
+    { ctx: options.ctx, sessionId },
+  );
 
   const server = new McpServer({
     name: options.name,
@@ -48,17 +59,11 @@ export function createMcpServer<Ctx>(
   server.registerTool(
     "run_plan",
     {
-      description: scoped.describe(),
+      description: bound.description,
       inputSchema: PlanSchema,
     },
     async (input) => {
-      const ctx = await resolveCtx(options.ctx);
-      const result = await runtime.execute(input, {
-        ctx,
-        session: { id: sessionId },
-        allowWrites,
-        include: options.include,
-      });
+      const result = await bound.execute(input);
       return { content: [{ type: "text" as const, text: result.text }], isError: !result.ok };
     },
   );
@@ -131,11 +136,4 @@ function itemLabel(item: unknown): string {
     return String((item as { label: unknown }).label);
   }
   return JSON.stringify(item);
-}
-
-async function resolveCtx<Ctx>(ctx: Ctx | (() => Ctx | Promise<Ctx>)): Promise<Ctx> {
-  if (typeof ctx === "function") {
-    return await (ctx as () => Ctx | Promise<Ctx>)();
-  }
-  return ctx;
 }
