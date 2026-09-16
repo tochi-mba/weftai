@@ -1,5 +1,6 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
+import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
 import { createMcpServer } from "@weftai/mcp";
 import {
   createRuntime,
@@ -26,7 +27,16 @@ export interface Io {
   readonly stderr: { write(chunk: string): void };
 }
 
-export async function dispatch(args: CliArgs, io: Io): Promise<number> {
+export interface DispatchOptions {
+  /** Transport for the `mcp` command instead of stdio (used by tests and embedders). */
+  readonly mcpTransport?: Transport | undefined;
+}
+
+export async function dispatch(
+  args: CliArgs,
+  io: Io,
+  options: DispatchOptions = {},
+): Promise<number> {
   switch (args.command) {
     case undefined:
     case "help":
@@ -41,7 +51,7 @@ export async function dispatch(args: CliArgs, io: Io): Promise<number> {
     case "trace":
       return traceCommand(args, io);
     case "mcp":
-      return mcpCommand(args, io);
+      return mcpCommand(args, io, options.mcpTransport);
     case "init":
       return initCommand(args, io);
     default:
@@ -121,7 +131,7 @@ function traceCommand(args: CliArgs, io: Io): Promise<number> {
   return Promise.resolve(0);
 }
 
-async function mcpCommand(args: CliArgs, io: Io): Promise<number> {
+async function mcpCommand(args: CliArgs, io: Io, transport?: Transport): Promise<number> {
   const domainPath = flag(args, "domain");
   if (domainPath === undefined) {
     io.stderr.write("mcp requires --domain <file>.\n");
@@ -135,7 +145,11 @@ async function mcpCommand(args: CliArgs, io: Io): Promise<number> {
     ctx,
   });
   io.stderr.write("Serving MCP on stdio. Press Ctrl+C to stop.\n");
-  await mcp.connectStdio();
+  await mcp.connectStdio(transport);
+  // Stay alive until the client closes the transport (stdin ends); returning here would exit.
+  await new Promise<void>((resolve) => {
+    mcp.server.server.onclose = resolve;
+  });
   return 0;
 }
 

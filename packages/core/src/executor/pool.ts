@@ -16,9 +16,7 @@ export async function mapPool<T, R>(
     while (next < items.length) {
       const index = next;
       next += 1;
-      const item = items[index];
-      if (item === undefined) return;
-      results[index] = await fn(item, index);
+      results[index] = await fn(items[index] as T, index);
     }
   }
 

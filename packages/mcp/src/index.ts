@@ -1,5 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
 import {
   type AnyOperation,
   PlanSchema,
@@ -21,7 +22,8 @@ export interface McpServerOptions<Ctx> {
 
 export interface WeftaiMcpServer {
   readonly server: McpServer;
-  connectStdio(): Promise<void>;
+  /** Connect over stdio, or over the given transport (used by tests and embedders). */
+  connectStdio(transport?: Transport): Promise<void>;
 }
 
 /**
@@ -90,8 +92,9 @@ export function createMcpServer<Ctx>(
 
   return {
     server,
-    async connectStdio() {
-      await server.connect(new StdioServerTransport());
+    async connectStdio(transport?: Transport) {
+      /* istanbul ignore next -- the stdio default needs the real process streams; the CLI's stdio test spawns it */
+      await server.connect(transport ?? new StdioServerTransport());
     },
   };
 }
@@ -117,8 +120,8 @@ export function formatRefResult<Ctx>(
     const lines = resolved.items.map((item, index) => `  ${index + 1}. ${itemLabel(item)}`);
     return `${resolved.type}: ${resolved.count} matched\n${lines.join("\n")}`;
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    return `Could not read '${refText}': ${message}`;
+    // resolveRef only throws RefResolutionError, whose message names the fix.
+    return `Could not read '${refText}': ${(error as Error).message}`;
   }
 }
 

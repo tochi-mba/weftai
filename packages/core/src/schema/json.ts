@@ -27,13 +27,12 @@ export function inputJsonSchema(schema: z.ZodType, options: JsonSchemaOptions = 
         (jsonSchema as JsonSchema).pattern = REF_PATTERN_SOURCE;
         return;
       }
-      if (options.strict === true && (jsonSchema as JsonSchema).type === "object") {
-        const target = jsonSchema as JsonSchema;
+      // Only objects with declared properties are closed; a record's additionalProperties is
+      // its value schema and must stay.
+      const target = jsonSchema as JsonSchema;
+      if (options.strict === true && target.type === "object" && target.properties !== undefined) {
         target.additionalProperties = false;
-        if (target.properties !== undefined) {
-          const props = Object.keys(target.properties as Record<string, unknown>);
-          target.required = props;
-        }
+        target.required = Object.keys(target.properties as Record<string, unknown>);
       }
     },
   }) as JsonSchema;

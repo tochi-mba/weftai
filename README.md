@@ -118,6 +118,16 @@ pnpm build && pnpm lint && pnpm typecheck && pnpm test
 Requires Node 22.12 or newer and pnpm (provided through corepack). CI runs the same gates on
 Windows and Ubuntu. No source file may exceed 1,000 lines; a test enforces it.
 
+## Releasing
+
+Every change that should ship gets a changeset (`pnpm changeset`). On push to `main`, the
+Release workflow opens a "Version packages" pull request that bumps versions and changelogs;
+merging it publishes the changed packages to npm and tags the release. The workflow needs the
+`NPM_TOKEN` repository secret (an npm granular token with write access and two-factor bypass).
+
+Tests must keep 100% statement, branch, function and line coverage; `pnpm test:coverage`
+enforces it locally and in CI.
+
 ## Status
 
 Version 0.1.0 is published on npm as `weftai` and `@weftai/*`. Source and the `v0.1.0` tag live

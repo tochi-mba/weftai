@@ -51,24 +51,29 @@ function stepBudget(step: StepResult, budgets: FormatBudgets): number {
   return step.present === "preview" ? budgets.preview : budgets.read;
 }
 
+/** A step's rendering plus how many body lines it had before any budget applied. */
+interface Row {
+  readonly header: string;
+  readonly lines: string[];
+  readonly full: number;
+  readonly notices: string[];
+}
+
 function applyStepBudget(
   step: RenderedStep,
   budget: number,
   tokens: (text: string) => number,
-): RenderedStep {
+): Row {
   const headerCost = tokens(step.header);
   const noticeCost = step.notices.reduce((sum, notice) => sum + tokens(`  ${notice}`), 0);
-  let remaining = budget - headerCost - noticeCost;
-  if (remaining < 0) remaining = 0;
+  let remaining = Math.max(0, budget - headerCost - noticeCost);
 
   const kept: string[] = [];
   for (const line of step.lines) {
     const cost = tokens(line);
-    if (kept.length > 0 && cost > remaining) break;
-    if (cost > remaining && kept.length === 0) {
-      // Always keep at least the first body line when there is one, so a step is never silent.
-      kept.push(line);
-      remaining = 0;
+    if (cost > remaining) {
+      // Always keep at least the first body line, so a step is never silent.
+      if (kept.length === 0) kept.push(line);
       break;
     }
     kept.push(line);
@@ -79,63 +84,48 @@ function applyStepBudget(
   if (kept.length < step.lines.length) {
     notices.push(`showing ${kept.length} of ${step.lines.length}`);
   }
-  return { header: step.header, lines: kept, notices };
+  return { header: step.header, lines: kept, full: step.lines.length, notices };
 }
 
+function rowCost(row: Row, tokens: (text: string) => number): number {
+  return (
+    tokens(row.header) +
+    row.lines.reduce((sum, line) => sum + tokens(line), 0) +
+    row.notices.reduce((sum, notice) => sum + tokens(`  ${notice}`), 0)
+  );
+}
+
+/** Trim bodies from the last step backwards until the whole response fits; headers always stay. */
 function applyTotalBudget(
-  steps: readonly RenderedStep[],
+  rows: readonly Row[],
   total: number,
   tokens: (text: string) => number,
 ): string {
-  const bodies = steps.map((step) => [...step.lines]);
-  const notices = steps.map((step) => [...step.notices]);
+  const costOf = () => rows.reduce((sum, row) => sum + rowCost(row, tokens), 0);
   let cut = false;
 
-  const costOf = () =>
-    steps.reduce((sum, step, index) => {
-      return (
-        sum +
-        tokens(step.header) +
-        (bodies[index] ?? []).reduce((lineSum, line) => lineSum + tokens(line), 0) +
-        (notices[index] ?? []).reduce((noticeSum, notice) => noticeSum + tokens(`  ${notice}`), 0)
-      );
-    }, 0);
-
   while (costOf() > total) {
-    let trimmed = false;
-    for (let i = steps.length - 1; i >= 0; i--) {
-      const body = bodies[i];
-      if (body !== undefined && body.length > 0) {
-        body.pop();
-        const shown = body.length;
-        const full = steps[i]?.lines.length ?? shown;
-        const list = notices[i];
-        if (list !== undefined) {
-          const idx = list.findIndex((notice) => notice.startsWith("showing "));
-          const message = `showing ${shown} of ${full}`;
-          if (idx >= 0) list[idx] = message;
-          else list.push(message);
-        }
-        trimmed = true;
-        cut = true;
-        break;
-      }
-    }
-    if (!trimmed) break;
+    const victim = [...rows].reverse().find((row) => row.lines.length > 0);
+    if (victim === undefined) break;
+    victim.lines.pop();
+    const message = `showing ${victim.lines.length} of ${victim.full}`;
+    const existing = victim.notices.findIndex((notice) => notice.startsWith("showing "));
+    if (existing >= 0) victim.notices[existing] = message;
+    else victim.notices.push(message);
+    cut = true;
   }
 
   if (cut) {
-    const last = notices[notices.length - 1];
-    last?.push(
-      `Shown headers for all ${steps.length} steps; bodies truncated to the total budget of ${total} tokens.`,
+    // `cut` implies at least one row exists.
+    const last = rows[rows.length - 1] as Row;
+    last.notices.push(
+      `Shown headers for all ${rows.length} steps; bodies truncated to the total budget of ${total} tokens.`,
     );
   }
 
-  return steps
-    .map((step, index) => {
-      const parts = [step.header, ...(bodies[index] ?? [])];
-      for (const notice of notices[index] ?? []) parts.push(`  ${notice}`);
-      return parts.join("\n");
-    })
+  return rows
+    .map((row) =>
+      [row.header, ...row.lines, ...row.notices.map((notice) => `  ${notice}`)].join("\n"),
+    )
     .join("\n");
 }

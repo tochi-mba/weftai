@@ -87,8 +87,8 @@ export function createMemoryStore(options: MemoryStoreOptions = {}): ResultStore
       const evicted: string[] = [];
       if (!replaced) {
         while (session.entries.size >= maxResults) {
-          const oldest = session.order.shift();
-          if (oldest === undefined) break;
+          // `order` always lists exactly the ids in `entries`, so it cannot run dry first.
+          const oldest = session.order.shift() as string;
           session.entries.delete(oldest);
           evicted.push(oldest);
         }

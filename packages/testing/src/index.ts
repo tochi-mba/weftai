@@ -76,7 +76,8 @@ export function toHaveFailed<Ctx>(
   if (step.status !== "error") {
     throw new Error(`Expected step '${id}' to fail, but it was '${step.status}'.`);
   }
-  const message = step.error ?? "";
+  // A failed step always carries its message.
+  const message = step.error as string;
   const hit = typeof pattern === "string" ? message.includes(pattern) : pattern.test(message);
   if (!hit) {
     throw new Error(`Expected step '${id}' to fail matching ${String(pattern)}. Error: ${message}`);

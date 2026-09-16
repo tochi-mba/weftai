@@ -22,9 +22,18 @@ export default defineConfig({
       "tools/**/*.test.ts",
     ],
     coverage: {
-      provider: "v8",
+      // Istanbul instruments the source; the V8 provider dropped coverage when a module was
+      // loaded by several test files and reported executed constructors as uncovered.
+      provider: "istanbul",
       include: ["packages/*/src/**/*.ts"],
       exclude: ["**/*.test.ts"],
+      reporter: ["text", "json-summary"],
+      thresholds: {
+        statements: 100,
+        branches: 100,
+        functions: 100,
+        lines: 100,
+      },
     },
   },
 });

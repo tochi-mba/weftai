@@ -31,9 +31,10 @@
     "clean": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\""
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
     "@weftai/mcp": "workspace:*",
-    "weftai": "workspace:*",
-    "jiti": "^2.6.1"
+    "jiti": "^2.6.1",
+    "weftai": "workspace:*"
   },
   "publishConfig": {
     "access": "public"

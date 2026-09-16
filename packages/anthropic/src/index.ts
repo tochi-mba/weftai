@@ -106,10 +106,9 @@ function makeTool<Ctx>(
     },
   });
 
-  const handle = async (input: unknown): Promise<string> => {
-    const out = await runnable.run(runnable.parse(input));
-    return typeof out === "string" ? out : JSON.stringify(out);
-  };
+  // `run` above always returns the formatted text, so the result is a string.
+  const handle = async (input: unknown): Promise<string> =>
+    (await runnable.run(runnable.parse(input))) as string;
 
   const tool = {
     ...runnable,

@@ -5,13 +5,14 @@ import { type RefMeta, refMeta } from "./ref.js";
 export type Path = readonly (string | number)[];
 
 /** One reference found in a parsed input, with where it sits and what it must resolve to. */
-export interface RefSite {
+export type RefSite = {
   readonly path: Path;
   readonly text: string;
-  readonly parsed: ParsedRef | undefined;
-  readonly error: string | undefined;
   readonly meta: RefMeta;
-}
+} & (
+  | { readonly parsed: ParsedRef; readonly error: undefined }
+  | { readonly parsed: undefined; readonly error: string }
+);
 
 const MAX_DEPTH = 32;
 

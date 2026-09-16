@@ -81,10 +81,8 @@ function isIntegerFormat(format: unknown): boolean {
 function hasIntCheck(schema: z.ZodType): boolean {
   const checks = (schema.def as { checks?: readonly unknown[] }).checks ?? [];
   return checks.some((check) => {
-    const inner = (check as { _zod?: { def?: { format?: unknown; check?: unknown } } })._zod?.def;
-    return (
-      inner !== undefined && (isIntegerFormat(inner.format) || inner.check === "number_format")
-    );
+    const inner = (check as { _zod: { def: { format?: unknown; check?: unknown } } })._zod.def;
+    return isIntegerFormat(inner.format) || inner.check === "number_format";
   });
 }
 

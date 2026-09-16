@@ -13,15 +13,17 @@
     "lint": "biome check .",
     "format": "biome check --write .",
     "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "test:watch": "vitest",
     "changeset": "changeset",
+    "version-packages": "changeset version && node tools/sync-version.mjs && biome check --write packages/core/src/index.ts",
     "release": "pnpm build && changeset publish"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.13",
     "@changesets/cli": "^3.0.3",
     "@types/node": "^24.1.0",
-    "@vitest/coverage-v8": "^4.1.11",
+    "@vitest/coverage-istanbul": "^4.1.11",
     "fast-check": "^4.10.0",
     "typescript": "^5.9.0",
     "vitest": "^4.1.11"

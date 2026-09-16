@@ -51,8 +51,7 @@ export function normalizeOutput(
   return { kind: "value", type, data, items, count };
 }
 
+/** Only called for values that failed the array check, so arrays never reach here. */
 function describeValue(value: unknown): string {
-  if (value === null) return "null";
-  if (Array.isArray(value)) return "an array";
-  return typeof value;
+  return value === null ? "null" : typeof value;
 }

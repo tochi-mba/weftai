@@ -270,18 +270,18 @@ function countBy<T, Ctx>(
     const key = stringify(field.get(item));
     counts.set(key, (counts.get(key) ?? 0) + 1);
   }
-  return [...counts.entries()]
-    .map(([key, count]) => ({ key, count }))
-    .sort((a, b) => {
-      // Items with no recorded value are reported, but always last.
-      const aMissing = a.key === NOT_RECORDED;
-      const bMissing = b.key === NOT_RECORDED;
-      if (aMissing !== bMissing) return aMissing ? 1 : -1;
-      return b.count - a.count || a.key.localeCompare(b.key);
-    });
+  return [...counts.entries()].map(([key, count]) => ({ key, count })).sort(compareGroups);
 }
 
 const NOT_RECORDED = "not recorded";
+
+/** Most common first, ties by key; items with no recorded value are reported, but always last. */
+export function compareGroups(a: Group, b: Group): number {
+  const aMissing = a.key === NOT_RECORDED;
+  const bMissing = b.key === NOT_RECORDED;
+  if (aMissing !== bMissing) return aMissing ? 1 : -1;
+  return b.count - a.count || a.key.localeCompare(b.key);
+}
 
 function mustField<T, Ctx>(type: CollectionType<T, Ctx>, name: string, ctx: Ctx, stepId: string) {
   const resolved = resolveField(type, name, ctx);

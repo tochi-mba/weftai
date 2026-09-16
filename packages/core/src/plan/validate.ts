@@ -85,6 +85,7 @@ export function validatePlan<Ctx>(
   }
 
   const indexById = new Map<string, number>();
+  const stepsById = new Map<string, (typeof plan.steps)[number]>();
   plan.steps.forEach((step, index) => {
     if (!isValidStepId(step.id)) {
       issues.push({
@@ -102,6 +103,7 @@ export function validatePlan<Ctx>(
       });
     } else {
       indexById.set(step.id, index);
+      stepsById.set(step.id, step);
     }
   });
 
@@ -157,7 +159,7 @@ export function validatePlan<Ctx>(
           code: "ref.invalid_syntax",
           stepId: step.id,
           path: site.path,
-          message: `${where}: ${site.error ?? "invalid reference"}`,
+          message: `${where}: ${site.error}`,
         });
         continue;
       }
@@ -184,7 +186,10 @@ export function validatePlan<Ctx>(
           });
           continue;
         }
-        const targetOp = registry.get(plan.steps[targetIndex]?.op ?? "");
+        // A known index means the step was recorded, so the lookup cannot miss.
+        const targetStep = stepsById.get(targetId) as (typeof plan.steps)[number];
+        const targetOp = registry.get(targetStep.op);
+        // The target step itself may name an unknown operation; that is reported on it, not here.
         if (targetOp !== undefined) {
           const actual = provenanceType(targetOp as AnyOperation<never>);
           const problem = typeMismatch(site, where, actual?.name, describeResult(targetOp));
@@ -292,7 +297,8 @@ function computeLevels<Ctx>(steps: readonly ValidatedStep<Ctx>[]): ValidatedStep
   for (const step of steps) {
     let depth = 0;
     for (const dependency of step.dependencies) {
-      depth = Math.max(depth, (level.get(dependency) ?? 0) + 1);
+      // Dependencies always precede their dependents (forward references are rejected).
+      depth = Math.max(depth, (level.get(dependency) as number) + 1);
     }
     level.set(step.id, depth);
     const bucket = levels[depth];
@@ -302,8 +308,9 @@ function computeLevels<Ctx>(steps: readonly ValidatedStep<Ctx>[]): ValidatedStep
   return levels;
 }
 
+/** Zod reports object keys and array indexes only; symbol keys never appear in plan inputs. */
 function plainPath(path: readonly PropertyKey[]): Path {
-  return path.map((segment) => (typeof segment === "symbol" ? String(segment) : segment));
+  return path as Path;
 }
 
 function describeZodIssues(issues: readonly z.core.$ZodIssue[]): string {

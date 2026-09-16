@@ -20,12 +20,17 @@ export async function loadDomain(file: string): Promise<DomainModule> {
   return domain;
 }
 
-function sourceAliases(): Record<string, string> {
-  const weftai = fileURLToPath(new URL("../../core/src/index.ts", import.meta.url));
+/**
+ * Inside this repository, point `weftai` at the core source so domains run without a build.
+ * In a published install there is no source next to the CLI, so the package resolves normally.
+ */
+export function sourceAliases(from: string = import.meta.url): Record<string, string> {
+  const weftai = fileURLToPath(new URL("../../core/src/index.ts", from));
   return existsSync(weftai) ? { weftai } : {};
 }
 
-function unwrap(loaded: unknown): DomainModule {
+/** Accepts either a default export or named exports of `registry` and `createContext`. */
+export function unwrap(loaded: unknown): DomainModule {
   if (typeof loaded !== "object" || loaded === null) {
     throw new Error("Domain module did not export an object.");
   }

@@ -110,8 +110,9 @@ export function createRuntime<Ctx>(options: RuntimeOptions<Ctx>): Runtime<Ctx> {
               hooks,
             });
             if (result.status === "error" && failure === "abort" && !failAbort.signal.aborted) {
+              // An error result always carries its message.
               failAbort.abort(
-                new StepExecutionError(step.id, step.operation.name, result.error ?? "failed"),
+                new StepExecutionError(step.id, step.operation.name, result.error as string),
               );
             }
             return result;
@@ -122,11 +123,8 @@ export function createRuntime<Ctx>(options: RuntimeOptions<Ctx>): Runtime<Ctx> {
         planBound.dispose();
       }
 
-      const steps = validation.plan.steps.map(
-        (step) =>
-          results.get(step.id) ??
-          skippedResult(step, "Skipped because the plan ended before this step ran."),
-      );
+      // Every step either produced a result or was marked skipped when the plan was cancelled.
+      const steps = validation.plan.steps.map((step) => results.get(step.id) as StepResult);
       const ok = steps.every((step) => step.status === "ok");
       const durationMs = Date.now() - started;
       const text = formatter.format({
@@ -368,10 +366,8 @@ function skipIfBlocked<Ctx>(
   results: ReadonlyMap<string, StepResult>,
 ): StepResult | undefined {
   for (const id of step.dependencies) {
-    const dependency = results.get(id);
-    if (dependency === undefined) {
-      return skippedResult(step, `Skipped because step '${id}' did not run.`);
-    }
+    // Dependencies run in earlier levels, so every one has a result by now.
+    const dependency = results.get(id) as StepResult;
     if (dependency.status === "error") {
       return skippedResult(step, `Skipped because step '${id}' failed.`);
     }
