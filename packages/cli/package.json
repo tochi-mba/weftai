@@ -1,0 +1,41 @@
+{
+  "name": "@agentweft/cli",
+  "version": "0.0.0",
+  "description": "CLI for Agentweft: run, validate, describe, trace, mcp, init.",
+  "license": "MIT",
+  "author": "Tochi Mba",
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "bin": {
+    "agentweft": "./dist/cli.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc -b tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "clean": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\""
+  },
+  "dependencies": {
+    "@agentweft/mcp": "workspace:*",
+    "agentweft": "workspace:*",
+    "jiti": "^2.6.1"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

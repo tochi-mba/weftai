@@ -22,7 +22,28 @@ Running record of decisions and ideas. Each idea carries a status so nothing is 
 - **Hard caps error, soft caps notify.** The runtime never chops a result silently: a hard cap
   is an error asking the model to narrow the query; a soft cap inside an operation is a notice
   that the formatter must render.
+- **Structured `toJSON()` on every error** is part of the public contract. Adapters and the MCP
+  server can `JSON.stringify` an error without leaking a stack.
+- **`formatPath` concatenates segments.** A leading numeric index is `input[0]`, never `input.[0]`.
+- **Array summaries parenthesise top-level unions and intersections**, including `{A} & {B}`,
+  using brace depth so `{ a: string | number }[]` stays unparenthesised.
 - **No file over 1,000 lines.** Enforced by `tools/file-length.test.ts`.
+- **The diagram example is the proposal's diagram.** Six entities with UUID-style ids, the four
+  ownership edges and the cashflow edge, and the thirteen Appendix A scenarios as tests that
+  assert the exact model-facing text. That suite, not an invented fixture, is the acceptance bar.
+- **Fuzzy is not edit distance.** It tolerates casing, punctuation, whitespace and placeholder
+  brackets in either direction. Edit distance made `Sub 1 Ltd` match `Sub 3 Ltd`, which turned a
+  disambiguation scenario into a wrong answer.
+- **Handlers choose displayed fields with `showFields`.** The formatter never sniffs plan input;
+  `details` asks for `"all"` or the named fields, and `"all"` omits a field that repeats the label.
+- **Provenance headers everywhere.** A count or a group with sources renders as
+  `id (nodes): N matched`; only results with no entities behind them use the bare forms.
+- **Two adapters in v0.1.** Anthropic tools wrap a plan schema (`strict: true` by default; session
+  id shared across tool calls). MCP exposes `run_plan`, `describe_operations` and `get_result`.
+- **Domain file contract.** Default export `{ registry, createContext(fixturePath?) }`. The CLI
+  loads TypeScript through jiti and `pathToFileURL`.
+- **`ref()` metadata uses `Symbol.for`.** A WeakMap is the fast path, but a global symbol on the
+  schema means a second copy of `agentweft` (CLI + jiti, bundlers) can still see `$ref` fields.
 
 ## Ideas
 
@@ -43,6 +64,6 @@ Running record of decisions and ideas. Each idea carries a status so nothing is 
 | 13 | Streaming step results as they finish | evaluating | `runtime.stream(plan)` as an async iterator for UIs. |
 | 14 | Conditional steps (`when` guards) | rejected | Control flow that depends on inspecting a result belongs to the model; a batch finishes, returns, and accepts a continuation. |
 | 15 | Plan format version field | rejected for now | Adds noise to every call; revisit when the format changes incompatibly. |
-| 16 | Structured `toJSON()` on every error | planned | Adapters and the MCP server need a stable error shape. |
+| 16 | Structured `toJSON()` on every error | adopted | Adapters and the MCP server need a stable error shape. |
 | 17 | Benchmarks (`vitest bench`) for the walker and validator on large inputs | planned | Guards against accidental quadratic behaviour. |
 | 18 | Message catalogue for model-facing strings | evaluating | Would allow localisation and A/B testing of phrasing without touching logic. |

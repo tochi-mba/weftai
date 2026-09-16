@@ -25,6 +25,11 @@ export interface RunContext<I extends z.ZodType, Ctx> {
   readonly step: StepInfo;
   /** Report anything that shortened or shaped the result. Notices are always shown to the model. */
   notice(message: string): void;
+  /**
+   * Ask the formatter to show named fields next to each item's label, or every catalogued field
+   * with `"all"`. Absent values render as `not recorded`.
+   */
+  showFields(fields: readonly string[] | "all"): void;
 }
 
 export type RunResult<O extends ResultType> = OutputData<O> | StepOutput<OutputData<O>>;

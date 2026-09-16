@@ -65,9 +65,11 @@ function visit(
     case "tuple": {
       if (!Array.isArray(value)) return;
       const items = def.items as readonly z.ZodType[];
-      items.forEach((item, index) => {
-        if (index < value.length) visit(item, value[index], [...path, index], sites, depth + 1);
-      });
+      for (let index = 0; index < items.length; index++) {
+        if (index < value.length) {
+          visit(items[index] as z.ZodType, value[index], [...path, index], sites, depth + 1);
+        }
+      }
       return;
     }
     case "record": {
@@ -141,10 +143,9 @@ export function getAtPath(root: unknown, path: Path): unknown {
 }
 
 export function formatPath(path: Path): string {
-  return path.length === 0
-    ? "input"
-    : `input.${path
-        .map((p) => (typeof p === "number" ? `[${p}]` : p))
-        .join(".")
-        .replace(/\.\[/g, "[")}`;
+  let out = "input";
+  for (const segment of path) {
+    out += typeof segment === "number" ? `[${segment}]` : `.${segment}`;
+  }
+  return out;
 }

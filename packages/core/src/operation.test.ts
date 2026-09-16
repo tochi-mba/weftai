@@ -27,6 +27,20 @@ describe("defineOperation", () => {
     expect(find.examples).toHaveLength(1);
   });
 
+  it("honours write effects and a present override", () => {
+    const written = define({
+      name: "selection.select",
+      description: "Select nodes.",
+      input: z.object({}),
+      output: value(z.number()),
+      effects: "write",
+      present: "preview",
+      run: () => 0,
+    });
+    expect(written.effects).toBe("write");
+    expect(written.present).toBe("preview");
+  });
+
   it("types resolved references inside run", () => {
     const count = define({
       name: "nodes.count",

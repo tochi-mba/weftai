@@ -18,9 +18,11 @@ export type Resolved<T> =
     ? R
     : T extends readonly (infer U)[]
       ? readonly Resolved<U>[]
-      : T extends object
-        ? { [K in keyof T]: Resolved<T[K]> }
-        : T;
+      : T extends Date | RegExp | ((...args: never[]) => unknown)
+        ? T
+        : T extends object
+          ? { [K in keyof T]: Resolved<T[K]> }
+          : T;
 
 export interface RefMeta {
   readonly kind: "ref";
@@ -29,6 +31,7 @@ export interface RefMeta {
 }
 
 /** Private metadata, keyed by schema identity; nothing here leaks into JSON Schema output. */
+const REF_KEY = Symbol.for("agentweft.ref");
 const refSchemas = new WeakMap<z.ZodType, RefMeta>();
 
 export interface RefOptions {
@@ -59,16 +62,21 @@ export function ref(
     .string()
     .regex(REF_TOLERANT_PATTERN, { message: REF_SYNTAX_RULE })
     .describe(description);
-  refSchemas.set(schema, { kind: "ref", target });
+  const meta: RefMeta = { kind: "ref", target };
+  refSchemas.set(schema, meta);
+  // Symbol.for survives a second copy of this module (CLI + jiti, bundlers).
+  Object.defineProperty(schema, REF_KEY, { value: meta, enumerable: false });
   return schema as unknown as z.ZodType<Ref<unknown>>;
 }
 
 export function refMeta(schema: z.ZodType): RefMeta | undefined {
-  return refSchemas.get(schema);
+  return (
+    refSchemas.get(schema) ?? (schema as unknown as Record<symbol, RefMeta | undefined>)[REF_KEY]
+  );
 }
 
 export function isRefSchema(schema: z.ZodType): boolean {
-  return refSchemas.has(schema);
+  return refMeta(schema) !== undefined;
 }
 
 function isCollectionType(value: unknown): value is CollectionType<unknown, unknown> {

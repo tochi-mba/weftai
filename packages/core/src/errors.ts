@@ -38,6 +38,10 @@ export class AgentweftError extends Error {
     this.name = new.target.name;
     this.code = code;
   }
+
+  toJSON(): { readonly name: string; readonly code: string; readonly message: string } {
+    return { name: this.name, code: this.code, message: this.message };
+  }
 }
 
 /** Thrown by `defineOperation`, `collection` and friends when a definition is malformed. */
@@ -62,6 +66,15 @@ export class PlanValidationError extends AgentweftError {
     super("plan.invalid", formatIssues(issues));
     this.issues = issues;
   }
+
+  override toJSON(): {
+    readonly name: string;
+    readonly code: string;
+    readonly message: string;
+    readonly issues: readonly PlanIssue[];
+  } {
+    return { ...super.toJSON(), issues: this.issues };
+  }
 }
 
 /** A `$ref` could not be resolved at execution time (missing result, ordinal out of range). */
@@ -74,6 +87,16 @@ export class RefResolutionError extends AgentweftError {
     this.ref = ref;
     this.stepId = stepId;
   }
+
+  override toJSON(): {
+    readonly name: string;
+    readonly code: string;
+    readonly message: string;
+    readonly ref: string;
+    readonly stepId: string | undefined;
+  } {
+    return { ...super.toJSON(), ref: this.ref, stepId: this.stepId };
+  }
 }
 
 /** An operation handler threw, timed out or was aborted. */
@@ -85,6 +108,16 @@ export class StepExecutionError extends AgentweftError {
     super("step.failed", message, options);
     this.stepId = stepId;
     this.operation = operation;
+  }
+
+  override toJSON(): {
+    readonly name: string;
+    readonly code: string;
+    readonly message: string;
+    readonly stepId: string;
+    readonly operation: string;
+  } {
+    return { ...super.toJSON(), stepId: this.stepId, operation: this.operation };
   }
 }
 
@@ -99,6 +132,17 @@ export class LimitExceededError extends AgentweftError {
     this.limit = limit;
     this.actual = actual;
     this.max = max;
+  }
+
+  override toJSON(): {
+    readonly name: string;
+    readonly code: string;
+    readonly message: string;
+    readonly limit: string;
+    readonly actual: number;
+    readonly max: number;
+  } {
+    return { ...super.toJSON(), limit: this.limit, actual: this.actual, max: this.max };
   }
 }
 

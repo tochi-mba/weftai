@@ -8,6 +8,10 @@ export default defineConfig({
     // Tests run against source so packages need no build step first.
     alias: {
       agentweft: here("./packages/core/src/index.ts"),
+      "@agentweft/anthropic": here("./packages/anthropic/src/index.ts"),
+      "@agentweft/mcp": here("./packages/mcp/src/index.ts"),
+      "@agentweft/testing": here("./packages/testing/src/index.ts"),
+      "@agentweft/cli": here("./packages/cli/src/index.ts"),
     },
   },
   test: {

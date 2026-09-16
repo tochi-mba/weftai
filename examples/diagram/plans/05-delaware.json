@@ -1,0 +1,24 @@
+{
+  "steps": [
+    {
+      "id": "acme",
+      "op": "nodes.find",
+      "input": {
+        "filters": [{ "field": "label", "op": "fuzzy", "value": "Corporate 1" }]
+      }
+    },
+    {
+      "id": "owned",
+      "op": "nodes.descendants",
+      "input": { "from": "$acme", "depth": "all" }
+    },
+    {
+      "id": "delaware",
+      "op": "nodes.filter",
+      "input": {
+        "from": "$owned",
+        "filters": [{ "field": "Jurisdiction", "op": "eq", "value": "Delaware" }]
+      }
+    }
+  ]
+}

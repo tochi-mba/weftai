@@ -1,0 +1,16 @@
+{
+  "name": "chat-anthropic",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "jiti src/index.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@agentweft/anthropic": "workspace:*",
+    "@anthropic-ai/sdk": "^0.125.0",
+    "agentweft": "workspace:*",
+    "jiti": "^2.6.1"
+  }
+}

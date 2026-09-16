@@ -1,0 +1,37 @@
+{
+  "name": "@agentweft/mcp",
+  "version": "0.0.0",
+  "description": "Expose an Agentweft runtime as an MCP server.",
+  "license": "MIT",
+  "author": "Tochi Mba",
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc -b tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "clean": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\""
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.27.1",
+    "agentweft": "workspace:*"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

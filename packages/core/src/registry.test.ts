@@ -3,7 +3,7 @@ import { z } from "zod";
 import { defineOperation } from "./operation.js";
 import { createRegistry } from "./registry.js";
 import { ref } from "./schema/ref.js";
-import { collection, value, withSources } from "./schema/types.js";
+import { collection, groups, value, withSources } from "./schema/types.js";
 
 const Node = z.object({ id: z.string(), label: z.string() });
 const Nodes = collection("nodes", Node, { label: (n) => n.label });
@@ -74,6 +74,23 @@ describe("createRegistry", () => {
     );
     expect(text).toContain("$stepId[1,3]");
     expect(registry.describe({ intro: false, examples: false })).not.toContain("e.g.");
+  });
+
+  it("describes grouped counts and allows an empty registry", () => {
+    const grouped = defineOperation({
+      name: "nodes.countBy",
+      description: "Group nodes.",
+      input: z.object({ from: ref(Nodes) }),
+      output: groups(),
+      sources: Nodes,
+      run: () => [],
+    });
+    const withGroups = createRegistry({ operations: [grouped] });
+    expect(withGroups.describe({ intro: false })).toContain(
+      "grouped counts (references resolve to the nodes counted)",
+    );
+    expect(createRegistry({ operations: [] }).names()).toEqual([]);
+    expect(createRegistry({ operations: [] }).describe()).toContain("Operations:");
   });
 
   it("builds a union plan schema with one variant per operation", () => {

@@ -1,0 +1,11 @@
+{
+  "steps": [
+    {
+      "id": "acme",
+      "op": "nodes.find",
+      "input": {
+        "filters": [{ "field": "relationshipType", "op": "eq", "value": "Ownership" }]
+      }
+    }
+  ]
+}

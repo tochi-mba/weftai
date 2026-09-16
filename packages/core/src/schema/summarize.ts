@@ -93,8 +93,18 @@ function isOptionalLike(schema: z.ZodType): boolean {
   return type === "optional" || type === "default" || type === "prefault";
 }
 
-/** Parenthesise a top-level union or intersection before appending `[]`; braces already group. */
+/** Parenthesise a top-level union or intersection before appending `[]`. */
 function wrap(text: string): string {
-  if (text.startsWith("{") || text.startsWith("[") || text.startsWith("(")) return text;
-  return text.includes(" | ") || text.includes(" & ") ? `(${text})` : text;
+  return hasTopLevelOperator(text) ? `(${text})` : text;
+}
+
+function hasTopLevelOperator(text: string): boolean {
+  let depth = 0;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (ch === "{" || ch === "[" || ch === "(" || ch === "<") depth += 1;
+    else if (ch === "}" || ch === "]" || ch === ")" || ch === ">") depth -= 1;
+    else if (depth === 0 && (text.startsWith(" | ", i) || text.startsWith(" & ", i))) return true;
+  }
+  return false;
 }
