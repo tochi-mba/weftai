@@ -1,6 +1,29 @@
 export { z } from "zod";
 
 export {
+  type Answer,
+  type AnswerKind,
+  Answers,
+  type AnyQuestion,
+  Batch,
+  Calibration,
+  type ChoiceQuestion,
+  choice,
+  type Decider,
+  Decomposition,
+  Gate,
+  MAX_LEVELS,
+  MAX_OPTIONS,
+  MAX_PROMPT,
+  MIN_LEVELS,
+  type NoulQuestion,
+  NullDecider,
+  noul,
+  QUESTION_ID,
+  type ScoreQuestion,
+  score,
+} from "./decisions/index.js";
+export {
   DefinitionError,
   formatIssue,
   formatIssues,
@@ -127,4 +150,4 @@ export {
 export { buildTrace, type Trace, type TraceInputRef, type TraceStep } from "./trace.js";
 
 /** Package version, kept in sync with package.json by the release step. */
-export const VERSION = "0.2.5";
+export const VERSION = "0.3.0";
