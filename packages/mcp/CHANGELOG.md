@@ -1,5 +1,15 @@
 # @weftai/mcp
 
+## 0.2.5
+
+### Patch Changes
+
+- Re-synced with the Python `weftai` package. The two are one library with two
+  implementations, and they had drifted to npm 0.2.1 against PyPI 0.2.4 with nothing
+  comparing them. `tools/surface.json` now records the version both must carry, and a test
+  on each side asserts its own packaging against it, so the lines cannot separate unnoticed
+  again.
+
 ## 0.2.1
 
 ### Patch Changes

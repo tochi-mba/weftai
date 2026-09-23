@@ -1,6 +1,6 @@
 {
   "name": "@weftai/providers",
-  "version": "0.2.1",
+  "version": "0.2.5",
   "description": "Wire-format adapters that expose a Weftai runtime as tools on model APIs.",
   "license": "MIT",
   "author": "Rex Technologies",
