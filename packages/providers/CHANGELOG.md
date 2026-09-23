@@ -1,5 +1,12 @@
 # @weftai/providers
 
+## 0.3.0
+
+### Minor Changes
+
+- Re-synced with the Python `weftai` package, which moves to 0.3.0 in the same release.
+  `tools/surface.json` records the version both must carry and a test on each side asserts it.
+
 ## 0.2.5
 
 ### Patch Changes
