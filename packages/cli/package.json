@@ -1,6 +1,6 @@
 {
   "name": "@weftai/cli",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "CLI for Weftai: run, validate, describe, trace, mcp, init.",
   "license": "MIT",
   "author": "Rex Technologies",

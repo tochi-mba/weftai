@@ -23,3 +23,7 @@ Subpath exports: `openai`, `anthropic`, `anthropic/tool-runner`, `google`, `bedr
 `@anthropic-ai/sdk` is an optional peer, required only for `anthropic/tool-runner`.
 
 See `docs/adapters.md` and `docs/providers.md` in the Weftai repository.
+
+## Laya decisions
+
+The Laya adapter implements the shared Decider interface for a long-running HTTP service. Python: `from weftai.providers.laya import LayaDecider`; npm: `import { LayaDecider } from "@weftai/providers/laya"`. Supply an operator-owned endpoint, and an `httpx.AsyncClient` in Python. Failures abstain; permissions remain the host's responsibility.

@@ -1,6 +1,6 @@
 {
   "name": "@weftai/mcp",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Expose a Weftai runtime as an MCP server.",
   "license": "MIT",
   "author": "Rex Technologies",

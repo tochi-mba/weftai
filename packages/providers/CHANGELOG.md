@@ -1,5 +1,15 @@
 # @weftai/providers
 
+## 0.4.0
+
+### Minor Changes
+
+- Add the Laya HTTP Decider, matching the Python provider: typed questions, explicit abstention, selected-value probabilities, bounded concurrency and fail-open transport handling.
+
+### Patch Changes
+
+- weftai@0.4.0
+
 ## 0.3.0
 
 ### Minor Changes

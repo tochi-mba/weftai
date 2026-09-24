@@ -1,5 +1,12 @@
 # @weftai/cli
 
+## 0.4.0
+
+### Patch Changes
+
+- weftai@0.4.0
+  - @weftai/mcp@0.4.0
+
 ## 0.3.0
 
 ### Minor Changes

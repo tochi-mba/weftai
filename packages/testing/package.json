@@ -1,6 +1,6 @@
 {
   "name": "@weftai/testing",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Test helpers for Weftai domains: runtimes, plan sugar, matchers and fixtures.",
   "license": "MIT",
   "author": "Rex Technologies",
