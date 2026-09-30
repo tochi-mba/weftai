@@ -155,6 +155,31 @@ describe("validatePlan: accepted plans", () => {
     expect(plan.steps[1]?.refs).toHaveLength(2);
   });
 
+  it("gives a write a level of its own, after every step written before it", () => {
+    const plan = stepsOf({
+      steps: [
+        { id: "a", op: "nodes.find" },
+        { id: "b", op: "nodes.find" },
+        { id: "w1", op: "selection.select", input: { refs: ["$a"] } },
+        { id: "c", op: "nodes.find" },
+        { id: "d", op: "nodes.descendants", input: { from: "$a" } },
+        { id: "w2", op: "selection.select", input: { refs: [] } },
+        { id: "w3", op: "selection.select", input: { refs: [] } },
+        { id: "e", op: "nodes.find" },
+      ],
+    });
+    expect(plan.levels.map((level) => level.map((s) => s.id))).toEqual([
+      ["a", "b"],
+      ["w1"],
+      ["c", "d"],
+      ["w2"],
+      ["w3"],
+      ["e"],
+    ]);
+    // Ordering is not a reference: a failed write skips nothing that did not reference it.
+    expect(plan.steps.find((s) => s.id === "w2")?.dependencies).toEqual([]);
+  });
+
   it("allows write operations by default", () => {
     expect(issuesOf({ steps: [{ id: "a", op: "selection.select", input: { refs: [] } }] })).toEqual(
       [],
