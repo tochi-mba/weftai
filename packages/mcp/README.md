@@ -1,20 +1,41 @@
 # @weftai/mcp
 
-Expose a Weftai runtime as an MCP server.
+Serve a [weftai](https://www.npmjs.com/package/weftai) runtime over the Model Context Protocol,
+so any MCP client can plan against your operations.
+
+```sh
+npm install weftai @weftai/mcp
+```
 
 ```ts
 import { createMcpServer } from "@weftai/mcp";
 
-const mcp = createMcpServer(runtime, { name: "supply-chain", ctx });
+const mcp = createMcpServer(runtime, { name: "tickets", ctx });
 await mcp.connectStdio();
 ```
 
-| Tool | Does |
-|------|------|
-| `run_plan` | Execute a plan; returns the model-facing text; stores results in the session. |
-| `describe_operations` | The model-facing description of every operation and the `$ref` syntax. |
-| `get_result` | Read a stored result by `$ref` (`$owned`, `$owned[2]`). |
+The server offers three tools:
 
-Options: `include` scopes operations, `allowWrites` gates `write` operations, `session` fixes the
-session id, `ctx` may be a value or a factory. Use `mcp.server.connect(transport)` for any other
-transport. The CLI wraps this as `weftai mcp --domain ./domain.ts`.
+| Tool | Does |
+| --- | --- |
+| `run_plan` | Executes a plan, returns the model-facing text, and keeps the results in the session |
+| `describe_operations` | Describes every operation the model may use, and the `$ref` syntax |
+| `get_result` | Reads a stored result by reference: `$open`, or `$open[2]` for one item |
+
+## Options
+
+| Option | Meaning |
+| --- | --- |
+| `name` | The server name a client sees |
+| `ctx` | The context handlers receive: a value, or a function that returns one (sync or async) |
+| `include` | Which operations to offer, as a predicate over each operation |
+| `allowWrites` | `false` refuses operations with `write` effects; they may run otherwise |
+| `session` | The session results are stored under, `{ id }`; `default` when omitted |
+
+`connectStdio()` serves over standard input and output. For any other transport, pass it to
+`mcp.server.connect(transport)`. The [CLI](https://www.npmjs.com/package/@weftai/cli) wraps this
+as `weftai mcp --domain ./domain.ts`.
+
+## License
+
+MIT
