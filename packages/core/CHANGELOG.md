@@ -1,5 +1,12 @@
 # weftai
 
+## 0.5.2
+
+### Patch Changes
+
+- 4eaab21: `Gate` and `Decomposition` now read a noul as the probability of yes. An answer's probability is the probability of the value it gives. So a noul answered no with 0.95 used to clear a 0.8 gate, and it added 0.95 to a weighted score as if it were a confident yes. A confident no now fails open at a gate and pulls a score down. The docs that described a noul's probability as the probability of yes now say what an answer actually carries.
+- 09413c4: A write step now runs on its own, in the order the plan wrote it. It starts after every step written before it has finished, and no step written after it starts until it is done. Two writes with no reference between them used to run at the same moment. Reads with no write between them still run together, and a failed write still skips only the steps that reference it.
+
 ## 0.5.1
 
 ### Patch Changes

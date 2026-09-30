@@ -1,5 +1,13 @@
 # @weftai/testing
 
+## 0.5.2
+
+### Patch Changes
+
+- Updated dependencies [4eaab21]
+- Updated dependencies [09413c4]
+  - weftai@0.5.2
+
 ## 0.5.1
 
 ### Patch Changes
