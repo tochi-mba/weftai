@@ -11,6 +11,7 @@ const DOC_NAMES = [
   "adapters.md",
   "providers.md",
   "cli.md",
+  "decisions.md",
 ] as const;
 
 function readDoc(name: string): string {
