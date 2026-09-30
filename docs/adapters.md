@@ -41,8 +41,9 @@ openaiTools(runtime, { ...PRESETS.ark, model: "ep-xxxxxxxx", ctx, tools: [...] }
 ```
 
 `api` defaults to `"chat.completions"`. GPT-6 Astra requires Responses. From GPT-5.4, Chat
-Completions rejects tools unless `reasoning_effort` is `none`. Deprecated `functions` / `function_call` still maps for old Azure
-and compat servers. Assistants and Realtime share the same `handle`.
+Completions rejects tools unless `reasoning_effort` is `none`. Deprecated `functions` /
+`function_call` still maps for old Azure and compat servers. Assistants and Realtime share the
+same `handle`.
 
 ## Anthropic (`@weftai/providers/anthropic`)
 

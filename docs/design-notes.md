@@ -32,7 +32,8 @@ Running record of decisions and ideas. Each idea carries a status so nothing is 
 - **No file over 1,000 lines.** Enforced by `tools/file-length.test.ts`.
 - **The supply-chain example is the acceptance suite.** Six parts with UUID-style ids, four
   Contains links and one Requires link, and thirteen scenarios as tests that assert the exact
-  model-facing text, plus a test that no scenario prints an internal identifier. That suite, not an invented fixture, is the acceptance bar.
+  model-facing text, plus a test that no scenario prints an internal identifier. That suite, not
+  an invented fixture, is the acceptance bar.
 - **Fuzzy is not edit distance.** It tolerates casing, punctuation, whitespace and placeholder
   brackets in either direction. Edit distance made near-identical labels match each other, which
   turned a disambiguation scenario into a wrong answer.

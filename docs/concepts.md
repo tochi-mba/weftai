@@ -94,8 +94,8 @@ formatter always renders. The stored result is never silently chopped.
 Results live under a session id (default `"default"`). Reusing a step id replaces the previous
 result and says so. The in-memory store expires entries after 30 minutes and keeps at most 200
 per session, evicting the oldest with a notice. Change either with
-`createMemoryStore({ ttlMs, maxResults })` and pass the store to `createRuntime({ registry, store })`;
-any object implementing `ResultStore` can replace it.
+`createMemoryStore({ ttlMs, maxResults })` and pass the store to
+`createRuntime({ registry, store })`; any object implementing `ResultStore` can replace it.
 
 ## Structural counts
 

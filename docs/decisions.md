@@ -135,8 +135,9 @@ must be greater than 0). Kinds without a temperature, and a `new Calibration()`,
 probabilities unchanged. Fit temperatures on your own labelled examples; they do not transfer
 between deciders or domains.
 
-`calibration.probability(answer)` returns one calibrated probability and `calibration.applied(answers)`
-a calibrated copy of `Answers`. Give a `Gate` or `Decomposition.score` a calibration to use it there.
+`calibration.probability(answer)` returns one calibrated probability and
+`calibration.applied(answers)` a calibrated copy of `Answers`. Give a `Gate` or
+`Decomposition.score` a calibration to use it there.
 
 ## Decomposition
 
