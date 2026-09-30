@@ -32,13 +32,26 @@ taiwan (parts): 2 matched
 A later tool call can still say `{ "refs": ["$components"] }` or `$matches[2]`: results stay in a
 session-scoped store, and positions always index the full set, not the preview.
 
+## Install
+
+```
+npm install weftai
+```
+
+The five packages are published on npm as [`weftai`](https://www.npmjs.com/package/weftai) and
+`@weftai/*`, released together under one version. The same library, with the same plan format,
+is on PyPI for Python 3.12+ as [`weftai`](https://pypi.org/project/weftai/). Release tags and
+each package's changelog are in this repository.
+
 ## What you define, and what you get
 
 You define each operation once: a name, a description for the model, a Zod input schema, an
-output type and a handler.
+output type and a handler. The code below is a simplified form of
+[`examples/supply-chain`](examples/supply-chain), where `Part`, `SupplyChainContext`,
+`findParts` and `walkComponents` are defined.
 
 ```ts
-import { collection, defineOperationFor, ref, standardOperations, z } from "weftai";
+import { collection, createRegistry, createRuntime, defineOperationFor, ref, standardOperations, z } from "weftai";
 
 const Parts = collection("parts", Part, {
   label: (p) => p.label,
@@ -56,7 +69,7 @@ export const components = define({
   description: "Everything the given parts are built from, walking the bill of materials down.",
   input: z.object({ from: ref(Parts), depth: z.union([z.int().min(1), z.literal("all")]).default("all") }),
   output: Parts,
-  run: ({ input, ctx }) => walkDown(ctx.catalog, input.from.items, input.depth),
+  run: ({ input, ctx }) => walkComponents(ctx.catalog, input.from.items, input.depth, "Contains"),
 });
 
 const registry = createRegistry({ operations: [findParts, components, ...standardOperations(Parts)] });
@@ -137,8 +150,3 @@ merging it publishes the changed packages to npm and tags the release. The workf
 
 Tests must keep 100% statement, branch, function and line coverage; `pnpm test:coverage`
 enforces it locally and in CI.
-
-## Status
-
-Version 0.2.0 is published on npm as `weftai` and `@weftai/*`. Source and the release tags live
-at https://github.com/tochi-mba/weftai.

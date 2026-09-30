@@ -1,8 +1,15 @@
 # @weftai/cli
 
-Run a Weftai domain against saved plans with no model in the loop.
+Run [weftai](https://www.npmjs.com/package/weftai) operations against saved plans, with no model
+in the loop: execute a plan, validate one, describe what a model would see, read a trace, or
+serve the operations over MCP.
 
+```sh
+npm install --save-dev @weftai/cli
+npx weftai init my-domain
 ```
+
+```text
 weftai run <plan.json> --domain <file> [--fixture <file>] [--trace out.json] [--format text|json]
 weftai validate <plan.json> --domain <file>
 weftai describe --domain <file> [--json]
@@ -11,14 +18,20 @@ weftai mcp --domain <file> [--fixture <file>] [--name <name>]
 weftai init [dir]
 ```
 
-A domain file default-exports `{ registry, createContext(fixturePath?) }`. TypeScript domain
-files load through jiti.
+| Command | Does |
+| --- | --- |
+| `run` | Executes a plan and prints the model-facing text, or JSON with `--format json`, optionally writing a trace. Exits 1 when any step failed. |
+| `validate` | Reports a plan's issues without running any handler |
+| `describe` | Prints the operation list a model sees, or the plan's JSON schema with `--json` |
+| `trace` | Prints each step's status, counts, timing and notices from a trace file |
+| `mcp` | Serves the domain over MCP on standard input and output, ready for `claude mcp add` |
+| `init` | Scaffolds a domain: one collection, one operation, the standard operations, a fixture and a test |
 
-- `run` executes a plan and prints the model-facing text (or `--format json`), optionally writing
-  a trace. Exit code 1 when any step failed.
-- `validate` reports plan issues without running handlers.
-- `describe` prints the model-facing operation list, or the union plan schema with `--json`.
-- `trace` prints a table of steps, status, counts, timings and notices from a trace file.
-- `mcp` serves the domain over MCP stdio, ready for `claude mcp add`.
-- `init` scaffolds a domain package with one collection, one operation, the standard operations,
-  a fixture and a test.
+A domain file default-exports `{ registry, createContext(fixturePath?) }`. TypeScript domain
+files load directly, without a build step.
+
+See the [CLI guide](https://github.com/tochi-mba/weftai/blob/main/docs/cli.md).
+
+## License
+
+MIT

@@ -1,29 +1,73 @@
 # @weftai/providers
 
-Wire-format adapters for a Weftai runtime. Weftai does not call models; these packages map one
-bound plan tool into the documented tool surface of each family.
+Present a [weftai](https://www.npmjs.com/package/weftai) runtime as a tool on a model host.
+weftai never calls a model itself: each adapter turns one bound plan tool into the tool
+definition a host documents, and turns the host's tool calls back into plans. Your application
+keeps its own SDK or HTTP client.
+
+```sh
+npm install weftai @weftai/providers
+```
 
 ```ts
 import { openaiTools, PRESETS } from "@weftai/providers/openai";
-import { anthropicTools } from "@weftai/providers/anthropic";
-import { ollamaTools } from "@weftai/providers/ollama";
-import { googleTools } from "@weftai/providers/google";
 
 const tools = openaiTools(runtime, {
   ...PRESETS.qwenIntl,
   model: "qwen-plus",
   ctx,
-  tools: [{ name: "query_supply_chain", include: (op) => op.effects === "read" }],
+  tools: [{ name: "query_tickets", include: (op) => op.effects === "read" }],
 });
 ```
 
-Subpath exports: `openai`, `anthropic`, `anthropic/tool-runner`, `google`, `bedrock`, `ollama`,
-`cohere`, `dashscope`, `hunyuan`, `spark`, `ai-sdk`.
+## Families
 
-`@anthropic-ai/sdk` is an optional peer, required only for `anthropic/tool-runner`.
+Each family is its own subpath, so an application loads only the ones it uses.
 
-See `docs/adapters.md` and `docs/providers.md` in the Weftai repository.
+| Import | Host |
+| --- | --- |
+| `@weftai/providers/openai` | OpenAI Chat Completions and Responses, Azure OpenAI, and OpenAI-compatible hosts through `PRESETS` |
+| `@weftai/providers/anthropic` | Anthropic Messages tools |
+| `@weftai/providers/anthropic/tool-runner` | The Anthropic SDK's tool runner (needs the optional peer `@anthropic-ai/sdk`) |
+| `@weftai/providers/google` | Gemini `generateContent` and Interactions |
+| `@weftai/providers/bedrock` | Amazon Bedrock Converse |
+| `@weftai/providers/ollama` | Ollama's native `/api/chat` |
+| `@weftai/providers/cohere` | Cohere Chat v2 |
+| `@weftai/providers/dashscope` | Alibaba DashScope Generation and MultiModalConversation |
+| `@weftai/providers/hunyuan` | Tencent Cloud Hunyuan |
+| `@weftai/providers/spark` | iFlytek Spark (WebSocket) |
+| `@weftai/providers/ai-sdk` | The Vercel AI SDK's `tool()` shape |
+| `@weftai/providers/laya` | A decision service over HTTP, for weftai's decisions interface (below) |
 
-## Laya decisions
+`PRESETS` holds the base URL and settings of hosted, local and regional OpenAI-compatible
+hosts, so a preset plus a model name is a complete configuration.
 
-The Laya adapter implements the shared Decider interface for a long-running HTTP service. Python: `from weftai.providers.laya import LayaDecider`; npm: `import { LayaDecider } from "@weftai/providers/laya"`. Supply an operator-owned endpoint, and an `httpx.AsyncClient` in Python. Failures abstain; permissions remain the host's responsibility.
+## Decisions over HTTP
+
+weftai's decisions interface asks a `Decider` short, typed questions (a choice, a score, a yes or
+no) and gets back answers with probabilities. `LayaDecider` is one implementation, for a
+decision service reached over HTTP. You supply its endpoint and key. Failures and timeouts
+abstain rather than guess, and what a host does with an answer, including any permission, stays
+the host's decision.
+
+```ts
+import { choice } from "weftai";
+import { LayaDecider } from "@weftai/providers/laya";
+
+const decider = new LayaDecider({ baseUrl: "http://127.0.0.1:8010" });
+const answers = await decider.decide("Find some jazz", [
+  choice("capability", "Which capability is relevant?", ["music", "research"]),
+]);
+```
+
+## Documentation
+
+- [Adapters](https://github.com/tochi-mba/weftai/blob/main/docs/adapters.md): binding one tool
+  into every family, and MCP
+- [Providers](https://github.com/tochi-mba/weftai/blob/main/docs/providers.md): families,
+  presets and catalog rows
+- [weftai](https://www.npmjs.com/package/weftai): the runtime these adapters present
+
+## License
+
+MIT
