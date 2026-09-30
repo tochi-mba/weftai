@@ -32,7 +32,7 @@ Running record of decisions and ideas. Each idea carries a status so nothing is 
 - **No file over 1,000 lines.** Enforced by `tools/file-length.test.ts`.
 - **The supply-chain example is the acceptance suite.** Six parts with UUID-style ids, four
   Contains links and one Requires link, and thirteen scenarios as tests that assert the exact
-  model-facing text. That suite, not an invented fixture, is the acceptance bar.
+  model-facing text, plus a test that no scenario prints an internal identifier. That suite, not an invented fixture, is the acceptance bar.
 - **Fuzzy is not edit distance.** It tolerates casing, punctuation, whitespace and placeholder
   brackets in either direction. Edit distance made near-identical labels match each other, which
   turned a disambiguation scenario into a wrong answer.
@@ -44,10 +44,17 @@ Running record of decisions and ideas. Each idea carries a status so nothing is 
   description and schema, and any registered operation stayed callable.
 - **Provenance headers everywhere.** A count or a group with sources renders as
   `id (parts): N matched`; only results with no entities behind them use the bare forms.
-- **Two adapters in v0.1.** Anthropic tools wrap a plan schema (`strict: true` by default; session
-  id shared across tool calls). MCP exposes `run_plan`, `describe_operations` and `get_result`.
+- **Anthropic and MCP were the first adapters (0.1).** Anthropic tools wrap a plan schema
+  (`strict: true` by default; session id shared across tool calls). MCP exposes `run_plan`,
+  `describe_operations` and `get_result`. The other families in `@weftai/providers` follow the
+  same shape: one bound tool, rendered in each host's wire format.
 - **Domain file contract.** Default export `{ registry, createContext(fixturePath?) }`. The CLI
   loads TypeScript through jiti and `pathToFileURL`.
+- **Decisions fail open.** A `Decider` must not throw; when it cannot answer it returns empty
+  `Answers`, every accessor takes a fallback, and a `Gate` returns its `failOpen` verdict, so an
+  unavailable decider means the application behaves as it did before. `tighten` moves a verdict
+  only towards the strict end. Questions are checked at definition time: one question per prompt,
+  snake_case ids, and an abstain option on every choice unless refused.
 - **`ref()` metadata uses `Symbol.for`.** A WeakMap is the fast path, but a global symbol on the
   schema means a second copy of `weftai` (CLI + jiti, bundlers) can still see `$ref` fields.
 
@@ -57,12 +64,12 @@ Running record of decisions and ideas. Each idea carries a status so nothing is 
 |---|------|--------|-------|
 | 1 | Property-based tests (fast-check) for parser round trips, path helpers and validator robustness | adopted | The validator must never throw on arbitrary JSON; parsers must round-trip. |
 | 2 | `explain` mode: return the dependency levels and per-step summaries without executing | planned | Cheap dry run for the CLI, debugging and a model self-check. |
-| 3 | Prompt-injection hardening in the formatter | planned | Labels and properties come from user data and land in model-facing text. Strip newlines and control characters from labels, cap their length, and indent data lines so a label cannot forge a step header like `components (parts): 0 matched`. |
+| 3 | Prompt-injection hardening in the formatter | adopted | Labels and properties come from user data and land in model-facing text. Control characters and newlines become spaces, whitespace collapses, values are capped at 120 characters, and every data line is indented, so a label cannot forge a step header like `components (parts): 0 matched`. |
 | 4 | Confirmation hook before `write` steps | planned | `beforeStep` can already veto; add a first-class `confirmWrites` option so human-in-the-loop is one flag. |
 | 5 | Deterministic ordering contract | planned | Operations declare `ordering: "stable" | "unspecified"`; for unspecified results the runtime sorts by label then key so ordinals cannot drift between calls. |
-| 6 | Token estimator plug-in | planned | Default chars/4; allow a real tokenizer. Budgets stay in tokens. |
+| 6 | Token estimator plug-in | adopted | `createFormatter({ estimateTokens })` takes any tokenizer; the default is chars/4. Budgets stay in tokens. |
 | 7 | Tracing hooks shaped like OpenTelemetry spans | planned | No dependency; expose `onSpan(start, end, attributes)` so any exporter can attach. |
-| 8 | Result-store adapters (Redis, encrypted) | evaluating | Interface first; in-memory store ships in v0.1. |
+| 8 | Result-store adapters (Redis, encrypted) | evaluating | The `ResultStore` interface and the in-memory store ship; no other store does yet. |
 | 9 | Step result caching within a session | evaluating | Re-running an identical read step against an unchanged context could reuse the earlier result. Needs a `contextVersion(ctx)` hook to be safe. |
 | 10 | `weftai doctor`: lint a registry for DX problems | planned | Missing examples, descriptions under N words, operations whose names differ by one character, fields without descriptions. |
 | 11 | Evaluation harness measuring round trips per scenario | planned | Turns hand-counted "structural counts" into an automated metric. |
