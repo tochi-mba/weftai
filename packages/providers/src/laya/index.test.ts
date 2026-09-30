@@ -2,8 +2,9 @@ import { describe, expect, it, vi } from "vitest";
 import { choice, noul, score } from "weftai";
 import { decodeAnswers, encodeQuestions, LayaDecider } from "./index.js";
 
+const relevant = noul("yes", "Is this relevant?", { criteria: "Judge relevance." });
 const questions = [
-  noul("yes", "Is this relevant?", { criteria: "Judge relevance." }),
+  relevant,
   choice("pick", "Which subject?", ["music", "work"]),
   score("level", "How useful?", ["low", "high"]),
 ];
@@ -127,11 +128,11 @@ describe("Laya decisions", () => {
       (
         await decider.decide(
           "",
-          Array.from({ length: 33 }, () => questions[0]!),
+          Array.from({ length: 33 }, () => relevant),
         )
       ).empty,
     ).toBe(true);
-    expect((await decider.decide("", [questions[0]!, questions[0]!])).empty).toBe(true);
+    expect((await decider.decide("", [relevant, relevant])).empty).toBe(true);
     expect(calls).toBe(1);
   });
 
