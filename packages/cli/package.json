@@ -2,6 +2,22 @@
   "name": "@weftai/cli",
   "version": "0.5.0",
   "description": "CLI for Weftai: run, validate, describe, trace, mcp, init.",
+  "keywords": [
+    "cli",
+    "ai",
+    "llm",
+    "mcp",
+    "weftai"
+  ],
+  "homepage": "https://github.com/tochi-mba/weftai/tree/main/packages/cli#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tochi-mba/weftai.git",
+    "directory": "packages/cli"
+  },
+  "bugs": {
+    "url": "https://github.com/tochi-mba/weftai/issues"
+  },
   "license": "MIT",
   "author": "Rex Technologies",
   "type": "module",
@@ -22,7 +38,8 @@
   },
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "sideEffects": false,
   "scripts": {

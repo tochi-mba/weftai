@@ -2,6 +2,23 @@
   "name": "@weftai/mcp",
   "version": "0.5.0",
   "description": "Expose a Weftai runtime as an MCP server.",
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "ai",
+    "llm",
+    "tools",
+    "weftai"
+  ],
+  "homepage": "https://github.com/tochi-mba/weftai/tree/main/packages/mcp#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tochi-mba/weftai.git",
+    "directory": "packages/mcp"
+  },
+  "bugs": {
+    "url": "https://github.com/tochi-mba/weftai/issues"
+  },
   "license": "MIT",
   "author": "Rex Technologies",
   "type": "module",
@@ -19,7 +36,8 @@
   },
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "sideEffects": false,
   "scripts": {

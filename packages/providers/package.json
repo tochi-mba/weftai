@@ -2,6 +2,28 @@
   "name": "@weftai/providers",
   "version": "0.5.0",
   "description": "Wire-format adapters that expose a Weftai runtime as tools on model APIs.",
+  "keywords": [
+    "ai",
+    "llm",
+    "tool-calling",
+    "function-calling",
+    "openai",
+    "anthropic",
+    "gemini",
+    "bedrock",
+    "ollama",
+    "cohere",
+    "weftai"
+  ],
+  "homepage": "https://github.com/tochi-mba/weftai/tree/main/packages/providers#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tochi-mba/weftai.git",
+    "directory": "packages/providers"
+  },
+  "bugs": {
+    "url": "https://github.com/tochi-mba/weftai/issues"
+  },
   "license": "MIT",
   "author": "Rex Technologies",
   "type": "module",
@@ -61,7 +83,8 @@
   },
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "sideEffects": false,
   "scripts": {

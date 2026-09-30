@@ -2,6 +2,22 @@
   "name": "@weftai/testing",
   "version": "0.5.0",
   "description": "Test helpers for Weftai domains: runtimes, plan sugar, matchers and fixtures.",
+  "keywords": [
+    "testing",
+    "vitest",
+    "ai",
+    "llm",
+    "weftai"
+  ],
+  "homepage": "https://github.com/tochi-mba/weftai/tree/main/packages/testing#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tochi-mba/weftai.git",
+    "directory": "packages/testing"
+  },
+  "bugs": {
+    "url": "https://github.com/tochi-mba/weftai/issues"
+  },
   "license": "MIT",
   "author": "Rex Technologies",
   "type": "module",
@@ -23,7 +39,8 @@
   },
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "sideEffects": false,
   "scripts": {

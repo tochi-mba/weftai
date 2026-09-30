@@ -2,6 +2,26 @@
   "name": "weftai",
   "version": "0.5.0",
   "description": "Composable AI workflows: declarative multi-step plans a model emits and your application validates and executes.",
+  "keywords": [
+    "ai",
+    "llm",
+    "agents",
+    "tool-calling",
+    "function-calling",
+    "workflow",
+    "declarative",
+    "plans",
+    "mcp"
+  ],
+  "homepage": "https://github.com/tochi-mba/weftai/tree/main/packages/core#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tochi-mba/weftai.git",
+    "directory": "packages/core"
+  },
+  "bugs": {
+    "url": "https://github.com/tochi-mba/weftai/issues"
+  },
   "license": "MIT",
   "author": "Rex Technologies",
   "type": "module",
@@ -23,7 +43,8 @@
   },
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "sideEffects": false,
   "scripts": {
@@ -36,15 +57,5 @@
   },
   "publishConfig": {
     "access": "public"
-  },
-  "keywords": [
-    "ai",
-    "agents",
-    "llm",
-    "tools",
-    "workflow",
-    "declarative",
-    "claude",
-    "mcp"
-  ]
+  }
 }
