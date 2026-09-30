@@ -47,7 +47,10 @@ export interface ValidatedStep<Ctx> {
 
 export interface ValidatedPlan<Ctx> {
   readonly steps: readonly ValidatedStep<Ctx>[];
-  /** Steps grouped so that every step depends only on steps in earlier groups. */
+  /**
+   * Steps grouped so that every step depends only on steps in earlier groups, and a write is alone
+   * in its group, after every step written before it and before every step written after it.
+   */
   readonly levels: readonly (readonly ValidatedStep<Ctx>[])[];
 }
 
@@ -311,14 +314,28 @@ function describeResult(operation: AnyOperation<never>): string {
   }
 }
 
+/**
+ * Group steps into levels that run one after another; the steps inside a level run together.
+ *
+ * A step waits for the steps it references. A write also runs on its own, in the order it was
+ * written: it waits for every step written before it, and every step written after it waits for
+ * it. Without that, two writes with no reference between them would run at the same moment, and a
+ * read written after a write could see the world from before it.
+ */
 function computeLevels<Ctx>(steps: readonly ValidatedStep<Ctx>[]): ValidatedStep<Ctx>[][] {
   const level = new Map<string, number>();
   const levels: ValidatedStep<Ctx>[][] = [];
+  // The first level a step written from here on may use: one past the last write, if any.
+  let floor = 0;
   for (const step of steps) {
-    let depth = 0;
+    let depth = floor;
     for (const dependency of step.dependencies) {
       // Dependencies always precede their dependents (forward references are rejected).
       depth = Math.max(depth, (level.get(dependency) as number) + 1);
+    }
+    if (step.operation.effects === "write") {
+      depth = Math.max(depth, levels.length);
+      floor = depth + 1;
     }
     level.set(step.id, depth);
     const bucket = levels[depth];

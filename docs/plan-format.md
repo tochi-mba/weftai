@@ -62,9 +62,14 @@ in this plan are not.
 
 ## Execution
 
-Independent steps (no `$ref` between them) run in parallel, bounded by `limits.maxParallel`
-(default 4). A failed step skips its dependents with `Skipped because step 'x' failed.` Other
-branches still finish unless the runtime is created with `failure: "abort"`.
+Independent reads (no `$ref` between them) run in parallel, bounded by `limits.maxParallel`
+(default 4). A step whose operation has `effects: "write"` runs on its own, in the order the plan
+wrote it: after every step written before it, and before any step written after it starts. Two
+writes therefore never overlap, and a read written after a write sees what the write did. That
+ordering is not a reference, so a failed write does not skip the steps after it.
+
+A failed step skips its dependents with `Skipped because step 'x' failed.` Other branches still
+finish unless the runtime is created with `failure: "abort"`.
 
 Each step has a timeout (`limits.stepTimeoutMs`, default 10 seconds) and the whole plan has one
 (`limits.planTimeoutMs`, default 60 seconds). `limits.maxSteps` defaults to 20. The defaults are

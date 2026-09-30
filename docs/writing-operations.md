@@ -139,7 +139,8 @@ collection, a value matching the schema passed to `value(schema)`, or `{ key, co
   `Sensor Board` does not match `Sensor Bracket`.
 - `effects: "write"` marks operations that change application state. Read-only tools can exclude
   them with `registry.filter(op => op.effects === "read")`, or with an `include` predicate on
-  `execute` or an adapter tool.
+  `execute` or an adapter tool. A write step runs on its own, in plan order, never beside another
+  step (see [Plan format](plan-format.md#execution)).
 
 ## Standard operations
 
