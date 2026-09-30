@@ -5,7 +5,13 @@ import { type AnyOperation, type Presentation, provenanceType } from "../operati
 import type { ParsedRef } from "../refs/syntax.js";
 import type { Registry } from "../registry.js";
 import { summarizeSchema } from "../schema/summarize.js";
-import { collectRefs, formatPath, type Path, type RefSite } from "../schema/walk.js";
+import {
+  collectPlainRefs,
+  collectRefs,
+  formatPath,
+  type Path,
+  type RefSite,
+} from "../schema/walk.js";
 import { closest } from "../util/levenshtein.js";
 import { PlanSchema } from "./types.js";
 
@@ -238,6 +244,20 @@ export function validatePlan<Ctx>(
         path: site.path,
         message: `${where} references '$${targetId}', but no earlier step or stored result is named '${targetId}'.`,
         hint: suggestion === undefined ? undefined : `Did you mean '$${suggestion}'?`,
+      });
+    }
+
+    // A plain field is passed as written. A reference there to something that exists was meant
+    // to be resolved, and would reach the operation as its own text instead.
+    for (const plain of collectPlainRefs(operation.input, parsed.data)) {
+      const named = plain.ref.id;
+      if (!indexById.has(named) && session?.has(named) !== true) continue;
+      issues.push({
+        code: "ref.in_plain_field",
+        stepId: step.id,
+        path: plain.path,
+        message: `${formatPath(plain.path)} holds the reference '${plain.text}', but this field does not take one, so it would receive the text as written.`,
+        hint: `Only fields marked $ref resolve a reference; anywhere else, write the value itself. Expected input: ${summarizeSchema(operation.input)}`,
       });
     }
 

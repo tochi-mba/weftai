@@ -458,3 +458,67 @@ describe("validatePlan: references", () => {
     expect(plan.steps[1]?.refs[0]?.source).toBe("plan");
   });
 });
+
+describe("validatePlan: references in plain fields", () => {
+  it("reports a reference written into a plain field, naming the fields that take one", () => {
+    // The bug, named: a plan that found something and passed `$found` in a text field ran,
+    // and the operation was handed the text '$found' instead of what was found.
+    const issues = issuesOf({
+      steps: [
+        { id: "drone", op: "nodes.find", input: { label: "Aurora" } },
+        { id: "groups", op: "nodes.countBy", input: { from: "$drone", field: "$drone" } },
+      ],
+    });
+    expect(issues).toEqual([
+      {
+        code: "ref.in_plain_field",
+        stepId: "groups",
+        path: ["field"],
+        message:
+          "input.field holds the reference '$drone', but this field does not take one, so it would receive the text as written.",
+        hint: "Only fields marked $ref resolve a reference; anywhere else, write the value itself. Expected input: { from: $ref<nodes>; field: string }",
+      },
+    ]);
+  });
+
+  it("reports a reference in a plain field to a stored result or a later step", () => {
+    const session: SessionView = {
+      has: (id) => id === "components",
+      ids: () => ["components"],
+      typeOf: () => "nodes",
+      countOf: () => 3,
+    };
+    const issues = issuesOf(
+      {
+        steps: [
+          { id: "a", op: "nodes.find", input: { label: " $components[2] " } },
+          { id: "b", op: "nodes.find", input: { label: "$c" } },
+          { id: "c", op: "nodes.find" },
+        ],
+      },
+      { session },
+    );
+    expect(issues.map((i) => [i.code, i.stepId, i.path])).toEqual([
+      ["ref.in_plain_field", "a", ["label"]],
+      ["ref.in_plain_field", "b", ["label"]],
+    ]);
+    expect(
+      issues[0]?.message.startsWith("input.label holds the reference ' $components[2] '"),
+    ).toBe(true);
+  });
+
+  it("passes text that only looks like a reference as written", () => {
+    const plan = stepsOf({
+      steps: [
+        { id: "a", op: "nodes.find", input: { label: "$HOME" } },
+        { id: "b", op: "nodes.find", input: { label: "costs $a" } },
+        { id: "c", op: "nodes.find", input: { label: "$5" } },
+      ],
+    });
+    expect(plan.steps.map((s) => (s.input as { label: string }).label)).toEqual([
+      "$HOME",
+      "costs $a",
+      "$5",
+    ]);
+  });
+});

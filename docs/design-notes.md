@@ -8,7 +8,9 @@ Running record of decisions and ideas. Each idea carries a status so nothing is 
 - **References are strings.** `"$components"`, `"$components[2]"`, `"$components[1,4,7]"`. They
   are only interpreted where an input field is declared with `ref()`, so plain string fields never
   treat a leading `$` specially. The model-facing JSON Schema shows the strict grammar; validation
-  tolerates whitespace inside the brackets.
+  tolerates whitespace inside the brackets. A whole reference to a step or stored result in a
+  plain field is refused at validation rather than passed on as text: a model that wrote it
+  meant the result, and an operation handed `"$drone"` fails somewhere far from the cause.
 - **Results are session-scoped.** A result store keyed by session id, with a TTL and a cap,
   lets a later tool call reference an earlier call's result by name. That is the whole point of
   a write step such as `orders.reserve { refs: ["$components"] }`.

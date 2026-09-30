@@ -16,7 +16,8 @@ export type IssueCode =
   | "ref.forward_reference"
   | "ref.self_reference"
   | "ref.type_mismatch"
-  | "ref.ordinal_out_of_range";
+  | "ref.ordinal_out_of_range"
+  | "ref.in_plain_field";
 
 export interface PlanIssue {
   readonly code: IssueCode;

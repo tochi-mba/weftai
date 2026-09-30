@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { z } from "zod";
 import { type Ref, ref } from "./ref.js";
 import { collection } from "./types.js";
-import { collectRefs, formatPath, getAtPath, setAtPath } from "./walk.js";
+import { collectPlainRefs, collectRefs, formatPath, getAtPath, setAtPath } from "./walk.js";
 
 const Node = z.object({ id: z.string(), label: z.string() });
 const Nodes = collection("nodes", Node, { label: (n) => n.label });
@@ -220,5 +220,60 @@ describe("formatPath", () => {
     expect(formatPath([0])).toBe("input[0]");
     expect(formatPath(["a", 0, "b", 1, 2])).toBe("input.a[0].b[1][2]");
     expect(formatPath(["0"])).toBe("input.0");
+  });
+});
+
+function plainOf(schema: z.ZodType, raw: unknown) {
+  return collectPlainRefs(schema, schema.parse(raw)).map((site) => [
+    formatPath(site.path),
+    site.text,
+    site.ref.id,
+  ]);
+}
+
+describe("collectPlainRefs", () => {
+  it("finds references written into plain fields wherever they sit", () => {
+    const schema = z.object({
+      name: z.string(),
+      target: ref(Nodes),
+      tags: z.array(z.string()),
+      labels: z.record(z.string(), z.string()),
+      extra: z.unknown(),
+      pick: z.union([z.literal(1), z.string()]),
+    });
+    const found = plainOf(schema, {
+      name: " $a ",
+      target: "$b",
+      tags: ["plain", "$c[2]"],
+      labels: { k: "$d" },
+      extra: { deep: [{ x: "$e" }, 3, null] },
+      pick: "$f",
+    });
+    expect(found).toEqual([
+      ["input.name", " $a ", "a"],
+      ["input.tags[1]", "$c[2]", "c"],
+      ["input.labels.k", "$d", "d"],
+      ["input.extra.deep[0].x", "$e", "e"],
+      ["input.pick", "$f", "f"],
+    ]);
+  });
+
+  it("leaves text that is not a whole reference alone", () => {
+    const schema = z.array(z.string());
+    expect(plainOf(schema, ["costs $5", "$5", "$bad[0]", "", "see $a"])).toEqual([]);
+  });
+
+  it("reports a plain field once when both sides of an intersection hold it", () => {
+    const schema = z.intersection(z.object({ a: z.string() }), z.object({ a: z.string() }));
+    expect(plainOf(schema, { a: "$x" })).toEqual([["input.a", "$x", "x"]]);
+  });
+
+  it("stops looking inside a plain value at the depth limit", () => {
+    let shallow: unknown = "$x";
+    let deep: unknown = "$x";
+    for (let i = 0; i < 3; i++) shallow = [shallow];
+    for (let i = 0; i < 40; i++) deep = [deep];
+    expect(collectPlainRefs(z.unknown(), shallow).map((site) => site.path)).toEqual([[0, 0, 0]]);
+    expect(collectPlainRefs(z.unknown(), deep)).toEqual([]);
   });
 });
