@@ -68,7 +68,9 @@ A field declared with `ref(Parts)` accepts a string:
 - `$components[1,4,7]` — those three items, in that order
 
 Positions always index the **full stored set**, not the lines the formatter happened to show.
-Plain string fields never interpret a leading `$`.
+Plain string fields never interpret a leading `$`: they are passed as written. A whole
+reference written into one, naming a step in the plan or a stored result, is a validation
+issue (`ref.in_plain_field`), because it would reach the operation as its own text.
 
 ## What the model is shown
 

@@ -35,6 +35,8 @@ with it, then `runtime.execute` validates operation inputs and references.
 
 - `step.unknown_operation` — includes a "Did you mean …?" hint when close
 - `ref.unknown_target` / `ref.forward_reference` / `ref.self_reference`
+- `ref.in_plain_field` — `$drone` written into a field declared as a plain string; it
+  names a step, but only `ref()` fields resolve one, so it would arrive as text
 - `ref.type_mismatch` — `$components` is `parts` but the field wanted `links`
 - `step.invalid_input` — Zod issues rewritten as plain sentences
 - `step.write_not_allowed` — a write op in a read-only tool
