@@ -10,9 +10,14 @@
  * temperature per kind. Its identity is the default, because a host that has not measured anything
  * should not be silently adjusted.
  *
- * **Failing open.** `Gate` returns its `failOpen` verdict whenever there is no answer, the answer is
- * the wrong kind, or the confidence is below the threshold. A host wires the verdict that means "do
+ * **Failing open.** `Gate` returns its `failOpen` verdict whenever there is no answer, a noul was
+ * answered no, or the confidence is below the threshold. A host wires the verdict that means "do
  * exactly what the code did before".
+ *
+ * **Reading a noul.** An answer's probability is the probability of the value it gives, so a noul
+ * answered no with 0.95 carries 0.95. Compared as it stands, that would clear a 0.8 threshold and
+ * pass a gate that asked whether something is true. `Gate` and `Decomposition` read a noul as the
+ * probability of yes instead: 0.95 for a confident yes, 0.05 for a confident no.
  *
  * **Monotone composition.** `Gate.tighten` can move a verdict one way only. That is what lets a
  * probabilistic call sit beside an authority decision: at worst it asks, escapes or holds something
@@ -21,6 +26,18 @@
 
 import { DefinitionError } from "../errors.js";
 import { type Answer, type AnswerKind, Answers, type AnyQuestion, type Decider } from "./types.js";
+
+/**
+ * The calibrated probability that counts in favour: of yes for a noul, of the given value otherwise.
+ *
+ * A noul's answer carries the probability of whichever value it gives, and a gate or a weighted
+ * score asks whether the thing is true, so a no is read as one minus its probability.
+ */
+function inFavour(answer: Answer, calibration: Calibration): number {
+  const probability = calibration.probability(answer);
+  if (answer.kind !== "noul" || answer.value === true) return probability;
+  return 1 - probability;
+}
 
 /**
  * Temperature scaling on a single probability, clamped away from the asymptotes.
@@ -72,8 +89,9 @@ export class Calibration {
 /**
  * A threshold over one question, with the verdict to use when it is not met.
  *
- * `failOpen` is returned for an unanswered question, a wrong-kind answer, or a confidence below
- * `threshold` — the three ways a decision can be absent rather than negative.
+ * `failOpen` is returned for an unanswered question, a noul answered no, or a confidence below
+ * `threshold`. For a noul the threshold is compared against the probability of yes, so a confident
+ * no is below it; for a choice or a score, against the probability of the value given.
  */
 export class Gate<V> {
   readonly threshold: number;
@@ -89,11 +107,14 @@ export class Gate<V> {
     this.calibration = options?.calibration ?? new Calibration();
   }
 
-  /** Whether this question was answered at or above the threshold, after calibration. */
+  /**
+   * Whether this question was answered at or above the threshold, after calibration. A noul is
+   * confident only when it is a yes: its probability of yes is what meets the threshold.
+   */
   confident(answers: Answers, id: string): boolean {
     const answer = answers.get(id);
     if (answer === undefined) return false;
-    return this.calibration.probability(answer) >= this.threshold;
+    return inFavour(answer, this.calibration) >= this.threshold;
   }
 
   /** `whenConfident` if the question cleared the threshold, `failOpen` otherwise. */
@@ -161,7 +182,8 @@ export class Decomposition {
    *
    * An unanswered question contributes nothing and its weight leaves the denominator, so a partial
    * answer set degrades smoothly instead of reading as a confident no. With nothing answered the
-   * score is 0, which every threshold above zero rejects — the fail-open result.
+   * score is 0, which every threshold above zero rejects — the fail-open result. A noul counts
+   * its probability of yes, so a confident no pulls the score down rather than up.
    */
   score(answers: Answers, options?: { calibration?: Calibration }): number {
     const calibration = options?.calibration ?? new Calibration();
@@ -171,7 +193,7 @@ export class Decomposition {
       const answer = answers.get(question.id);
       if (answer === undefined) continue;
       available += weight;
-      weighted += weight * calibration.probability(answer);
+      weighted += weight * inFavour(answer, calibration);
     }
     return available === 0 ? 0 : weighted / available;
   }
