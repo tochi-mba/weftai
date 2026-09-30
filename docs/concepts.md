@@ -93,10 +93,34 @@ formatter always renders. The stored result is never silently chopped.
 
 Results live under a session id (default `"default"`). Reusing a step id replaces the previous
 result and says so. The in-memory store expires entries after 30 minutes and keeps at most 200
-per session, evicting the oldest with a notice.
+per session, evicting the oldest with a notice. Change either with
+`createMemoryStore({ ttlMs, maxResults })` and pass the store to `createRuntime({ registry, store })`;
+any object implementing `ResultStore` can replace it.
 
 ## Structural counts
 
 Until token or latency figures are measured on real transcripts, docs and READMEs talk about
 **structural counts** (steps per question, tool calls per question), not token or latency
 savings.
+
+## Decisions
+
+Beside operations, `weftai` has typed [decisions](decisions.md): closed yes/no, choice and score
+questions answered by a model or classifier you supply, with calibration and a threshold that
+falls back to your existing behaviour.
+
+## Examples and further reading
+
+The repository has three example domains, each with tests that assert the model-facing text:
+`examples/supply-chain` (parts and a bill of materials), `examples/inbox` (support tickets) and
+`examples/documents` (contracts). `examples/chat-*` bind the supply-chain domain to each provider
+family.
+
+- [Plan format](plan-format.md): the wire format, validation issues and execution limits.
+- [Writing operations](writing-operations.md): collections, operations, registry and runtime.
+- [Formatting](formatting.md): budgets and exactly what the model reads.
+- [Adapters](adapters.md) and the [provider catalog](providers.md): binding a runtime to a model
+  host or MCP.
+- [Decisions](decisions.md): closed questions, deciders and gates.
+- [CLI](cli.md): running plans without a model, and the testing helpers.
+- [Design notes](design-notes.md): decisions taken and ideas under consideration.
