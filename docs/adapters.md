@@ -10,6 +10,15 @@ stays in `@weftai/mcp`. The kernel (`bindTool`, schema dialects, capability cata
 Never set `tool_choice` / `ANY` by default. Newest OpenAI, Anthropic and Gemini models reject a
 forced tool.
 
+Every family helper takes `ctx` (a value, or a function returning one per call), `tools` and
+an optional `session`. Each entry in `tools` becomes one tool: `{ name, description?, include?,
+allowWrites? }`, where `include` limits the operations that tool can run (see
+[Writing operations](writing-operations.md#rules-that-are-part-of-the-product)) and
+`allowWrites` defaults to whether any operation in its scope is a write. All tools from one call
+share a session, so one tool call can `$ref` another's result. Pass `session: { id }` to keep
+results across calls to the helper as well, for example one id per conversation; without it the
+helper generates a random id.
+
 ## OpenAI (`@weftai/providers/openai`)
 
 Chat Completions (nested `function`) and the Responses API (flat `type: "function"`). Azure uses
@@ -31,8 +40,8 @@ openaiTools(runtime, { ...PRESETS.qwenIntl, model: "qwen-plus", ctx, tools: [...
 openaiTools(runtime, { ...PRESETS.ark, model: "ep-xxxxxxxx", ctx, tools: [...] });
 ```
 
-GPT-6 Astra requires Responses. From GPT-5.4, Chat Completions rejects tools unless
-`reasoning_effort` is `none`. Deprecated `functions` / `function_call` still maps for old Azure
+`api` defaults to `"chat.completions"`. GPT-6 Astra requires Responses. From GPT-5.4, Chat
+Completions rejects tools unless `reasoning_effort` is `none`. Deprecated `functions` / `function_call` still maps for old Azure
 and compat servers. Assistants and Realtime share the same `handle`.
 
 ## Anthropic (`@weftai/providers/anthropic`)
@@ -41,10 +50,20 @@ Messages API tools use `input_schema` and `tool_use` / `tool_result`. The beta `
 is `@weftai/providers/anthropic/tool-runner` (optional `@anthropic-ai/sdk` peer).
 
 ```ts
-import { anthropicTools } from "@weftai/providers/anthropic";
+import { anthropicTools, handleToolUseBlocks } from "@weftai/providers/anthropic";
 import { weftaiTools } from "@weftai/providers/anthropic/tool-runner";
 
-const messages = anthropicTools(runtime, {
+// Messages API: send each tool's name, description and input_schema with the request, then
+// answer the tool_use blocks in the reply with tool_result blocks.
+const tools = anthropicTools(runtime, {
+  ctx,
+  session: { id: conversationId },
+  tools: [{ name: "query_supply_chain", include: (op) => op.effects === "read" }],
+});
+const toolResults = await handleToolUseBlocks(tools, toolUseBlocks);
+
+// Beta tool runner: pass these as `tools` to client.beta.messages.toolRunner(...).
+const runnerTools = weftaiTools(runtime, {
   ctx,
   session: { id: conversationId },
   tools: [{ name: "query_supply_chain", include: (op) => op.effects === "read" }],
@@ -64,9 +83,15 @@ const messages = anthropicTools(runtime, {
 | `@weftai/providers/spark` | Classic Spark HMAC `function_definition`. HTTP OpenAI-style is `PRESETS.sparkHttp` |
 | `@weftai/providers/ai-sdk` | Vercel AI SDK `tool()` shape (`description`, `inputSchema`, `execute`) |
 
-If a model cannot call tools, `lookupCapability` / the family helper errors with the fix (nearest
-model, family, or `ollama.com/search?c=tool`). Unknown names are not assumed to be Chat
-Completions; pass `api` to override the catalog for a new model.
+If a model cannot call tools, the family helper throws an error naming the fix (nearest model,
+a working API, or `ollama.com/search?c=tool`). `lookupCapability(model, { api, provider,
+region, stream })` from `weftai/adapter` returns the same check as `{ ok: false, message }`
+instead of throwing; `requireCapability` throws. Unknown names are not assumed to be Chat
+Completions; pass `api` to override the catalog for a new model. See the
+[provider catalog](providers.md).
+
+`@weftai/providers/laya` is not a tool adapter. It exports `LayaDecider`, which answers
+[decision questions](decisions.md) over HTTP.
 
 Chinese descriptions stay UTF-8. Region is `cn` | `intl` with both `baseURL`s when the lab
 publishes them.
@@ -80,6 +105,10 @@ const mcp = createMcpServer(runtime, { name: "supply-chain", ctx });
 await mcp.connectStdio();
 ```
 
+Options: `name` (required), `version` (defaults to the package version), `ctx` (a value or a
+function), `session` (default id `"default"`), `include` and `allowWrites`. `mcp.server` is the
+underlying `McpServer`; connect it to any other MCP transport with `mcp.server.connect(transport)`.
+
 | Tool | Does |
 |------|------|
 | `run_plan` | Execute a plan; returns formatted text; stores results in the session. |
@@ -91,6 +120,8 @@ The CLI wraps this: `weftai mcp --domain ./domain.ts`. Register with Claude Code
 
 ## Live check
 
-`examples/chat-*` binds the supply-chain domain in every family (`pnpm --filter chat-openai start`,
-`chat-anthropic start:bind`, `chat-presets start`, …). `examples/chat-anthropic` `start` is the
-live Claude tool-runner check (`ANTHROPIC_API_KEY`). Catalog rows: `docs/providers.md`.
+`examples/chat-*` binds the supply-chain domain in every family and prints the wire shape, with no
+network call: `pnpm --filter chat-openai start`, `pnpm --filter chat-anthropic start:bind`,
+`pnpm --filter chat-presets start`, and so on. `pnpm --filter chat-anthropic start` is the live
+Claude tool-runner check; it needs `ANTHROPIC_API_KEY`. Catalog rows:
+[providers.md](providers.md).
