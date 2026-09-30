@@ -1,5 +1,13 @@
 # @weftai/cli
 
+## 0.5.0
+
+### Patch Changes
+
+- Updated dependencies
+  - weftai@0.5.0
+  - @weftai/mcp@0.5.0
+
 ## 0.4.0
 
 ### Patch Changes
