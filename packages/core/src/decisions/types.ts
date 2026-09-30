@@ -7,9 +7,9 @@
  * answers them with regexes and thresholds, so the primitives belong here rather than being
  * rewritten per host.
  *
- * Three kinds, because that is what such a model can answer: `noul` (a yes/no judgement, whose
- * probability is the probability of yes), `choice` (one option from a closed set) and `score`
- * (one level from an ordered set).
+ * Three kinds, because that is what such a model can answer: `noul` (a yes/no judgement),
+ * `choice` (one option from a closed set) and `score` (one level from an ordered set). Every
+ * answer's probability is the probability of the value it gives, a noul's included.
  *
  * The wording, the thresholds and the authority are the host's: nothing here says what 0.6
  * means. What it does say is that a question must be answerable on its own, which is the one rule
@@ -24,7 +24,10 @@ export type AnswerKind = "noul" | "choice" | "score";
 /** Question ids are snake_case so an answer can be read back by name in either language. */
 export const QUESTION_ID = "^[a-z][a-z0-9_]*$";
 
-/** A yes/no judgement. `probability` in the answer is the probability of yes. */
+/**
+ * A yes/no judgement. The answer's `probability` is that of the value it gives: 0.9 on a no means
+ * 0.9 that the answer is no. `Gate` and `Decomposition` read it as the probability of yes.
+ */
 export interface NoulQuestion {
   readonly kind: "noul";
   readonly id: string;

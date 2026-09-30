@@ -106,14 +106,16 @@ batch. `size` and `questions` read the batch back.
 verdict to use when it is not met.
 
 - `gate.confident(answers, id)` is true when the question was answered and its calibrated
-  probability is at least `threshold`.
+  probability is at least `threshold`. For a noul that is the probability of yes, so only a yes
+  can be confident: a noul answered no with 0.95 has 0.05 on yes. For a choice or a score it is
+  the probability of the value given.
 - `gate.decide(answers, id, whenConfident)` returns `whenConfident` if `confident` is true and
-  `failOpen` otherwise: when the question is unanswered or answered below the threshold.
+  `failOpen` otherwise: when the question is unanswered, a noul is answered no, or the answer is
+  below the threshold.
 
-`Gate` compares the probability only; it does not read the answer's value. Pass the answered
-value as `whenConfident`, as in `routing.decide(answers, "queue", answers.choice("queue"))` or
-`new Gate(0.8, false).decide(answers, "urgent", answers.noul("urgent"))`, so that a confident
-"no" stays a no.
+So `new Gate(0.8, "carry_on").decide(answers, "looping", "stop")` stops only on a confident yes.
+For a choice, `Gate` does not know which option you wanted: pass the answered value as
+`whenConfident`, as in `routing.decide(answers, "queue", answers.choice("queue"))`.
 
 `gate.tighten(current, proposed, order)` returns the stricter of two verdicts, where `order` lists
 the verdicts from most to least permissive. It can only move a verdict towards the strict end, so
@@ -146,14 +148,10 @@ recombined with weights you fit. There must be one weight per question, and the 
 to more than 0. Add the parts to a batch with `batch.extend(decomposition)`, then call
 `decomposition.score(answers, { calibration? })`.
 
-The score is the weighted mean of the calibrated `probability` of each answered part. An
-unanswered part and its weight are left out, so a partial answer set does not read as a confident
-no; with nothing answered the score is 0.
-
-The score reads probabilities, not values. With a decider that reports the probability of the
-value it returned, as `LayaDecider` does, a confident "no" to a noul part raises the score as much
-as a confident "yes". Phrase and weight parts with that in mind, or read the values with
-`answers.noul(id)` before trusting the score.
+The score is the weighted mean of each answered part's calibrated probability in favour: the
+probability of yes for a noul, and of the value given for a choice or a score. A confident "no" to
+a noul part therefore pulls the score down. An unanswered part and its weight are left out, so a
+partial answer set does not read as a confident no; with nothing answered the score is 0.
 
 ## Laya decider
 

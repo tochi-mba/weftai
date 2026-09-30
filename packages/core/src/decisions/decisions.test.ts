@@ -204,6 +204,15 @@ describe("gate", () => {
     );
   });
 
+  it("reads a noul as the probability of yes, so a confident no fails open", () => {
+    const gate = new Gate(0.8, "carry_on");
+    const no = new Answers([noulAnswer("looping", false, 0.95)]);
+    expect(gate.confident(no, "looping")).toBe(false);
+    expect(gate.decide(no, "looping", "stop")).toBe("carry_on");
+    // A no given only a 0.1 chance leaves 0.9 on yes, which is what the threshold is about.
+    expect(gate.confident(new Answers([noulAnswer("looping", false, 0.1)]), "looping")).toBe(true);
+  });
+
   it("treats the threshold as inclusive", () => {
     expect(new Gate(0.6, "x").confident(new Answers([noulAnswer("f", true, 0.6)]), "f")).toBe(true);
   });
@@ -248,6 +257,14 @@ describe("decomposition", () => {
       noulAnswer("about_person", true, 0),
     ]);
     expect(parts().score(answers)).toBeCloseTo(0.7);
+  });
+
+  it("counts a noul answered no against the score", () => {
+    const answers = new Answers([
+      noulAnswer("durable", false, 0.9),
+      noulAnswer("about_person", true, 1),
+    ]);
+    expect(parts().score(answers)).toBeCloseTo(0.7 * 0.1 + 0.3 * 1);
   });
 
   it("drops an unanswered part from the denominator", () => {

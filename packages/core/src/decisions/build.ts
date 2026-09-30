@@ -64,7 +64,7 @@ function checkDistinct(id: string, what: string, values: readonly string[]): voi
   }
 }
 
-/** A yes/no judgement. The answer's probability is the probability of yes. */
+/** A yes/no judgement. The answer's probability is that of the value it gives, yes or no. */
 export function noul(id: string, prompt: string, options?: { criteria?: string }): NoulQuestion {
   checkId(id);
   return { kind: "noul", id, prompt: checkPrompt(id, prompt), criteria: options?.criteria };
