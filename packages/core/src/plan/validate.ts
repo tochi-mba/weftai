@@ -41,6 +41,8 @@ export interface ValidatedStep<Ctx> {
   /** Ids of steps in this plan that must complete first. */
   readonly dependencies: readonly string[];
   readonly present: Presentation;
+  /** What the step is for, in the plan author's words, when the plan said. */
+  readonly note?: string | undefined;
   /** True when a later step in this plan references this one. */
   readonly referenced: boolean;
 }
@@ -272,6 +274,7 @@ export function validatePlan<Ctx>(
       refs,
       dependencies: [...dependencies],
       present: step.present ?? operation.present,
+      note: step.note,
       referenced: false,
     });
   });

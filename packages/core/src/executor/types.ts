@@ -76,6 +76,8 @@ export interface StepResult {
   readonly referenced: boolean;
   readonly present: Presentation;
   readonly replaced: boolean;
+  /** The step's note from the plan, for a host's approval prompt, progress line or log. */
+  readonly note?: string | undefined;
 }
 
 export interface TraceInputRef {
@@ -102,6 +104,7 @@ export interface TraceStep {
   readonly skippedBecause: string | undefined;
   readonly startedAt: number;
   readonly durationMs: number;
+  readonly note?: string | undefined;
 }
 
 export interface Trace {

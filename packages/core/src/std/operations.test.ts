@@ -85,6 +85,13 @@ describe("standardOperations: definition", () => {
   it("marks every derived operation read-only with a description and a $ref input", () => {
     for (const op of standardOperations(Nodes)) {
       expect(op.effects).toBe("read");
+      // They read a result already stored in the session, so nothing outside is reached.
+      expect(op.annotations).toEqual({
+        readOnly: true,
+        destructive: false,
+        idempotent: true,
+        openWorld: false,
+      });
       expect(op.description.length).toBeGreaterThan(10);
       expect(Object.keys((op.input as z.ZodObject).shape)).toContain("from");
     }

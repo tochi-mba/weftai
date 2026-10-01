@@ -2,7 +2,7 @@ import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import { describe, expect, it } from "vitest";
 import { collection, createRegistry, createRuntime, defineOperation, z } from "weftai";
-import { createMcpServer, formatRefResult } from "./index.js";
+import { createMcpServer, formatRefResult, planAnnotations } from "./index.js";
 
 const Item = z.object({ id: z.string(), label: z.string() });
 const Items = collection("items", Item, {
@@ -57,6 +57,67 @@ describe("@weftai/mcp", () => {
       arguments: { ref: "$all" },
     });
     expect(textOf(fetched)).toContain("Alpha");
+  });
+
+  it("annotates every tool, so a client need not assume each is destructive and open-world", async () => {
+    const runtime = createRuntime({ registry });
+    const client = await connect(runtime);
+    const listed = await client.listTools();
+    const byName = new Map(listed.tools.map((tool) => [tool.name, tool.annotations]));
+    const localRead = {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: false,
+    };
+    expect(byName.get("describe_operations")).toEqual(localRead);
+    expect(byName.get("get_result")).toEqual(localRead);
+    // items.find is a read declared with no annotations: read-only, but it may reach outside.
+    expect(byName.get("run_plan")).toEqual({
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+    });
+  });
+
+  it("derives run_plan's annotations from the operations it can actually run", () => {
+    const drop = defineOperation({
+      name: "items.drop",
+      description: "Drop items.",
+      input: z.object({}),
+      output: Items,
+      effects: "write",
+      run: () => [],
+    });
+    const tag = defineOperation({
+      name: "items.tag",
+      description: "Tag items.",
+      input: z.object({}),
+      output: Items,
+      effects: "write",
+      annotations: { destructive: false, idempotent: true, openWorld: false },
+      run: () => [],
+    });
+    expect(planAnnotations([find, drop], undefined)).toEqual({
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+    });
+    expect(planAnnotations([tag], true)).toEqual({
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: false,
+    });
+    // With writes refused, the writes it lists cannot run, so they do not count.
+    expect(planAnnotations([find, drop], false)).toEqual({
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+    });
   });
 
   it("describe_operations names every op and the $ref syntax", async () => {

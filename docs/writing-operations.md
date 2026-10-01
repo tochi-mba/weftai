@@ -141,6 +141,27 @@ collection, a value matching the schema passed to `value(schema)`, or `{ key, co
   them with `registry.filter(op => op.effects === "read")`, or with an `include` predicate on
   `execute` or an adapter tool. A write step runs on its own, in plan order, never beside another
   step (see [Plan format](plan-format.md#execution)).
+- `annotations` says what a host may assume before an operation runs, in MCP's own terms:
+  `readOnly` (follows from `effects`; declaring a value that disagrees is a definition error),
+  `destructive`, `idempotent` and `openWorld`. Undeclared values take MCP's defaults: a write is
+  destructive and not idempotent, and anything may reach outside the process. Say what is true:
+
+  ```ts
+  defineOperation({
+    name: "parts.tag",
+    description: "Add a tag to a part.",
+    input: z.object({ part: ref(Parts), tag: z.string() }),
+    output: value(z.object({ tagged: z.number() })),
+    effects: "write",
+    annotations: { destructive: false, idempotent: true, openWorld: false },
+    run: ({ input }) => ({ tagged: input.part.items.length }),
+  });
+  ```
+
+  The resolved values are on `operation.annotations`. `describe` gives every write one line,
+  `effect: changes something (destructive)`, so the model knows before it plans; `@weftai/mcp`
+  sends them as tool annotations; a host can ask a person before any destructive step. Standard
+  operations are `openWorld: false`: they read a result already stored.
 
 ## Standard operations
 

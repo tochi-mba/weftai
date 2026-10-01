@@ -61,6 +61,7 @@ export function createMcpServer<Ctx>(
     {
       description: bound.description,
       inputSchema: PlanSchema,
+      annotations: planAnnotations(scoped.operations, options.allowWrites),
     },
     async (input) => {
       const result = await bound.execute(input);
@@ -73,6 +74,7 @@ export function createMcpServer<Ctx>(
     {
       description: "List operations this server can run, with input shapes and the $ref syntax.",
       inputSchema: z.object({}),
+      annotations: LOCAL_READ,
     },
     async () => ({
       content: [{ type: "text" as const, text: scoped.describe() }],
@@ -87,6 +89,7 @@ export function createMcpServer<Ctx>(
       inputSchema: z.object({
         ref: z.string().describe("A $stepId or $stepId[1,3] reference."),
       }),
+      annotations: LOCAL_READ,
     },
     async ({ ref }) => {
       const text = formatRefResult(runtime, sessionId, ref);
@@ -101,6 +104,41 @@ export function createMcpServer<Ctx>(
       /* istanbul ignore next -- the stdio default needs the real process streams; the CLI's stdio test spawns it */
       await server.connect(transport ?? new StdioServerTransport());
     },
+  };
+}
+
+/** A tool that reads only what this server already holds. */
+const LOCAL_READ = {
+  readOnlyHint: true,
+  destructiveHint: false,
+  idempotentHint: true,
+  openWorldHint: false,
+} as const;
+
+/**
+ * What `run_plan` may do, read off the operations it can run: read-only when none of them writes
+ * (or writes are not allowed), destructive when any write it may run is, idempotent only when all
+ * of them are, open-world when any reaches outside. Without this a client must assume the worst
+ * of every tool, which MCP's defaults do: destructive and open-world.
+ */
+export function planAnnotations<Ctx>(
+  operations: readonly AnyOperation<Ctx>[],
+  allowWrites: boolean | undefined,
+): {
+  readonly readOnlyHint: boolean;
+  readonly destructiveHint: boolean;
+  readonly idempotentHint: boolean;
+  readonly openWorldHint: boolean;
+} {
+  const runnable =
+    allowWrites === false
+      ? operations.filter((operation) => operation.effects === "read")
+      : operations;
+  return {
+    readOnlyHint: runnable.every((operation) => operation.annotations.readOnly),
+    destructiveHint: runnable.some((operation) => operation.annotations.destructive),
+    idempotentHint: runnable.every((operation) => operation.annotations.idempotent),
+    openWorldHint: runnable.some((operation) => operation.annotations.openWorld),
   };
 }
 

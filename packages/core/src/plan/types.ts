@@ -1,5 +1,8 @@
 import { z } from "zod";
 
+/** How long a step's note may be: one sentence, not a paragraph. */
+export const NOTE_MAX_CHARS = 200;
+
 /**
  * The wire format the model produces: one tool call, one or more named steps. Unknown keys are
  * rejected so a mis-named field (`operation` instead of `op`) is reported, not silently ignored.
@@ -9,6 +12,8 @@ export const PlanStepSchema = z.strictObject({
   op: z.string(),
   input: z.record(z.string(), z.unknown()).default({}),
   present: z.enum(["auto", "preview", "full"]).optional(),
+  /** One plain sentence saying what this step is for, written for a person. Never executed. */
+  note: z.string().max(NOTE_MAX_CHARS).optional(),
 });
 
 export const PlanSchema = z.strictObject({

@@ -45,6 +45,7 @@ function step(
     referenced: false,
     present: "full",
     replaced: false,
+    note: undefined,
     ...partial,
   };
 }

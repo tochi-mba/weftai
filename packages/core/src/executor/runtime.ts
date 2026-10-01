@@ -303,6 +303,7 @@ function okResult<Ctx>(
     referenced: step.referenced,
     present: inferredPresent(step),
     replaced,
+    note: step.note,
   };
 }
 
@@ -330,6 +331,7 @@ function errorResult<Ctx>(
     referenced: step.referenced,
     present: inferredPresent(step),
     replaced: false,
+    note: step.note,
   };
 }
 
@@ -353,6 +355,7 @@ function skippedResult<Ctx>(step: ValidatedStep<Ctx>, reason: string): StepResul
     referenced: step.referenced,
     present: inferredPresent(step),
     replaced: false,
+    note: step.note,
   };
 }
 

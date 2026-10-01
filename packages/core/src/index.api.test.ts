@@ -22,6 +22,7 @@ const EXPECTED = [
   "MAX_OPTIONS",
   "MAX_PROMPT",
   "MIN_LEVELS",
+  "NOTE_MAX_CHARS",
   "NullDecider",
   "OPERATION_NAME_PATTERN",
   "PlanSchema",

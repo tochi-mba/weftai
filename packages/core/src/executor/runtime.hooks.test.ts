@@ -3,6 +3,7 @@ import { z } from "zod";
 import { defineOperation } from "../operation.js";
 import { createRegistry } from "../registry.js";
 import { createMemoryStore } from "../results/store.js";
+import { ref } from "../schema/ref.js";
 import { collection } from "../schema/types.js";
 import { createRuntime } from "./runtime.js";
 
@@ -57,6 +58,68 @@ describe("createRuntime: hooks and store notices", () => {
       { ctx: {} },
     );
     expect(events).toEqual(["before:ok", "after:ok:ok", "before:bad", "error:bad"]);
+  });
+
+  it("hands each step's note to the hooks, the step result and the trace", async () => {
+    const seen: (string | undefined)[] = [];
+    const rt = createRuntime({
+      registry: createRegistry({ operations: [find] }),
+      hooks: {
+        beforeStep({ step }) {
+          seen.push(step.note);
+        },
+      },
+    });
+    const result = await rt.execute(
+      {
+        steps: [
+          { id: "a", op: "nodes.find", note: "Look up the first node" },
+          { id: "b", op: "nodes.find" },
+        ],
+      },
+      { ctx: {} },
+    );
+    expect(seen).toEqual(["Look up the first node", undefined]);
+    expect(result.steps.map((step) => step.note)).toEqual(["Look up the first node", undefined]);
+    expect(result.trace.steps.map((step) => step.note)).toEqual([
+      "Look up the first node",
+      undefined,
+    ]);
+    // The note is for people; the model wrote it and is not shown it again.
+    expect(result.text).not.toContain("Look up the first node");
+  });
+
+  it("carries the note onto failed and skipped steps", async () => {
+    const boom = defineOperation({
+      name: "nodes.boom",
+      description: "Fail.",
+      input: z.object({}),
+      output: Nodes,
+      run: () => {
+        throw new Error("nope");
+      },
+    });
+    const after = defineOperation({
+      name: "nodes.after",
+      description: "After.",
+      input: z.object({ from: ref(Nodes) }),
+      output: Nodes,
+      run: () => [],
+    });
+    const rt = createRuntime({ registry: createRegistry({ operations: [boom, after] }) });
+    const result = await rt.execute(
+      {
+        steps: [
+          { id: "bad", op: "nodes.boom", note: "Try the failing thing" },
+          { id: "next", op: "nodes.after", input: { from: "$bad" }, note: "Use what it found" },
+        ],
+      },
+      { ctx: {} },
+    );
+    expect(result.steps.map((step) => [step.status, step.note])).toEqual([
+      ["error", "Try the failing thing"],
+      ["skipped", "Use what it found"],
+    ]);
   });
 
   it("turns a beforeStep throw into a step error", async () => {
