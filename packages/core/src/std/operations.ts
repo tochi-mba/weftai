@@ -46,7 +46,11 @@ export function standardOperations<T, Ctx>(
   type: CollectionType<T, Ctx>,
   options: StandardOperationsOptions = {},
 ): Operation<z.ZodType, ResultType, Ctx>[] {
-  const define = defineOperationFor<Ctx>();
+  const defineFor = defineOperationFor<Ctx>();
+  // Every standard operation reads a result already stored in this session: nothing outside
+  // the process is reached, which is what `openWorld: false` tells a host.
+  const define: typeof defineFor = (spec) =>
+    defineFor({ ...spec, annotations: { openWorld: false, ...spec.annotations } });
   const include = new Set(options.include ?? STANDARD_OP_KINDS);
   const maxItems = options.maxItems;
   const ops: Operation<z.ZodType, ResultType, Ctx>[] = [];

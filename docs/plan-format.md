@@ -17,6 +17,7 @@ Unknown keys on a step (`operation` instead of `op`) are an error naming the key
 | `steps[].op` | yes | Operation name such as `parts.find`. |
 | `steps[].input` | no | Object of arguments. Missing input is `{}`. |
 | `steps[].present` | no | `auto` (default), `preview`, or `full`. See [Formatting](formatting.md#presentation). |
+| `steps[].note` | no | One plain sentence, at most 200 characters (`NOTE_MAX_CHARS`), saying what the step is for, written for a person. Never executed and never shown back to the model; it is on the validated step, the step result, the trace and every hook, for a host's approval prompt, progress line or log. |
 
 ## JSON Schema for the model
 

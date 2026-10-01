@@ -7,6 +7,32 @@ import type { CollectionType, OutputData, ResultType, StepOutput } from "./schem
 export type Effects = "read" | "write";
 
 /**
+ * What a host may assume about an operation before it runs, named exactly as MCP's
+ * `ToolAnnotations` name them and defaulted the way MCP defaults them: a write is assumed
+ * destructive and not idempotent, and anything may reach outside the process, unless the
+ * operation says otherwise. Hosts use them to decide what to ask a person about, what is safe
+ * to retry, and what to advertise; the model is told which writes are destructive.
+ */
+export interface OperationAnnotations {
+  /** Derived from `effects`; declaring a value that disagrees is a definition error. */
+  readonly readOnly?: boolean | undefined;
+  /** Destroys or overwrites something a person would miss. Meaningful only for writes. */
+  readonly destructive?: boolean | undefined;
+  /** Running it twice with the same input has no effect beyond the first. Writes only. */
+  readonly idempotent?: boolean | undefined;
+  /** Reaches something outside this process: a network service, another person, the world. */
+  readonly openWorld?: boolean | undefined;
+}
+
+/** The annotations an operation carries once defined: every one decided. */
+export interface ResolvedAnnotations {
+  readonly readOnly: boolean;
+  readonly destructive: boolean;
+  readonly idempotent: boolean;
+  readonly openWorld: boolean;
+}
+
+/**
  * How much of a step's output the model is shown. `auto` shows a preview when a later step in the
  * same plan references this one, and the full read budget otherwise.
  */
@@ -54,6 +80,8 @@ export interface OperationSpec<I extends z.ZodType, O extends ResultType, Ctx> {
   /** Validated at definition time, shown in the model-facing description. */
   readonly examples?: readonly OperationExample<I>[] | undefined;
   readonly present?: Presentation | undefined;
+  /** What a host may assume before running it. Defaults follow `effects`; see `OperationAnnotations`. */
+  readonly annotations?: OperationAnnotations | undefined;
   run(args: RunContext<I, Ctx>): Promise<RunResult<O>> | RunResult<O>;
 }
 
@@ -71,6 +99,7 @@ export interface Operation<
   readonly sources: CollectionType<unknown, unknown> | undefined;
   readonly examples: readonly OperationExample<I>[];
   readonly present: Presentation;
+  readonly annotations: ResolvedAnnotations;
   run(args: RunContext<I, Ctx>): Promise<RunResult<O>> | RunResult<O>;
 }
 
@@ -97,6 +126,8 @@ export function defineOperation<I extends z.ZodType, O extends ResultType, Ctx =
       `Operation '${spec.name}' returns a collection, so 'sources' is redundant; remove it.`,
     );
   }
+  const effects = spec.effects ?? "read";
+  const annotations = resolveAnnotations(spec.name, effects, spec.annotations);
   const examples = spec.examples ?? [];
   examples.forEach((example, index) => {
     const parsed = spec.input.safeParse(example.input);
@@ -112,12 +143,37 @@ export function defineOperation<I extends z.ZodType, O extends ResultType, Ctx =
     description: spec.description.trim(),
     input: spec.input,
     output: spec.output,
-    effects: spec.effects ?? "read",
+    effects,
     sources: spec.sources,
     examples,
     present: spec.present ?? "auto",
+    annotations,
     run: spec.run,
   };
+}
+
+function resolveAnnotations(
+  name: string,
+  effects: Effects,
+  declared: OperationAnnotations | undefined,
+): ResolvedAnnotations {
+  const readOnly = effects === "read";
+  if (declared?.readOnly !== undefined && declared.readOnly !== readOnly) {
+    throw new DefinitionError(
+      `Operation '${name}' has effects '${effects}' but declares readOnly: ${declared.readOnly}; remove readOnly, it follows from effects.`,
+    );
+  }
+  if (readOnly && declared?.destructive === true) {
+    throw new DefinitionError(
+      `Operation '${name}' is a read but declares destructive: true; a destructive operation has effects 'write'.`,
+    );
+  }
+  return Object.freeze({
+    readOnly,
+    destructive: readOnly ? false : (declared?.destructive ?? true),
+    idempotent: readOnly ? true : (declared?.idempotent ?? false),
+    openWorld: declared?.openWorld ?? true,
+  });
 }
 
 /** Binds the context type once so each operation in a domain does not repeat it. */

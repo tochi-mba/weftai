@@ -30,6 +30,7 @@ export function describeOperations(
     lines.push(`- ${operation.name} — ${operation.description}`);
     lines.push(`  input: ${summarizeSchema(operation.input)}`);
     lines.push(`  returns: ${describeOutput(operation)}`);
+    if (operation.effects === "write") lines.push(`  effect: ${describeEffect(operation)}`);
     if (options.examples !== false) {
       for (const example of operation.examples) {
         const note = example.note === undefined ? "" : ` (${example.note})`;
@@ -38,6 +39,21 @@ export function describeOperations(
     }
   }
   return lines.join("\n");
+}
+
+/**
+ * What a write does, in the words a model plans with. Only writes get the line: a read changes
+ * nothing, and saying so forty times would cost more than it tells.
+ */
+function describeEffect(operation: AnyOperation<never>): string {
+  const { destructive, idempotent } = operation.annotations;
+  const qualities = [
+    destructive ? "destructive" : undefined,
+    idempotent ? "safe to repeat" : undefined,
+  ].filter((quality) => quality !== undefined);
+  return qualities.length === 0
+    ? "changes something"
+    : `changes something (${qualities.join(", ")})`;
 }
 
 function describeOutput(operation: AnyOperation<never>): string {

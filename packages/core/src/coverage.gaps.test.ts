@@ -193,6 +193,7 @@ describe("formatter: unusual step shapes", () => {
     referenced: false,
     present: "full",
     replaced: false,
+    note: undefined,
   };
 
   it("renders a collection with neither count nor items as zero", () => {

@@ -116,3 +116,61 @@ describe("createRegistry", () => {
     expect(steps.maxItems).toBe(10);
   });
 });
+
+describe("describe: what a write does", () => {
+  const base = { input: z.object({}), output: value(z.number()), run: () => 1 } as const;
+
+  it("adds one effect line to each write, naming destructive and repeatable ones, and none to reads", () => {
+    const registry = createRegistry({
+      operations: [
+        defineOperation({ ...base, name: "nodes.size", description: "Size." }),
+        defineOperation({ ...base, name: "nodes.drop", description: "Drop.", effects: "write" }),
+        defineOperation({
+          ...base,
+          name: "nodes.tag",
+          description: "Tag.",
+          effects: "write",
+          annotations: { destructive: false },
+        }),
+        defineOperation({
+          ...base,
+          name: "nodes.pin",
+          description: "Pin.",
+          effects: "write",
+          annotations: { destructive: false, idempotent: true },
+        }),
+        defineOperation({
+          ...base,
+          name: "nodes.reset",
+          description: "Reset.",
+          effects: "write",
+          annotations: { idempotent: true },
+        }),
+      ],
+    });
+    const text = registry.describe({ intro: false });
+    expect(text).toBe(
+      [
+        "- nodes.size — Size.",
+        "  input: {}",
+        "  returns: number",
+        "- nodes.drop — Drop.",
+        "  input: {}",
+        "  returns: number",
+        "  effect: changes something (destructive)",
+        "- nodes.tag — Tag.",
+        "  input: {}",
+        "  returns: number",
+        "  effect: changes something",
+        "- nodes.pin — Pin.",
+        "  input: {}",
+        "  returns: number",
+        "  effect: changes something (safe to repeat)",
+        "- nodes.reset — Reset.",
+        "  input: {}",
+        "  returns: number",
+        "  effect: changes something (destructive, safe to repeat)",
+      ].join("\n"),
+    );
+  });
+});

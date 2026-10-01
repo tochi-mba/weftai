@@ -87,3 +87,80 @@ describe("defineOperation", () => {
     ).toThrow(/example 1 does not match/);
   });
 });
+
+describe("defineOperation: annotations", () => {
+  const base = { input: z.object({}), output: value(z.number()), run: () => 1 } as const;
+
+  it("decides every annotation from effects when none are declared, as MCP defaults them", () => {
+    const read = defineOperation({ ...base, name: "nodes.size", description: "Size." });
+    expect(read.annotations).toEqual({
+      readOnly: true,
+      destructive: false,
+      idempotent: true,
+      openWorld: true,
+    });
+    const write = defineOperation({
+      ...base,
+      name: "nodes.drop",
+      description: "Drop.",
+      effects: "write",
+    });
+    expect(write.annotations).toEqual({
+      readOnly: false,
+      destructive: true,
+      idempotent: false,
+      openWorld: true,
+    });
+  });
+
+  it("keeps what a write declares and freezes the result", () => {
+    const rename = defineOperation({
+      ...base,
+      name: "nodes.rename",
+      description: "Rename.",
+      effects: "write",
+      annotations: { destructive: false, idempotent: true, openWorld: false },
+    });
+    expect(rename.annotations).toEqual({
+      readOnly: false,
+      destructive: false,
+      idempotent: true,
+      openWorld: false,
+    });
+    expect(Object.isFrozen(rename.annotations)).toBe(true);
+  });
+
+  it("ignores idempotent false on a read, which repeats safely by definition", () => {
+    const read = defineOperation({
+      ...base,
+      name: "nodes.peek",
+      description: "Peek.",
+      annotations: { readOnly: true, destructive: false, idempotent: false },
+    });
+    expect(read.annotations.idempotent).toBe(true);
+  });
+
+  it("refuses annotations that contradict effects, naming the fix", () => {
+    expect(() =>
+      defineOperation({
+        ...base,
+        name: "nodes.drop",
+        description: "Drop.",
+        effects: "write",
+        annotations: { readOnly: true },
+      }),
+    ).toThrow(
+      "Operation 'nodes.drop' has effects 'write' but declares readOnly: true; remove readOnly, it follows from effects.",
+    );
+    expect(() =>
+      defineOperation({
+        ...base,
+        name: "nodes.size",
+        description: "Size.",
+        annotations: { destructive: true },
+      }),
+    ).toThrow(
+      "Operation 'nodes.size' is a read but declares destructive: true; a destructive operation has effects 'write'.",
+    );
+  });
+});

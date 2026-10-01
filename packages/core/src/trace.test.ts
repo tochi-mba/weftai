@@ -93,6 +93,7 @@ describe("buildTrace", () => {
       referenced: false,
       present: "full",
       replaced: false,
+      note: undefined,
     };
     const skipped: StepResult = {
       ...failed,

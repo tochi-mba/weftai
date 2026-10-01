@@ -71,15 +71,18 @@ export {
   defineOperationFor,
   type Effects,
   type Operation,
+  type OperationAnnotations,
   type OperationExample,
   type OperationSpec,
   type Presentation,
   provenanceType,
+  type ResolvedAnnotations,
   type RunContext,
   type RunResult,
   type StepInfo,
 } from "./operation.js";
 export {
+  NOTE_MAX_CHARS,
   type Plan,
   type PlanInput,
   PlanSchema,

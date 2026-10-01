@@ -547,3 +547,32 @@ describe("validatePlan: references in plain fields", () => {
     ]);
   });
 });
+
+describe("validatePlan: notes", () => {
+  it("carries a step's note onto the validated step, and leaves it absent when none was written", () => {
+    const result = validatePlan(
+      {
+        steps: [
+          { id: "a", op: "nodes.find", note: "Find the nodes they asked about" },
+          { id: "b", op: "nodes.find" },
+        ],
+      },
+      registry,
+    );
+    if (!result.ok) throw new Error("expected a valid plan");
+    expect(result.plan.steps.map((step) => step.note)).toEqual([
+      "Find the nodes they asked about",
+      undefined,
+    ]);
+  });
+
+  it("refuses a note longer than one sentence should be, saying how long it may be", () => {
+    const result = validatePlan(
+      { steps: [{ id: "a", op: "nodes.find", note: "x".repeat(201) }] },
+      registry,
+    );
+    if (result.ok) throw new Error("expected a refusal");
+    expect(result.issues[0]?.code).toBe("plan.invalid_shape");
+    expect(result.issues[0]?.message).toContain("200");
+  });
+});
