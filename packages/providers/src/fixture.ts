@@ -1,13 +1,13 @@
 import { collection, createRegistry, createRuntime, defineOperation, z } from "weftai";
 
 const Item = z.object({ id: z.string(), label: z.string() });
-export const Items = collection("items", Item, {
+const Items = collection("items", Item, {
   label: (item) => item.label,
 });
 
 export type SampleCtx = { readonly items: readonly z.infer<typeof Item>[] };
 
-export const findItems = defineOperation({
+const findItems = defineOperation({
   name: "items.find",
   description: "查找项目",
   input: z.object({ q: z.string().default("") }),
@@ -16,7 +16,7 @@ export const findItems = defineOperation({
     ctx.items.filter((item) => item.label.includes(input.q)),
 });
 
-export const writeItems = defineOperation({
+const writeItems = defineOperation({
   name: "items.write",
   description: "Write items.",
   input: z.object({}),
