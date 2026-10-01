@@ -1,6 +1,6 @@
 {
   "name": "@weftai/providers",
-  "version": "0.5.2",
+  "version": "0.6.0",
   "description": "Wire-format adapters that expose a Weftai runtime as tools on model APIs.",
   "keywords": [
     "ai",
