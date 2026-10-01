@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Weftai is a framework for composable AI workflows: a model emits a declarative plan of named steps, your application validates and executes it, and results flow between steps by name without travelling through the model. For TypeScript and Python. A REX Technologies product.">
+<meta name="robots" content="index,follow">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#080A09">
+<meta property="og:title" content="Weftai — composable AI workflows — REX Technologies">
+<meta property="og:description" content="Weftai is a framework for composable AI workflows: a model emits a declarative plan of named steps, your application validates and executes it, and results flow between steps by name without travelling through the model. For TypeScript and Python. A REX Technologies product.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://tochi-mba.github.io/weftai/">
+<meta name="twitter:card" content="summary">
+<link rel="canonical" href="https://tochi-mba.github.io/weftai/">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<script>document.documentElement.classList.replace("no-js","js");</script>
+<noscript><style>@media(max-width:760px){.site-nav{display:flex!important;position:static!important;flex-direction:column}.menu-button{display:none!important}}</style></noscript>
+<title>Weftai — composable AI workflows — REX Technologies</title>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<div class="ambient ambient-one" aria-hidden="true"></div>
+<div class="ambient ambient-two" aria-hidden="true"></div>
+
+<header class="site-header">
+  <div class="container nav-wrap">
+    <a class="brand" href="#top" aria-label="Weftai, by REX Technologies">
+      <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M6 10h20M6 16h20M6 22h20"/><path d="M11 6v20M21 6v20"/></svg></span>
+      <span class="brand-lockup"><span class="brand-company">REX Technologies</span><span class="brand-name">Weftai</span></span>
+    </a>
+    <button class="menu-button" type="button" aria-expanded="false" aria-controls="site-nav"><span class="sr-only">Toggle navigation</span><span></span><span></span></button>
+    <nav id="site-nav" class="site-nav" aria-label="Primary navigation">
+      <a href="#how">How it works</a>
+      <a href="#api">Packages</a>
+      <a href="#install">Run it</a>
+      <a href="#limits">Rules it keeps</a>
+      <a href="#docs">Docs</a>
+      <a class="nav-github" href="https://github.com/tochi-mba/weftai">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <section class="hero container" id="top">
+    <div class="hero-copy">
+      <p class="eyebrow signal">TypeScript · Python</p>
+      <h1>One plan. Named steps. <span>Nothing copied</span> by the model.</h1>
+      <p class="hero-lede">A model emits a declarative plan of named steps; your application validates and executes it; results flow between steps by name and never travel through the model.</p>
+      <div class="hero-actions">
+        <a class="button button-primary" href="#install">Install it</a>
+        <a class="button button-secondary" href="https://github.com/tochi-mba/weftai">Source on GitHub</a>
+      </div>
+      <div class="hero-meta">
+        <span>npm install weftai</span>
+        <span>pip install weftai</span>
+        <span>Any model provider</span>
+        <span>MIT licensed</span>
+      </div>
+    </div>
+    <pre class="console" aria-label="A plan with three dependent steps"><code>{ <span class="k">"steps"</span>: [
+  { "id": "drone",      "op": "parts.find",
+    "input": { "filters": [{ "field": "label", "op": "fuzzy", "value": "Aurora Drone" }] } },
+  { "id": "components", "op": "parts.components",
+    "input": { "from": <span class="s">"$drone"</span>, "depth": "all" } },
+  { "id": "taiwan",     "op": "parts.filter",
+    "input": { "from": <span class="s">"$components"</span>,
+               "filters": [{ "field": "origin", "op": "eq", "value": "Taiwan" }] } }
+] }
+
+<span class="you">One tool call, three dependent lookups, zero identifiers copied by the model.</span></code></pre>
+  </section>
+
+  <section class="trust-strip">
+    <div class="container trust-grid">
+      <div><strong>Errors that name the fix</strong><span>An unknown operation suggests the nearest name; a wrong reference says what it expected.</span></div>
+      <div><strong>Typed references</strong><span>A step reads an earlier result as $stepId, and the handler receives the collection.</span></div>
+      <div><strong>Nothing truncates silently</strong><span>Exact counts, “showing 30 of 35”, and a notice for every cap that bit.</span></div>
+      <div><strong>Results stay in the session</strong><span>The next tool call can build on this one, by name.</span></div>
+    </div>
+  </section>
+
+  <section class="section container" id="how">
+    <div class="section-heading">
+      <p class="eyebrow signal">How it works</p>
+      <h2>Define an operation once. Everything else is derived.</h2>
+      <p>The same library, with the same plan format, is published for TypeScript on npm and for Python 3.12+ on PyPI.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <span class="step-number">01</span>
+        <h3>You define operations</h3>
+        <p>A name, a description for the model, an input schema, an output type and a handler. Standard operations per collection come for nothing: <code>filter</code>, <code>count</code>, <code>countBy</code>, <code>distinct</code>, <code>mostCommon</code>, <code>first</code>, <code>pick</code>, <code>details</code>.</p>
+      </div>
+      <div class="step">
+        <span class="step-number">02</span>
+        <h3>The model writes a plan</h3>
+        <p>Named steps over your operations. A later step refers to an earlier result as <code>$stepId</code> or <code>$stepId[2]</code>; positions always index the full set, not the preview the model was shown.</p>
+      </div>
+      <div class="step">
+        <span class="step-number">03</span>
+        <h3>Your application runs it</h3>
+        <p>If a plan has any issue, no step runs, and the model reads every issue at once. Independent reads run together, a write runs on its own in the order it was written, a failed step skips only its dependents, and every step is traced.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section container" id="api">
+    <div class="section-heading">
+      <p class="eyebrow signal">Packages</p>
+      <h2>Five packages, released together under one version.</h2>
+      <p>On npm as <code>weftai</code> and <code>@weftai/*</code>, and on PyPI as <code>weftai</code> with matching extras. Release tags and each package's changelog are in the repository.</p>
+    </div>
+    <div class="feature-grid">
+      <div class="feature-card"><span class="meta">weftai</span><h3>Core runtime</h3><p>Operations, plans, validation, execution, the result store, the formatter and traces.</p></div>
+      <div class="feature-card"><span class="meta">@weftai/providers</span><h3>Wire-format adapters</h3><p>OpenAI, Anthropic, Gemini, Bedrock, Ollama and more, so a plan tool reads the same to each.</p></div>
+      <div class="feature-card"><span class="meta">@weftai/mcp</span><h3>MCP server</h3><p>Expose a runtime as an MCP server.</p></div>
+      <div class="feature-card"><span class="meta">@weftai/testing</span><h3>Testing</h3><p>A test runtime, matchers and fixture helpers.</p></div>
+      <div class="feature-card"><span class="meta">@weftai/cli</span><h3>Command line</h3><p><code>weftai run | validate | describe | trace | mcp | init</code>: run saved plans against fixtures with no model in the loop.</p></div>
+      <div class="feature-card"><span class="meta">pip install weftai</span><h3>Python</h3><p>The same library and plan format for Python 3.12+, on <a href="https://pypi.org/project/weftai/">PyPI</a>.</p></div>
+    </div>
+  </section>
+
+  <section class="section container" id="install">
+    <div class="section-heading">
+      <p class="eyebrow signal">Run it</p>
+      <h2>One install, in either language.</h2>
+      <p>The README walks through a bill-of-materials example end to end: the operations, the plan a model writes, and the text the model reads back.</p>
+    </div>
+    <ol class="install-steps">
+      <li>TypeScript, on Node 22.12 or newer.
+        <div class="command-row"><code>npm install weftai</code><button class="copy-button" type="button" data-copy="npm install weftai">Copy</button></div>
+      </li>
+      <li>Python 3.12 or newer.
+        <div class="command-row"><code>pip install weftai</code><button class="copy-button" type="button" data-copy="pip install weftai">Copy</button></div>
+      </li>
+    </ol>
+    <p class="install-note">Start with <a href="https://github.com/tochi-mba/weftai/blob/main/docs/concepts.md">concepts</a>, then <a href="https://github.com/tochi-mba/weftai/blob/main/docs/writing-operations.md">writing operations</a>.</p>
+    <p id="copy-status" class="sr-only" aria-live="polite"></p>
+  </section>
+
+  <section class="section container" id="limits">
+    <div class="section-heading">
+      <p class="eyebrow signal">Rules it keeps</p>
+      <h2>Rules that are part of the product.</h2>
+    </div>
+    <div class="faq">
+      <details open>
+        <summary>Does my data travel through the model?</summary>
+        <p>No. Results flow between steps by reference and stay in a session-scoped store. The model reads a formatted, token-budgeted view with exact counts, and refers to the full set by name.</p>
+      </details>
+      <details>
+        <summary>What happens when the model asks a wrong question?</summary>
+        <p>It is an error, never an empty result. An unknown field lists the available fields, an unknown step suggests the nearest id, and a reference written into a field that does not take one is refused before anything runs.</p>
+      </details>
+      <details>
+        <summary>Is it tied to one model provider?</summary>
+        <p>No. The plan tool is described once and adapted to each provider's wire format. A model that cannot call tools is an error naming the fix, and an unknown model name is not assumed to speak Chat Completions.</p>
+      </details>
+      <details>
+        <summary>Does it force the model to call it?</summary>
+        <p>No. No adapter sets a forced tool choice by default; the newest OpenAI, Anthropic and Gemini models reject one.</p>
+      </details>
+    </div>
+  </section>
+
+  <section class="section container" id="docs">
+    <div class="section-heading">
+      <p class="eyebrow signal">Docs</p>
+      <h2>Written for the person who has to run it.</h2>
+    </div>
+    <div class="feature-grid">
+      <a class="feature-card link" href="https://github.com/tochi-mba/weftai/blob/main/docs/concepts.md"><h3>Concepts</h3><p>Operations, plans, references and the result store.</p></a>
+      <a class="feature-card link" href="https://github.com/tochi-mba/weftai/blob/main/docs/plan-format.md"><h3>The plan format</h3><p>The JSON a model writes, and every validation issue.</p></a>
+      <a class="feature-card link" href="https://github.com/tochi-mba/weftai/blob/main/docs/writing-operations.md"><h3>Writing operations</h3><p>Schemas, outputs, effects and handlers.</p></a>
+      <a class="feature-card link" href="https://github.com/tochi-mba/weftai/blob/main/docs/providers.md"><h3>Providers</h3><p>The wire formats it adapts to.</p></a>
+      <a class="feature-card link" href="https://github.com/tochi-mba/weftai/blob/main/docs/formatting.md"><h3>Formatting</h3><p>What the model reads, and how it is budgeted.</p></a>
+      <a class="feature-card link" href="https://github.com/tochi-mba/weftai/blob/main/docs/cli.md"><h3>The CLI</h3><p>Running, validating and tracing plans from a terminal.</p></a>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-wrap">
+    <span>© <span id="year">2026</span> REX Technologies · Weftai</span>
+    <span>Used by <a href="https://tochi-mba.github.io/LUCY-assistant/">LUCY</a>. MIT licensed.</span>
+    <span class="footer-links">
+      <a href="https://github.com/tochi-mba/weftai/blob/main/packages/core/CHANGELOG.md">What's new <span aria-hidden="true">↗</span></a>
+      <a href="#top">Back to top <span aria-hidden="true">↑</span></a>
+    </span>
+  </div>
+</footer>
+<script src="app.js" defer></script>
+</body>
+</html>

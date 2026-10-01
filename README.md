@@ -1,6 +1,6 @@
 # Weftai
 
-A Rex Technologies product.
+A REX Technologies product. Site: <https://tochi-mba.github.io/weftai/>
 
 Composable AI workflows. A model emits a declarative plan of named steps; your application
 validates and executes it; results flow between steps by name and never travel through the model.
