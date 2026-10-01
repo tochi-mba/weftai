@@ -25,7 +25,7 @@
     "url": "https://github.com/tochi-mba/weftai/issues"
   },
   "license": "MIT",
-  "author": "Rex Technologies",
+  "author": "REX Technologies",
   "type": "module",
   "engines": {
     "node": ">=22.12.0"
