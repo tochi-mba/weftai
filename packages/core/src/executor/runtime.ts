@@ -44,9 +44,6 @@ export type {
   StepHookInfo,
   StepResult,
   StepStatus,
-  Trace,
-  TraceInputRef,
-  TraceStep,
 } from "./types.js";
 export { DEFAULT_LIMITS, TRACE_VERSION } from "./types.js";
 
