@@ -1,6 +1,6 @@
 {
   "name": "@weftai/cli",
-  "version": "0.5.2",
+  "version": "0.6.0",
   "description": "CLI for Weftai: run, validate, describe, trace, mcp, init.",
   "keywords": [
     "cli",

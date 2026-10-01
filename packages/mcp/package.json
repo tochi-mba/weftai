@@ -1,6 +1,6 @@
 {
   "name": "@weftai/mcp",
-  "version": "0.5.2",
+  "version": "0.6.0",
   "description": "Expose a Weftai runtime as an MCP server.",
   "keywords": [
     "mcp",
