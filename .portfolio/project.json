@@ -1,0 +1,29 @@
+{
+  "$schema": "https://tochi-mba.github.io/schema/project.schema.json",
+  "slug": "weftai",
+  "name": "weftai",
+  "tagline": "Composable AI workflows: the model plans, your code executes, results never travel through the model.",
+  "description": "A model emits a declarative plan of named steps. Your application validates it against Zod schemas and runs it. Results flow between steps by name and stay in a session-scoped store, so one tool call can chain three dependent lookups with zero identifiers copied by the model. Published as five npm packages under one version and as the same library on PyPI, with the same plan format.",
+  "highlights": [
+    "One tool call, three dependent lookups, zero identifiers copied by the model",
+    "Operations defined once: name, description, Zod input schema, output type, handler",
+    "Previews for the model, full sets for the code; positions index the full set",
+    "Released on npm (weftai, @weftai/*) and PyPI together, at one version",
+    "Property-based tests with fast-check, Biome, changesets"
+  ],
+  "stack": ["TypeScript", "Zod", "pnpm workspaces", "Vitest", "Python"],
+  "category": "ai",
+  "family": "lucy",
+  "role": "runtime",
+  "status": "active",
+  "featured": true,
+  "order": 20,
+  "display": true,
+  "links": {
+    "package": "https://www.npmjs.com/package/weftai"
+  },
+  "packages": {
+    "npm": ["weftai", "@weftai/providers", "@weftai/mcp", "@weftai/cli", "@weftai/testing"],
+    "pypi": ["weftai", "weftai-providers", "weftai-mcp", "weftai-cli", "weftai-testing"]
+  }
+}
