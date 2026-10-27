@@ -38,6 +38,7 @@ export function buildTrace<Ctx>(args: {
         startedAt: step.startedAt,
         durationMs: step.durationMs,
         note: step.note,
+        reused: step.reused,
       };
     }),
     issues: args.issues,

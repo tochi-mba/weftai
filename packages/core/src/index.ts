@@ -82,6 +82,16 @@ export {
   type StepInfo,
 } from "./operation.js";
 export {
+  buildRerun,
+  createMemoryPlanStore,
+  DEFAULT_PLAN_STORE_LIMITS,
+  type MemoryPlanStoreOptions,
+  type PlanRecord,
+  type PlanStore,
+  type RerunOptions,
+  type RerunResult,
+} from "./plan/rerun.js";
+export {
   NOTE_MAX_CHARS,
   type Plan,
   type PlanInput,

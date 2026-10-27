@@ -103,7 +103,8 @@ describe("createRegistry", () => {
       "edges.link",
     ]);
     expect(variants[0]?.required).toEqual(["id", "op"]);
-    expect(steps.minItems).toBe(1);
+    // No minItems: a rerun may hold no steps. Validation refuses an empty plain plan.
+    expect(steps.minItems).toBeUndefined();
     expect(schema.required).toEqual(["steps"]);
   });
 

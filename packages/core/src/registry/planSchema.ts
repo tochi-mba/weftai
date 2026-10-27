@@ -13,6 +13,10 @@ export interface PlanSchemaOptions {
   readonly maxSteps?: number | undefined;
 }
 
+/** What the model is told `rerun` does. Shared word for word with the Python line. */
+export const RERUN_DESCRIPTION =
+  "Name a step of an earlier plan to run that plan again: steps then holds only the steps to change or add. Steps that succeeded and depend on nothing that changed are reused, not run.";
+
 const STEP_ID_SCHEMA: JsonSchema = {
   type: "string",
   pattern: STEP_ID_PATTERN.source,
@@ -27,18 +31,24 @@ export function buildPlanSchema(
   const style = options.style ?? "union";
   const strict = options.strict === true;
   const items = style === "union" ? unionStep(operations, strict) : looseStep(operations, strict);
+  // No minItems: a rerun may change nothing and run an earlier plan's failed steps again.
+  // Validation still refuses an empty plan that names no rerun.
   const steps: JsonSchema = {
     type: "array",
-    minItems: 1,
     items,
     description:
       "Steps to run. A step may reference earlier steps' results with $id; independent steps run together.",
   };
   if (options.maxSteps !== undefined) steps.maxItems = options.maxSteps;
+  const rerun: JsonSchema = strict
+    ? // Strict modes require every property; null says "not a rerun". A type list, not anyOf,
+      // which OpenAI's strict mode refuses.
+      { type: ["string", "null"], pattern: STEP_ID_PATTERN.source, description: RERUN_DESCRIPTION }
+    : { type: "string", pattern: STEP_ID_PATTERN.source, description: RERUN_DESCRIPTION };
   return {
     type: "object",
-    properties: { steps },
-    required: ["steps"],
+    properties: { steps, rerun },
+    required: strict ? ["steps", "rerun"] : ["steps"],
     additionalProperties: false,
   };
 }

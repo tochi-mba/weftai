@@ -1,11 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
+import { STEP_ID_PATTERN } from "../ids.js";
 import { defineOperation } from "../operation.js";
 import { REF_PATTERN_SOURCE } from "../refs/syntax.js";
 import { ref } from "../schema/ref.js";
 import { collection, groups, value, withSources } from "../schema/types.js";
 import { describeOperations, REFERENCE_GUIDE } from "./describe.js";
-import { buildPlanSchema } from "./planSchema.js";
+import { buildPlanSchema, RERUN_DESCRIPTION } from "./planSchema.js";
 
 const Node = z.object({ id: z.string(), label: z.string() });
 const Nodes = collection("nodes", Node, { label: (n) => n.label });
@@ -110,9 +111,27 @@ describe("buildPlanSchema", () => {
     });
     const steps = stepsOf(schema);
     expect(steps.type).toBe("array");
-    expect(steps.minItems).toBe(1);
+    expect(steps.minItems).toBeUndefined();
     expect(steps.maxItems).toBeUndefined();
     expect(String(steps.description)).toContain("$id");
+  });
+
+  it("offers rerun: optional when loose, required and nullable when strict", () => {
+    const loose = buildPlanSchema([find]);
+    const rerun = (loose.properties as Record<string, Record<string, unknown>>).rerun;
+    expect(rerun).toEqual({
+      type: "string",
+      pattern: STEP_ID_PATTERN.source,
+      description: RERUN_DESCRIPTION,
+    });
+    expect(loose.required).toEqual(["steps"]);
+    const strict = buildPlanSchema([find], { strict: true });
+    expect((strict.properties as Record<string, Record<string, unknown>>).rerun?.type).toEqual([
+      "string",
+      "null",
+    ]);
+    expect(strict.required).toEqual(["steps", "rerun"]);
+    expect(RERUN_DESCRIPTION).toContain("reused, not run");
   });
 
   it("union style: one closed variant per operation with the operation's input schema", () => {

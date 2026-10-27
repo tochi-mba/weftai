@@ -1,6 +1,7 @@
 import type { PlanIssue } from "../errors.js";
 import type { Formatter } from "../format/formatter.js";
 import type { AnyOperation, Presentation } from "../operation.js";
+import type { PlanStore } from "../plan/rerun.js";
 import type { ValidatedPlan, ValidatedStep } from "../plan/validate.js";
 import type { Registry } from "../registry.js";
 import type { ResultKind, ResultStore } from "../results/types.js";
@@ -43,6 +44,11 @@ export interface RuntimeOptions<Ctx> {
   readonly hooks?: RuntimeHooks<Ctx> | undefined;
   readonly failure?: FailurePolicy | undefined;
   readonly formatter?: Formatter | undefined;
+  /**
+   * Where executed plans are kept, so a later plan can `rerun` one with some steps changed.
+   * Default: a memory plan store. `null` keeps none, and a rerun is refused.
+   */
+  readonly plans?: PlanStore | null | undefined;
 }
 
 export interface ExecuteOptions<Ctx> {
@@ -78,6 +84,8 @@ export interface StepResult {
   readonly replaced: boolean;
   /** The step's note from the plan, for a host's approval prompt, progress line or log. */
   readonly note?: string | undefined;
+  /** True when a rerun kept this step's earlier result instead of running it. */
+  readonly reused?: boolean | undefined;
 }
 
 export interface TraceInputRef {
@@ -105,6 +113,7 @@ export interface TraceStep {
   readonly startedAt: number;
   readonly durationMs: number;
   readonly note?: string | undefined;
+  readonly reused?: boolean | undefined;
 }
 
 export interface Trace {
@@ -124,6 +133,14 @@ export interface ExecutionResult<Ctx> {
   readonly issues: readonly PlanIssue[] | undefined;
   readonly trace: Trace;
   readonly durationMs: number;
+  /** For a rerun: the step it named, and which steps ran again and which were reused. */
+  readonly rerun?:
+    | {
+        readonly of: string;
+        readonly ran: readonly string[];
+        readonly reused: readonly string[];
+      }
+    | undefined;
 }
 
 export interface Runtime<Ctx> {

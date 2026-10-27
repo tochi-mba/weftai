@@ -16,9 +16,25 @@ export const PlanStepSchema = z.strictObject({
   note: z.string().max(NOTE_MAX_CHARS).optional(),
 });
 
-export const PlanSchema = z.strictObject({
-  steps: z.array(PlanStepSchema).min(1),
-});
+/**
+ * A plan is its steps, or, with `rerun`, an earlier plan run again: `rerun` names one of that
+ * plan's steps and `steps` holds only the steps to replace or add, so it may be empty. `null` is
+ * the same as leaving it out, for strict schemas where every property is required.
+ */
+export const PlanSchema = z
+  .strictObject({
+    steps: z.array(PlanStepSchema),
+    rerun: z.string().nullable().optional(),
+  })
+  .superRefine((plan, context) => {
+    if (plan.steps.length === 0 && (plan.rerun === undefined || plan.rerun === null)) {
+      context.addIssue({
+        code: "custom",
+        path: ["steps"],
+        message: "Too small: expected array to have >=1 items",
+      });
+    }
+  });
 
 export type PlanStep = z.output<typeof PlanStepSchema>;
 export type Plan = z.output<typeof PlanSchema>;

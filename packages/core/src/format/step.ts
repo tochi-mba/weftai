@@ -46,6 +46,11 @@ export function renderStep<Ctx>(
     };
   }
 
+  if (step.reused === true) {
+    // Its result is the one the model already read from the earlier run; one line says
+    // it stands, and `$id` still reaches every item of it.
+    return { header: `${headerFor(step)} (reused from the earlier run)`, lines: [], notices: [] };
+  }
   const operation = args.registry.get(step.operation);
   const notices = [...step.notices];
   if (step.present === "preview") notices.push(PREVIEW_NOTICE(step.id));

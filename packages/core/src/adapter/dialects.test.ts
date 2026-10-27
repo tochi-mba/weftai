@@ -54,7 +54,7 @@ describe("compilePlanSchema", () => {
     const nova = compilePlanSchema([find], "bedrock-nova");
     expect(nova.type).toBe("object");
     expect("additionalProperties" in nova).toBe(false);
-    expect(nova.required).toEqual(["steps"]);
+    expect(nova.required).toEqual(["steps", "rerun"]);
   });
 
   it("strips unsupported Gemini keywords and uppercases Vertex types", () => {

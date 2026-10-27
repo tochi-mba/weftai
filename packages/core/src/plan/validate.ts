@@ -63,6 +63,13 @@ export interface ValidateOptions {
   readonly session?: SessionView | undefined;
 }
 
+/** A rerun asked of something that keeps no earlier plans. */
+export const RERUN_NOT_KEPT: PlanIssue = {
+  code: "rerun.not_kept",
+  message: "This runtime keeps no earlier plans to rerun.",
+  hint: "Send the whole plan.",
+};
+
 export type ValidationResult<Ctx> =
   | { readonly ok: true; readonly plan: ValidatedPlan<Ctx> }
   | { readonly ok: false; readonly issues: readonly PlanIssue[] };
@@ -86,6 +93,11 @@ export function validatePlan<Ctx>(
     };
   }
   const plan = shape.data;
+  if (typeof plan.rerun === "string") {
+    // Building the plan to rerun needs the earlier plans, which only `buildRerun` (and so a
+    // runtime) has. Validated here it would be read as just its replacement steps.
+    return { ok: false, issues: [RERUN_NOT_KEPT] };
+  }
   const issues: PlanIssue[] = [];
   if (options.maxSteps !== undefined && plan.steps.length > options.maxSteps) {
     issues.push({
