@@ -17,7 +17,10 @@ export type IssueCode =
   | "ref.self_reference"
   | "ref.type_mismatch"
   | "ref.ordinal_out_of_range"
-  | "ref.in_plain_field";
+  | "ref.in_plain_field"
+  | "rerun.unknown_plan"
+  | "rerun.write_would_repeat"
+  | "rerun.not_kept";
 
 export interface PlanIssue {
   readonly code: IssueCode;

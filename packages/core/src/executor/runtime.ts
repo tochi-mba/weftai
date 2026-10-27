@@ -7,10 +7,9 @@ import {
 import type { Formatter } from "../format/formatter.js";
 import { createFormatter } from "../format/formatter.js";
 import type { Presentation, RunContext } from "../operation.js";
+import { buildRerun, createMemoryPlanStore } from "../plan/rerun.js";
 import type { ValidatedPlan, ValidatedStep } from "../plan/validate.js";
-import { validatePlan } from "../plan/validate.js";
 import { resolveRef } from "../results/resolve.js";
-import { sessionView } from "../results/session.js";
 import { createMemoryStore } from "../results/store.js";
 import { DEFAULT_SESSION_ID, type StoredResult } from "../results/types.js";
 import { formatPath, setAtPath } from "../schema/walk.js";
@@ -59,6 +58,7 @@ export function createRuntime<Ctx>(options: RuntimeOptions<Ctx>): Runtime<Ctx> {
   const hooks = options.hooks ?? {};
   const failure = options.failure ?? "continue";
   const formatter = options.formatter ?? createFormatter();
+  const plans = options.plans === undefined ? createMemoryPlanStore() : options.plans;
 
   return {
     registry,
@@ -68,10 +68,12 @@ export function createRuntime<Ctx>(options: RuntimeOptions<Ctx>): Runtime<Ctx> {
       const sessionId = executeOptions.session?.id ?? DEFAULT_SESSION_ID;
       const scoped =
         executeOptions.include === undefined ? registry : registry.filter(executeOptions.include);
-      const validation = validatePlan(raw, scoped, {
+      const validation = buildRerun(raw, scoped, {
+        plans,
+        store,
+        sessionId,
         maxSteps: limits.maxSteps,
         allowWrites: executeOptions.allowWrites,
-        session: sessionView(store, sessionId),
       });
       if (!validation.ok) {
         return failedValidation(started, validation.issues, formatter, scoped, executeOptions.ctx);
@@ -83,6 +85,7 @@ export function createRuntime<Ctx>(options: RuntimeOptions<Ctx>): Runtime<Ctx> {
       );
       const plan = mergeAbort([planBound.signal, failAbort.signal]);
       const results = new Map<string, StepResult>();
+      const reused = new Set(validation.reused);
 
       try {
         for (const level of validation.plan.levels) {
@@ -98,6 +101,10 @@ export function createRuntime<Ctx>(options: RuntimeOptions<Ctx>): Runtime<Ctx> {
             }
             const blocked = skipIfBlocked(step, results);
             if (blocked !== undefined) return blocked;
+            // A reused step's result was stored by the earlier run; buildRerun reused it only
+            // because it is still there.
+            if (reused.has(step.id))
+              return reusedResult(step, store.get(sessionId, step.id) as StoredResult);
             const result = await runStep(step, {
               ctx: executeOptions.ctx,
               sessionId,
@@ -123,6 +130,11 @@ export function createRuntime<Ctx>(options: RuntimeOptions<Ctx>): Runtime<Ctx> {
       // Every step either produced a result or was marked skipped when the plan was cancelled.
       const steps = validation.plan.steps.map((step) => results.get(step.id) as StepResult);
       const ok = steps.every((step) => step.status === "ok");
+      plans?.set(sessionId, {
+        steps: validation.steps,
+        outcome: Object.fromEntries(steps.map((step) => [step.id, step.status])),
+        storedAt: Date.now(),
+      });
       const durationMs = Date.now() - started;
       const text = formatter.format({
         steps,
@@ -138,6 +150,14 @@ export function createRuntime<Ctx>(options: RuntimeOptions<Ctx>): Runtime<Ctx> {
         issues: undefined,
         durationMs,
         trace: buildTrace({ ok, durationMs, steps, validated: validation.plan, issues: undefined }),
+        rerun:
+          validation.of === undefined
+            ? undefined
+            : {
+                of: validation.of,
+                ran: steps.filter((step) => !reused.has(step.id)).map((step) => step.id),
+                reused: [...validation.reused],
+              },
       };
     },
   };
@@ -301,6 +321,31 @@ function okResult<Ctx>(
     present: inferredPresent(step),
     replaced,
     note: step.note,
+  };
+}
+
+/** A rerun step whose earlier result stands: reported as it was stored, and not run. */
+function reusedResult<Ctx>(step: ValidatedStep<Ctx>, stored: StoredResult): StepResult {
+  return {
+    id: step.id,
+    operation: step.operation.name,
+    status: "ok",
+    kind: stored.kind,
+    type: stored.type,
+    count: stored.count,
+    data: stored.data,
+    items: stored.items,
+    notices: Object.freeze([...stored.notices]),
+    fields: undefined,
+    error: undefined,
+    skippedBecause: undefined,
+    durationMs: 0,
+    startedAt: stored.storedAt,
+    referenced: step.referenced,
+    present: inferredPresent(step),
+    replaced: false,
+    note: step.note,
+    reused: true,
   };
 }
 

@@ -12,7 +12,7 @@ describe("Anthropic Messages tools", () => {
     expect(tools[0]?.name).toBe("query_supply_chain");
     expect(tools[0]?.description).toContain("查找项目");
     expect(await tools[0]?.handle(SAMPLE_PLAN)).toContain("Alpha");
-    expect(tools[0]?.input_schema).toMatchObject({ type: "object", required: ["steps"] });
+    expect(tools[0]?.input_schema).toMatchObject({ type: "object", required: ["steps", "rerun"] });
     const results = await handleToolUseBlocks(tools, [
       { type: "tool_use", id: "toolu_1", name: "query_supply_chain", input: SAMPLE_PLAN },
       { id: "toolu_2", name: "nope", input: {} },
