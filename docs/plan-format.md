@@ -17,6 +17,7 @@ Unknown keys on a step (`operation` instead of `op`) are an error naming the key
 | `steps[].op` | yes | Operation name such as `parts.find`. |
 | `steps[].input` | no | Object of arguments. Missing input is `{}`. |
 | `steps[].present` | no | `auto` (default), `preview`, or `full`. See [Formatting](formatting.md#presentation). |
+| `rerun` | no | The id of a step in an earlier plan of this session. That plan runs again, and `steps` holds only the steps to replace (same id) or add (new id); it may be empty. See [Rerunning a plan](#rerunning-a-plan). `null` is the same as leaving it out. |
 | `steps[].note` | no | One plain sentence, at most 200 characters (`NOTE_MAX_CHARS`), saying what the step is for, written for a person. Never executed and never shown back to the model; it is on the validated step, the step result, the trace and every hook, for a host's approval prompt, progress line or log. |
 
 ## JSON Schema for the model
@@ -56,10 +57,41 @@ in one reply. The codes are the `IssueCode` type:
 | `ref.unknown_target` | No earlier step and no stored result has that name. The hint suggests the nearest one. |
 | `ref.type_mismatch` | The target holds a different collection (`$components` is `parts` but the field wants `links`), or has no entities to reference. |
 | `ref.ordinal_out_of_range` | A position is beyond the size of a result stored by an earlier call. Positions into a step of the same plan are checked when the referencing step runs. |
+| `rerun.unknown_plan` | No earlier plan in this session has a step with the `rerun` id. The hint suggests the nearest one, or says to send the whole plan. |
+| `rerun.write_would_repeat` | A write that succeeded last time would run again (a step it reads runs, or its stored result is gone). Naming it in `steps` runs it on purpose. |
+| `rerun.not_kept` | The runtime keeps no earlier plans (`plans` is `null`), or the plan reached a check that cannot see them. |
 | `ref.in_plain_field` | A whole reference such as `$drone`, naming a step in the plan or a stored result, is written into a field that is not declared with `ref()`. It would reach the operation as the text `$drone`. Text that only looks like a reference (`$HOME`, `costs $5`) is passed as written. |
 
 Refs to results stored from **earlier calls** in the same session are valid. Refs to later steps
 in this plan are not.
+
+## Rerunning a plan
+
+When a step fails, the model does not have to write the plan again. It names any step of that
+plan with `rerun` and sends only what changes:
+
+```json
+{ "rerun": "b", "steps": [{ "id": "b", "op": "nodes.pick", "input": { "from": "$a" } }] }
+```
+
+The runtime takes the plan that step was last part of, replaces the steps whose ids `steps`
+repeats, adds steps with new ids at the end, and validates the whole like a new plan. Then, step
+by step in plan order:
+
+- a step **runs** when it was replaced or added, did not succeed last time (failed, skipped,
+  cancelled, timed out), lost its stored result, or reads a step that runs;
+- every other step is **reused**: its stored result stands, it is not run, and the model reads one
+  line for it, `a (nodes): 2 matched (reused from the earlier run)`. `$a` still reaches every item.
+
+With `steps` empty, a rerun retries whatever failed or was skipped. A write that succeeded never
+runs again as a side effect: if one would, the rerun is refused with `rerun.write_would_repeat`,
+and naming the write in `steps` is how to run it again on purpose.
+
+Executed plans are kept per session by a `PlanStore` (`createMemoryPlanStore()` by default: the result
+store's time to live and 50 plans per session). Pass `plans: null` to keep none. The
+result carries `rerun: { of, ran, reused }`, each reused step has `reused` set, and the trace
+records it. A host that checks permissions before running calls `buildRerun(plan, registry, { plans, store, sessionId })`, which
+`runtime.execute` uses itself, to see exactly which steps will run.
 
 ## Execution
 

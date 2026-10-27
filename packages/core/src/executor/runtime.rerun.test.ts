@@ -378,5 +378,12 @@ describe("memory plan store", () => {
     expect(() => createMemoryPlanStore({ ttlMs: Number.NaN })).toThrow(
       "Plan store ttlMs must be a positive number or Infinity, not NaN.",
     );
+    expect(() => createMemoryPlanStore({ maxPlans: 1.5 })).toThrow(/not 1\.5\.$/);
+    expect(() => createMemoryPlanStore({ ttlMs: Number.NEGATIVE_INFINITY })).toThrow(
+      /not -Infinity\.$/,
+    );
+    expect(() => createMemoryPlanStore({ ttlMs: 0 })).toThrow(
+      /ttlMs must be a positive number or Infinity, not 0\.$/,
+    );
   });
 });
