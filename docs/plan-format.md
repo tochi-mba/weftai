@@ -67,12 +67,23 @@ in this plan are not.
 
 ## Rerunning a plan
 
-When a step fails, the model does not have to write the plan again. It names any step of that
-plan with `rerun` and sends only what changes:
+When a step fails or needs a different input, the model does not have to write the plan again.
+It names any step of that plan with `rerun` and sends only what changes. After
 
 ```json
-{ "rerun": "b", "steps": [{ "id": "b", "op": "nodes.pick", "input": { "from": "$a" } }] }
+{ "steps": [
+  { "id": "drone", "op": "parts.find", "input": { "filters": [{ "field": "label", "op": "fuzzy", "value": "Aurora Drone" }] } },
+  { "id": "bom", "op": "parts.components", "input": { "from": "$drone", "depth": "all" } }
+] }
 ```
+
+asking for only the first level of components is one step:
+
+```json
+{ "rerun": "bom", "steps": [{ "id": "bom", "op": "parts.components", "input": { "from": "$drone", "depth": 1 } }] }
+```
+
+`drone` is reused and `bom` runs again.
 
 The runtime takes the plan that step was last part of, replaces the steps whose ids `steps`
 repeats, adds steps with new ids at the end, and validates the whole like a new plan. Then, step
@@ -81,7 +92,7 @@ by step in plan order:
 - a step **runs** when it was replaced or added, did not succeed last time (failed, skipped,
   cancelled, timed out), lost its stored result, or reads a step that runs;
 - every other step is **reused**: its stored result stands, it is not run, and the model reads one
-  line for it, `a (nodes): 2 matched (reused from the earlier run)`. `$a` still reaches every item.
+  line for it, `drone (parts): 1 matched (reused from the earlier run)`. `$drone` still reaches every item.
 
 With `steps` empty, a rerun retries whatever failed or was skipped. A write that succeeded never
 runs again as a side effect: if one would, the rerun is refused with `rerun.write_would_repeat`,

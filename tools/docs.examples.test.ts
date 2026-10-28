@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { validatePlan } from "weftai";
-import { registry } from "../examples/supply-chain/src/domain.js";
+import { createSupplyChainRuntime, registry } from "../examples/supply-chain/src/domain.js";
 
 const DOC_NAMES = [
   "concepts.md",
@@ -47,12 +47,35 @@ describe("docs", () => {
     let checked = 0;
     for (const name of DOC_NAMES) {
       for (const block of planBlocks(readDoc(name))) {
-        const plan: unknown = JSON.parse(block);
+        const plan = JSON.parse(block) as { rerun?: unknown };
+        // A rerun is checked by running it: the plan just before it in the page, then the rerun.
+        if (plan.rerun !== undefined) continue;
         const result = validatePlan(plan, registry);
         expect(
           result.ok,
           `${name}: ${result.ok ? "" : result.issues.map((i) => i.message).join("; ")}`,
         ).toBe(true);
+        checked += 1;
+      }
+    }
+    expect(checked).toBeGreaterThan(0);
+  });
+
+  it("runs every rerun it shows against the plan shown before it", async () => {
+    let checked = 0;
+    for (const name of DOC_NAMES) {
+      const blocks = planBlocks(readDoc(name));
+      for (const [index, block] of blocks.entries()) {
+        const plan = JSON.parse(block) as { rerun?: unknown };
+        if (plan.rerun === undefined) continue;
+        const { runtime, ctx } = createSupplyChainRuntime();
+        const first = await runtime.execute(JSON.parse(blocks[index - 1] ?? "null"), { ctx });
+        expect(first.ok, `${name}: the plan before a rerun runs`).toBe(true);
+        const rerun = await runtime.execute(plan, { ctx });
+        expect(rerun.ok, `${name}: ${rerun.issues?.map((i) => i.message).join("; ") ?? ""}`).toBe(
+          true,
+        );
+        expect(rerun.rerun?.reused.length, `${name}: something is reused`).toBeGreaterThan(0);
         checked += 1;
       }
     }
